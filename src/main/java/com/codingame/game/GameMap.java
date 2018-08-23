@@ -37,7 +37,7 @@ public class GameMap {
                 beginIterator.set(newTile);
                 ListIterator<String> endIterator = map.listIterator(map.size() - index - 1);
                 String endTile = endIterator.next();
-                endIterator.set(getRotatedTile(newTile));
+                endIterator.set(rotateTile(newTile, 2));
             }
         }
     }
@@ -49,12 +49,17 @@ public class GameMap {
     private String getRandomTile() {
         int index = Constants.random.nextInt(availableTiles.size());
         String tile = availableTiles.get(index);
+        tile = rotateTile(tile, Constants.random.nextInt(3));
         availableTiles.remove(index);
         return tile;
     }
 
-    private String getRotatedTile(String tile) {
-        // shift the last 2 characters to the right - corresponds to 180 deg rotation
-        return tile.substring(tile.length() - 2) + tile.substring(0, tile.length() - 2);
+    private String rotateTile(String tile, int numTimes) {
+        // shift characters to the right - 1 shift corresponds to a 90 deg rotation
+        numTimes %= tile.length();
+        if (numTimes == 0) {
+            return tile;
+        }
+        return tile.substring(tile.length() - numTimes) + tile.substring(0, tile.length() - numTimes);
     }
 }
