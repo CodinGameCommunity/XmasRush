@@ -24,6 +24,9 @@ public class Referee extends AbstractReferee {
         Properties params = gameManager.getGameParameters();
         Constants.random = new Random(getSeed(params));
 
+        // TODO: update this when we have gameplay
+        gameManager.setMaxTurns(1);
+
         createBackground();
         createMap();
     }
@@ -79,15 +82,21 @@ public class Referee extends AbstractReferee {
                 .setY(0)
                 .setWidth(SCREEN_WIDTH)
                 .setHeight(SCREEN_HEIGHT)
-                .setFillColor(0xFFFFFF)
+                .setFillColor(0x669999)
                 .setZIndex(Constants.MapLayers.BACKGROUND.asValue());
+
+        graphicEntityModule.createSprite()
+                .setImage("logoCG.png")
+                .setX(SCREEN_WIDTH - 280)
+                .setY(915)
+                .setAnchor(0.5);
     }
 
     private Sprite createSprite(String path, int size, int x, int y, double rotation, int zIndex) {
         return graphicEntityModule.createSprite()
                 .setImage(path)
-                .setBaseHeight(size)
                 .setBaseWidth(size)
+                .setBaseHeight(size)
                 .setX(x)
                 .setY(y)
                 .setRotation(rotation)
