@@ -72,27 +72,20 @@ public class Referee extends AbstractReferee {
                     }
                 }
 
-                String tileValue = map.get(i, j);
-                for (int index = 0; index < tileValue.length(); index++) {
-                    if (tileValue.charAt(index) == '0') continue;
+                createSprite("tile_background.png", x, y, Math.toRadians(0), Constants.MapLayers.BACKGROUND.asValue());
 
-                    createSprite("tile_background.png", x, y, Math.toRadians(0), Constants.MapLayers.BACKGROUND.asValue());
-                    // UP
-                    if (index == 0) {
-                        createSprite("tile_path.png", x, y, Math.toRadians(0), Constants.MapLayers.TILES.asValue());
-                    }
-                    // RIGHT
-                    if (index == 1) {
-                        createSprite("tile_path.png", x, y, Math.toRadians(90), Constants.MapLayers.TILES.asValue());
-                    }
-                    // DOWN
-                    if (index == 2) {
-                        createSprite("tile_path.png", x, y, Math.toRadians(180), Constants.MapLayers.TILES.asValue());
-                    }
-                    // LEFT
-                    if (index == 3) {
-                        createSprite("tile_path.png", x, y, Math.toRadians(270), Constants.MapLayers.TILES.asValue());
-                    }
+                Tile tile = map.get(i, j);
+                if (tile.hasUp()) {
+                    createSprite("tile_path.png", x, y, Math.toRadians(0), Constants.MapLayers.TILES.asValue());
+                }
+                if (tile.hasRight()) {
+                    createSprite("tile_path.png", x, y, Math.toRadians(90), Constants.MapLayers.TILES.asValue());
+                }
+                if (tile.hasDown()) {
+                    createSprite("tile_path.png", x, y, Math.toRadians(180), Constants.MapLayers.TILES.asValue());
+                }
+                if (tile.hasLeft()) {
+                    createSprite("tile_path.png", x, y, Math.toRadians(270), Constants.MapLayers.TILES.asValue());
                 }
                 x += Constants.TILE_SIZE + tileSpace;
             }
