@@ -42,36 +42,61 @@ public class Referee extends AbstractReferee {
     private void createMap() {
         map = new GameMap();
 
-        int offsetX = SCREEN_WIDTH / 2 - (GameMap.MAP_WIDTH * Constants.TILE_SIZE) / 2 + Constants.TILE_SIZE / 2;
-        int offsetY = SCREEN_HEIGHT / 2 - (GameMap.MAP_HEIGHT * Constants.TILE_SIZE) / 2 + Constants.TILE_SIZE / 2;
         int tileSpace = 5;
-        int x = offsetX, y = offsetY;
+        int mapOffsetX = SCREEN_WIDTH / 2 - (GameMap.MAP_WIDTH * Constants.TILE_SIZE) / 2 + Constants.TILE_SIZE / 2 - tileSpace / 2 * GameMap.MAP_WIDTH;
+        int mapOffsetY = SCREEN_HEIGHT / 2 - (GameMap.MAP_HEIGHT * Constants.TILE_SIZE) / 2 + Constants.TILE_SIZE / 2 - tileSpace / 2 * GameMap.MAP_HEIGHT;
+        int x = mapOffsetX, y = mapOffsetY;
         for (int i = 0; i < GameMap.MAP_WIDTH; i++) {
             for (int j = 0; j < GameMap.MAP_HEIGHT; j++) {
+                int arrowPosX = x, arrowPosY = y, arrowRot = 0, arrowOffset = 85;
+                if (j % 2 != 0) {
+                    if (i == 0) {
+                        arrowPosY -= arrowOffset;
+                        arrowRot = 180;
+                        createSprite("arrow.png", arrowPosX, arrowPosY, Math.toRadians(arrowRot), Constants.MapLayers.BACKGROUND.asValue());
+                    } else if (i == GameMap.MAP_WIDTH - 1) {
+                        arrowPosY += arrowOffset;
+                        arrowRot = 0;
+                        createSprite("arrow.png", arrowPosX, arrowPosY, Math.toRadians(arrowRot), Constants.MapLayers.BACKGROUND.asValue());
+                    }
+                }
+                else if (i % 2 != 0) {
+                    if (j == 0) {
+                        arrowPosX -= arrowOffset;
+                        arrowRot = 90;
+                        createSprite("arrow.png", arrowPosX, arrowPosY, Math.toRadians(arrowRot), Constants.MapLayers.BACKGROUND.asValue());
+                    } else if (j == GameMap.MAP_HEIGHT - 1) {
+                        arrowPosX += arrowOffset;
+                        arrowRot = 270;
+                        createSprite("arrow.png", arrowPosX, arrowPosY, Math.toRadians(arrowRot), Constants.MapLayers.BACKGROUND.asValue());
+                    }
+                }
+
                 String tileValue = map.get(i, j);
                 for (int index = 0; index < tileValue.length(); index++) {
                     if (tileValue.charAt(index) == '0') continue;
+
+                    createSprite("tile_background.png", x, y, Math.toRadians(0), Constants.MapLayers.BACKGROUND.asValue());
                     // UP
                     if (index == 0) {
-                        createSprite("tile.png", Constants.TILE_SIZE, x, y, Math.toRadians(0), Constants.MapLayers.TILES.asValue());
+                        createSprite("tile_path.png", x, y, Math.toRadians(0), Constants.MapLayers.TILES.asValue());
                     }
                     // RIGHT
                     if (index == 1) {
-                        createSprite("tile.png", Constants.TILE_SIZE, x, y, Math.toRadians(90), Constants.MapLayers.TILES.asValue());
+                        createSprite("tile_path.png", x, y, Math.toRadians(90), Constants.MapLayers.TILES.asValue());
                     }
                     // DOWN
                     if (index == 2) {
-                        createSprite("tile.png", Constants.TILE_SIZE, x, y, Math.toRadians(180), Constants.MapLayers.TILES.asValue());
+                        createSprite("tile_path.png", x, y, Math.toRadians(180), Constants.MapLayers.TILES.asValue());
                     }
                     // LEFT
                     if (index == 3) {
-                        createSprite("tile.png", Constants.TILE_SIZE, x, y, Math.toRadians(270), Constants.MapLayers.TILES.asValue());
+                        createSprite("tile_path.png", x, y, Math.toRadians(270), Constants.MapLayers.TILES.asValue());
                     }
-                    createSprite("tile_center.png", Constants.TILE_SIZE, x, y, Math.toRadians(0), Constants.MapLayers.TILES.asValue());
                 }
                 x += Constants.TILE_SIZE + tileSpace;
             }
-            x = offsetX;
+            x = mapOffsetX;
             y += Constants.TILE_SIZE + tileSpace;
         }
     }
@@ -87,22 +112,19 @@ public class Referee extends AbstractReferee {
 
         graphicEntityModule.createSprite()
                 .setImage("logoCG.png")
-                .setX(SCREEN_WIDTH - 280)
-                .setY(915)
+                .setX(SCREEN_WIDTH - 230)
+                .setY(930)
                 .setAnchor(0.5);
     }
 
-    private Sprite createSprite(String path, int size, int x, int y, double rotation, int zIndex) {
+    private Sprite createSprite(String path, int x, int y, double rotation, int zIndex) {
         return graphicEntityModule.createSprite()
                 .setImage(path)
-                .setBaseWidth(size)
-                .setBaseHeight(size)
                 .setX(x)
                 .setY(y)
                 .setRotation(rotation)
                 .setZIndex(zIndex)
-                .setAnchorX(0.5)
-                .setAnchorY(0.5);
+                .setAnchor(0.5);
     }
 
     private void sendPlayerInputs() {
