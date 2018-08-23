@@ -22,9 +22,9 @@ public class GameMap {
             "1100", "0000", "1101", "0000", "1101", "0000", "1001"
     ));
     List<String> availableTiles = new LinkedList<>(Arrays.asList(
-            "0110", "0110", "0110", "0110", "0110", "0110", "0110", "0110", "0110", "0110", "0110", "0110", "0110", "0110", "0110", "0110",
-            "1101", "1101", "1101", "1101", "1101", "1101",
-            "1010", "1010", "1010", "1010", "1010", "1010", "1010", "1010", "1010", "1010", "1010", "1010"
+            "0110", "0110", "0110", "0110", "0110", "0110", "0110", "0110",
+            "1101", "1101", "1101",
+            "1010", "1010", "1010", "1010", "1010", "1010"
     ));
 
     public GameMap() {
@@ -35,6 +35,11 @@ public class GameMap {
             if (beginTile.equals("0000")) {
                 String newTile = getRandomTile();
                 beginIterator.set(newTile);
+
+                // do not duplicate the center tile
+                if (index == MAP_WIDTH * MAP_HEIGHT / 2) continue;
+
+                // mirror a new tile via the secondary diagonal
                 ListIterator<String> endIterator = map.listIterator(map.size() - index - 1);
                 String endTile = endIterator.next();
                 endIterator.set(rotateTile(newTile, 2));
