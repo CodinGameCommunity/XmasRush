@@ -1,21 +1,17 @@
 package com.codingame.game;
 
-import com.codingame.game.Utils.Vector2;
-
 public class Tile {
     String pattern;
-    Vector2 pos;
     Item item;
 
     public Tile(String pattern) {
         this.pattern = pattern;
-        this.pos = Vector2.ZERO;
         this.item = null;
     }
 
     public Tile(Tile tile) {
         this.pattern = tile.pattern;
-        this.pos = new Vector2(tile.pos);
+        // TODO: item deep copy
         //this.item = new Item(tile.item);
     }
 
