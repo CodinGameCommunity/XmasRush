@@ -1,5 +1,6 @@
 package com.codingame.game;
 
+import com.codingame.game.Utils.Constants;
 import com.codingame.game.Utils.Vector2;
 
 public class Tile {
@@ -16,7 +17,7 @@ public class Tile {
     public Tile(Tile tile) {
         this.pattern = tile.pattern;
         this.pos = new Vector2(tile.pos);
-        //this.item = new Item(tile.item);
+        this.item = new Item(tile.item);
     }
 
     public boolean hasUp() {
@@ -33,6 +34,20 @@ public class Tile {
 
     public boolean hasLeft() {
         return pattern.charAt(3) == '1';
+    }
+
+    public boolean hasItem() {
+        return this.item != null;
+    }
+
+    public void putItem(Item item) {
+        this.item = item;
+    }
+
+    public boolean isCenterTile() {
+        float centerX = (float) Constants.MAP_HEIGHT / 2;
+        float centerY = (float) Constants.MAP_WIDTH / 2;
+        return this.pos.x == Math.ceil(centerX) && this.pos.y == Math.ceil(centerY);
     }
 
     public boolean isEmpty() {
