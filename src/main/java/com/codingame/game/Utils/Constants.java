@@ -12,7 +12,8 @@ public class Constants {
 
     public enum MapLayers {
         BACKGROUND(0),
-        TILES(1);
+        TILES(1),
+        ITEMS(2);
 
         private final int value;
         MapLayers(int value) {

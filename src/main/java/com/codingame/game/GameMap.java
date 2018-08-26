@@ -49,7 +49,7 @@ public class GameMap {
             Tile beginTile = beginIterator.next();
             if (index % Constants.MAP_WIDTH >= Constants.MAP_WIDTH - index / Constants.MAP_HEIGHT) continue;
             if (beginTile.isEmpty()) {
-                Tile newTile = getRandomTile();
+                Tile newTile = takeRandomAvailableTile();
                 newTile.pos = new Vector2(beginTile.pos);
                 beginIterator.set(new Tile(newTile));
 
@@ -68,9 +68,9 @@ public class GameMap {
         for (ListIterator<String> beginIterator = itemIdentifiers.listIterator(); beginIterator.hasNext();) {
             String beginIdentifier = beginIterator.next();
             Item item = new Item(beginIdentifier, 1);
-            Tile tile = getRandomTile();
-            while (!tile.hasItem() && !tile.isCenterTile()) {
-                tile = getRandomTile();
+            Tile tile = getRandomMapTile();
+            while (tile.isCenterTile() || tile.hasItem()) {
+                tile = getRandomMapTile();
             }
             tile.putItem(item);
 
@@ -84,7 +84,7 @@ public class GameMap {
         return tileMap.get(i * Constants.MAP_WIDTH + j);
     }
 
-    private Tile getRandomTile() {
+    private Tile takeRandomAvailableTile() {
         int index = Constants.random.nextInt(availableTiles.size());
         Tile tile = availableTiles.get(index);
         rotateTile(tile, Constants.random.nextInt(3));
@@ -92,8 +92,13 @@ public class GameMap {
         return tile;
     }
 
+    private Tile getRandomMapTile() {
+        int index = Constants.random.nextInt(tileMap.size());
+        return tileMap.get(index);
+    }
+
     private Tile getOppositeTile(int i, int j) {
-        return tileMap.get(Constants.MAP_HEIGHT * Constants.MAP_WIDTH - (i * Constants.MAP_WIDTH + j));
+        return tileMap.get(Constants.MAP_HEIGHT * Constants.MAP_WIDTH - (i * Constants.MAP_WIDTH + j + 1));
     }
 
     private void rotateTile(Tile tile, int numTimes) {

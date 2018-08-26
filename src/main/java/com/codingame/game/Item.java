@@ -13,4 +13,12 @@ public class Item {
         this.identifier = item.identifier;
         this.playerId = item.playerId;
     }
+
+    public String getLowercaseIdentifier() {
+        return this.identifier.toLowerCase();
+    }
+
+    public int getPlayerId() {
+        return this.playerId;
+    }
 }

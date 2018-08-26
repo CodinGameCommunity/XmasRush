@@ -17,7 +17,11 @@ public class Tile {
     public Tile(Tile tile) {
         this.pattern = tile.pattern;
         this.pos = new Vector2(tile.pos);
-        this.item = new Item(tile.item);
+        if (tile.item != null) {
+            this.item = new Item(tile.item);
+        } else {
+            this.item = null;
+        }
     }
 
     public boolean hasUp() {

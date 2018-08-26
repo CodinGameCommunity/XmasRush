@@ -87,6 +87,12 @@ public class Referee extends AbstractReferee {
                 if (tile.hasLeft()) {
                     createSprite("tile_path.png", x, y, Math.toRadians(270), Constants.MapLayers.TILES.asValue());
                 }
+
+                if (tile.hasItem()) {
+                    String spritePath = String.format("items/item_%s_%d.png", tile.item.getLowercaseIdentifier(), tile.item.getPlayerId());
+                    createSprite(spritePath, x, y, 0, Constants.MapLayers.ITEMS.asValue());
+                }
+
                 x += Constants.TILE_SIZE + tileSpace;
             }
             x = mapOffsetX;
