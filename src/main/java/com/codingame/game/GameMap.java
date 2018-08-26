@@ -38,12 +38,21 @@ public class GameMap {
     ));
 
     public GameMap() {
+        // initialize positions
+        for (int i = 0; i < MAP_WIDTH; i++) {
+            for (int j = 0; j < MAP_HEIGHT; j++) {
+                Tile tile = get(i, j);
+                tile.pos = new Vector2(i, j);
+            }
+        }
+
         for (ListIterator<Tile> beginIterator = tileMap.listIterator(); beginIterator.hasNext();) {
             int index = beginIterator.nextIndex();
             Tile beginTile = beginIterator.next();
             if (index % MAP_WIDTH >= MAP_WIDTH - index / MAP_HEIGHT) continue;
             if (beginTile.isEmpty()) {
                 Tile newTile = getRandomTile();
+                newTile.pos = new Vector2(beginTile.pos);
                 beginIterator.set(new Tile(newTile));
 
                 // do not duplicate the center tile
@@ -53,6 +62,7 @@ public class GameMap {
                 ListIterator<Tile> endIterator = tileMap.listIterator(tileMap.size() - index - 1);
                 Tile endTile = endIterator.next();
                 rotateTile(newTile, 2);
+                newTile.pos = new Vector2(endTile.pos);
                 endIterator.set(newTile);
             }
         }
