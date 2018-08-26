@@ -43,18 +43,18 @@ public class Referee extends AbstractReferee {
         map = new GameMap();
 
         int tileSpace = 5;
-        int mapOffsetX = SCREEN_WIDTH / 2 - (GameMap.MAP_WIDTH * Constants.TILE_SIZE) / 2 + Constants.TILE_SIZE / 2 - tileSpace / 2 * GameMap.MAP_WIDTH;
-        int mapOffsetY = SCREEN_HEIGHT / 2 - (GameMap.MAP_HEIGHT * Constants.TILE_SIZE) / 2 + Constants.TILE_SIZE / 2 - tileSpace / 2 * GameMap.MAP_HEIGHT;
+        int mapOffsetX = SCREEN_WIDTH / 2 - (Constants.MAP_WIDTH * Constants.TILE_SIZE) / 2 + Constants.TILE_SIZE / 2 - tileSpace / 2 * Constants.MAP_WIDTH;
+        int mapOffsetY = SCREEN_HEIGHT / 2 - (Constants.MAP_HEIGHT * Constants.TILE_SIZE) / 2 + Constants.TILE_SIZE / 2 - tileSpace / 2 * Constants.MAP_HEIGHT;
         int x = mapOffsetX, y = mapOffsetY;
-        for (int i = 0; i < GameMap.MAP_WIDTH; i++) {
-            for (int j = 0; j < GameMap.MAP_HEIGHT; j++) {
+        for (int i = 0; i < Constants.MAP_WIDTH; i++) {
+            for (int j = 0; j < Constants.MAP_HEIGHT; j++) {
                 int arrowPosX = x, arrowPosY = y, arrowRot = 0, arrowOffset = 85;
                 if (j % 2 != 0) {
                     if (i == 0) {
                         arrowPosY -= arrowOffset;
                         arrowRot = 180;
                         createSprite("arrow.png", arrowPosX, arrowPosY, Math.toRadians(arrowRot), Constants.MapLayers.BACKGROUND.asValue());
-                    } else if (i == GameMap.MAP_WIDTH - 1) {
+                    } else if (i == Constants.MAP_WIDTH - 1) {
                         arrowPosY += arrowOffset;
                         arrowRot = 0;
                         createSprite("arrow.png", arrowPosX, arrowPosY, Math.toRadians(arrowRot), Constants.MapLayers.BACKGROUND.asValue());
@@ -65,7 +65,7 @@ public class Referee extends AbstractReferee {
                         arrowPosX -= arrowOffset;
                         arrowRot = 90;
                         createSprite("arrow.png", arrowPosX, arrowPosY, Math.toRadians(arrowRot), Constants.MapLayers.BACKGROUND.asValue());
-                    } else if (j == GameMap.MAP_HEIGHT - 1) {
+                    } else if (j == Constants.MAP_HEIGHT - 1) {
                         arrowPosX += arrowOffset;
                         arrowRot = 270;
                         createSprite("arrow.png", arrowPosX, arrowPosY, Math.toRadians(arrowRot), Constants.MapLayers.BACKGROUND.asValue());
