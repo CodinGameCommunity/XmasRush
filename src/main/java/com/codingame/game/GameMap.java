@@ -7,7 +7,7 @@ import java.util.*;
 
 public class GameMap {
     // format is UP, RIGHT, DOWN, LEFT represented as binary digits
-    List<Tile> tileMap = new LinkedList<>(Arrays.asList(
+    List<Tile> tileMap = new ArrayList<>(Arrays.asList(
             new Tile("0110"), new Tile("0000"), new Tile("0111"), new Tile("0000"),
             new Tile("0111"), new Tile("0000"), new Tile("0011"), new Tile("0000"),
             new Tile("0000"), new Tile("0000"), new Tile("0000"), new Tile("0000"),
@@ -23,7 +23,7 @@ public class GameMap {
             new Tile("1001")
     ));
 
-    List<Tile> availableTiles = new LinkedList<>(Arrays.asList(
+    List<Tile> availableTiles = new ArrayList<>(Arrays.asList(
             new Tile("0110"), new Tile("0110"), new Tile("0110"), new Tile("0110"),
             new Tile("0110"), new Tile("0110"), new Tile("0110"), new Tile("0110"),
             new Tile("1101"), new Tile("1101"), new Tile("1101"), new Tile("1010"),
