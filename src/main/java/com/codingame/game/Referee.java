@@ -58,7 +58,15 @@ public class Referee extends AbstractReferee {
         for (ListIterator<Item> beginIterator = playerCards.listIterator(); beginIterator.hasNext();) {
             Item item = beginIterator.next();
             int index = beginIterator.nextIndex();
-            createSprite("cardBack_1.png", playerOffsetX, playerOffsetY + index*15, 0, Constants.MapLayers.TILES.asValue());
+
+            if (index == playerCards.size()) {
+                createSprite("cardFront.png", playerOffsetX, playerOffsetY + index*15, 0, Constants.MapLayers.TILES.asValue());
+                String itemsPath = "items" + System.getProperty("file.separator") + "item_%s_%d.png";
+                String spritePath = String.format(itemsPath, item.getLowercaseIdentifier(), item.getPlayerId());
+                createSprite(spritePath, playerOffsetX, playerOffsetY + index*15, 0, Constants.MapLayers.ITEMS.asValue());
+            } else {
+                createSprite("cardBack_1.png", playerOffsetX, playerOffsetY + index*15, 0, Constants.MapLayers.TILES.asValue());
+            }
         }
 
         for (ListIterator<Item> beginIterator = opponentCards.listIterator(); beginIterator.hasNext();) {
