@@ -49,9 +49,9 @@ public class Tile {
     }
 
     public boolean isCenterTile() {
-        float centerX = (float) Constants.MAP_HEIGHT / 2;
-        float centerY = (float) Constants.MAP_WIDTH / 2;
-        return this.pos.x == Math.ceil(centerX) && this.pos.y == Math.ceil(centerY);
+        int centerX = Constants.MAP_HEIGHT / 2;
+        int centerY = Constants.MAP_WIDTH / 2;
+        return this.pos.x == centerX && this.pos.y == centerY;
     }
 
     public boolean isBaseTile() {
