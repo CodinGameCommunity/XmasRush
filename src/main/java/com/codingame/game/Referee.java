@@ -106,13 +106,16 @@ public class Referee extends AbstractReferee {
         int cardHeight = 256;
         int playerOffsetX = 100 + cardWidth / 2;
         int playerOffsetY = 25 + cardHeight / 2;
-
-        createSprite("cardBack_1.png", playerOffsetX, playerOffsetY, 0, Constants.MapLayers.TILES.asValue());
-
         int opponentOffsetX = SCREEN_WIDTH - (100 + cardWidth / 2);
         int opponentOffsetY = SCREEN_HEIGHT - (150 + cardHeight / 2);
 
-        createSprite("cardBack_2.png", opponentOffsetX, opponentOffsetY, 0, Constants.MapLayers.TILES.asValue());
+        for (ListIterator<String> beginIterator = itemIdentifiers.listIterator(); beginIterator.hasNext();) {
+            beginIterator.next();
+            int index = beginIterator.nextIndex();
+            createSprite("cardBack_1.png", playerOffsetX, playerOffsetY + index*15, 0, Constants.MapLayers.TILES.asValue());
+            createSprite("cardBack_2.png", opponentOffsetX, opponentOffsetY - index*15, 0, Constants.MapLayers.TILES.asValue());
+        }
+
     }
 
     private void createMap() {
