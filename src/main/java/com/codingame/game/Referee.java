@@ -7,8 +7,7 @@ import com.codingame.gameengine.module.entities.GraphicEntityModule;
 import com.codingame.gameengine.module.entities.Sprite;
 import com.google.inject.Inject;
 
-import java.util.Properties;
-import java.util.Random;
+import java.util.*;
 
 public class Referee extends AbstractReferee {
     private static int SCREEN_WIDTH = 1920;
@@ -18,6 +17,10 @@ public class Referee extends AbstractReferee {
     @Inject private GraphicEntityModule graphicEntityModule;
 
     private GameMap map = null;
+
+    List<String> itemIdentifiers = new ArrayList<>(Arrays.asList(
+            "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"
+    ));
 
     @Override
     public void init() {
@@ -39,9 +42,7 @@ public class Referee extends AbstractReferee {
         }
     }
 
-    private void createMap() {
-        map = new GameMap();
-
+    private void drawMap() {
         int tileSpace = 5;
         int mapOffsetX = SCREEN_WIDTH / 2 - (Constants.MAP_WIDTH * Constants.TILE_SIZE) / 2 + Constants.TILE_SIZE / 2 - tileSpace / 2 * Constants.MAP_WIDTH;
         int mapOffsetY = SCREEN_HEIGHT / 2 - (Constants.MAP_HEIGHT * Constants.TILE_SIZE) / 2 + Constants.TILE_SIZE / 2 - tileSpace / 2 * Constants.MAP_HEIGHT;
@@ -98,6 +99,28 @@ public class Referee extends AbstractReferee {
             x = mapOffsetX;
             y += Constants.TILE_SIZE + tileSpace;
         }
+    }
+
+    private void drawCards() {
+        int cardWidth = 128;
+        int cardHeight = 256;
+        int playerOffsetX = 100 + cardWidth / 2;
+        int playerOffsetY = 25 + cardHeight / 2;
+
+        createSprite("cardBack_1.png", playerOffsetX, playerOffsetY, 0, Constants.MapLayers.TILES.asValue());
+
+        int opponentOffsetX = SCREEN_WIDTH - (100 + cardWidth / 2);
+        int opponentOffsetY = SCREEN_HEIGHT - (150 + cardHeight / 2);
+
+        createSprite("cardBack_2.png", opponentOffsetX, opponentOffsetY, 0, Constants.MapLayers.TILES.asValue());
+    }
+
+    private void createMap() {
+        map = new GameMap();
+        drawMap();
+
+        Collections.shuffle(itemIdentifiers);
+        drawCards();
     }
 
     private void createBackground() {
