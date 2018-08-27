@@ -1,6 +1,7 @@
 package com.codingame.game;
 
 import com.codingame.game.Utils.Constants;
+import com.codingame.game.Utils.Vector2;
 import com.codingame.gameengine.core.AbstractReferee;
 import com.codingame.gameengine.core.MultiplayerGameManager;
 import com.codingame.gameengine.module.entities.GraphicEntityModule;
@@ -25,6 +26,9 @@ public class Referee extends AbstractReferee {
     private List<Item> playerCards = new ArrayList<>();
     private List<Item> opponentCards = new ArrayList<>();
 
+    private Vector2 playerPosition;
+    private Vector2 opponentPosition;
+
     @Override
     public void init() {
         Properties params = gameManager.getGameParameters();
@@ -34,6 +38,7 @@ public class Referee extends AbstractReferee {
         gameManager.setMaxTurns(1);
 
         createBackground();
+        createPlayers();
         createMap();
         createCards();
     }
@@ -46,6 +51,24 @@ public class Referee extends AbstractReferee {
         }
     }
 
+    private void drawPlayers() {
+        int tileSpace = 5;
+        int mapOffsetX = SCREEN_WIDTH / 2 - (Constants.MAP_WIDTH * Constants.TILE_SIZE) / 2 + Constants.TILE_SIZE / 2 - tileSpace / 2 * Constants.MAP_WIDTH;
+        int mapOffsetY = SCREEN_HEIGHT / 2 - (Constants.MAP_HEIGHT * Constants.TILE_SIZE) / 2 + Constants.TILE_SIZE / 2 - tileSpace / 2 * Constants.MAP_HEIGHT;
+        int playerOffsetX = mapOffsetX + (Constants.TILE_SIZE + tileSpace) * playerPosition.x;
+        int playerOffsetY = mapOffsetY + (Constants.TILE_SIZE + tileSpace) * playerPosition.y;
+        createSprite("agent_1.png", playerOffsetX, playerOffsetY, 0, Constants.MapLayers.AGENTS.asValue());
+        int opponentOffsetX = mapOffsetX + (Constants.TILE_SIZE + tileSpace) * opponentPosition.x;
+        int opponentOffsetY = mapOffsetY + (Constants.TILE_SIZE + tileSpace) * opponentPosition.y;
+        createSprite("agent_2.png", opponentOffsetX, opponentOffsetY, 0, Constants.MapLayers.AGENTS.asValue());
+    }
+
+    private void createPlayers() {
+        playerPosition = new Vector2(0, 0);
+        opponentPosition = new Vector2(Constants.MAP_WIDTH - 1, Constants.MAP_HEIGHT - 1);
+
+        drawPlayers();
+    }
 
     private void drawCards() {
         int cardWidth = 128;
@@ -137,6 +160,12 @@ public class Referee extends AbstractReferee {
                 if (tile.hasItem()) {
                     String itemsPath = "items" + System.getProperty("file.separator") + "item_%s_%d.png";
                     String spritePath = String.format(itemsPath, tile.item.getLowercaseIdentifier(), tile.item.getPlayerId());
+                    createSprite(spritePath, x, y, 0, Constants.MapLayers.ITEMS.asValue());
+                }
+
+                if (tile.isBaseTile()) {
+                    int playerBase = tile.pos.x == 0 ? 1 : 2;
+                    String spritePath = String.format("base_%d.png", playerBase);
                     createSprite(spritePath, x, y, 0, Constants.MapLayers.ITEMS.asValue());
                 }
 

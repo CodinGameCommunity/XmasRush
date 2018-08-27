@@ -54,6 +54,10 @@ public class Tile {
         return this.pos.x == Math.ceil(centerX) && this.pos.y == Math.ceil(centerY);
     }
 
+    public boolean isBaseTile() {
+        return (this.pos.x == 0 && this.pos.y == 0) || (this.pos.x == Constants.MAP_WIDTH -1 && this.pos.y == Constants.MAP_HEIGHT -1);
+    }
+
     public boolean isEmpty() {
         return pattern.equals("0000");
     }

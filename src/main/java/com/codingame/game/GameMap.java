@@ -69,7 +69,7 @@ public class GameMap {
             String beginIdentifier = beginIterator.next();
             Item item = new Item(beginIdentifier, 1);
             Tile tile = getRandomMapTile();
-            while (tile.isCenterTile() || tile.hasItem()) {
+            while (tile.isCenterTile() || tile.isBaseTile() || tile.hasItem()) {
                 tile = getRandomMapTile();
             }
             tile.putItem(item);
