@@ -89,7 +89,7 @@ public class Referee extends AbstractReferee {
                 }
 
                 if (tile.hasItem()) {
-                    String spritePath = String.format("items/item_%s_%d.png", tile.item.getLowercaseIdentifier(), tile.item.getPlayerId());
+                    String spritePath = String.format("assets/items/item_%s_%d.png", tile.item.getLowercaseIdentifier(), tile.item.getPlayerId());
                     createSprite(spritePath, x, y, 0, Constants.MapLayers.ITEMS.asValue());
                 }
 
