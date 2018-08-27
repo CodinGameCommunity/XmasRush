@@ -22,6 +22,9 @@ public class Referee extends AbstractReferee {
             "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"
     ));
 
+    private List<Item> playerCards = new ArrayList<>();
+    private List<Item> opponentCards = new ArrayList<>();
+
     @Override
     public void init() {
         Properties params = gameManager.getGameParameters();
@@ -32,6 +35,7 @@ public class Referee extends AbstractReferee {
 
         createBackground();
         createMap();
+        createCards();
     }
 
     private Long getSeed(Properties params) {
@@ -40,6 +44,39 @@ public class Referee extends AbstractReferee {
         } catch(NumberFormatException nfe) {
             return 0L;
         }
+    }
+
+
+    private void drawCards() {
+        int cardWidth = 128;
+        int cardHeight = 256;
+        int playerOffsetX = 100 + cardWidth / 2;
+        int playerOffsetY = 25 + cardHeight / 2;
+        int opponentOffsetX = SCREEN_WIDTH - (100 + cardWidth / 2);
+        int opponentOffsetY = SCREEN_HEIGHT - (150 + cardHeight / 2);
+
+        for (ListIterator<Item> beginIterator = playerCards.listIterator(); beginIterator.hasNext();) {
+            Item item = beginIterator.next();
+            int index = beginIterator.nextIndex();
+            createSprite("cardBack_1.png", playerOffsetX, playerOffsetY + index*15, 0, Constants.MapLayers.TILES.asValue());
+        }
+
+        for (ListIterator<Item> beginIterator = opponentCards.listIterator(); beginIterator.hasNext();) {
+            Item item = beginIterator.next();
+            int index = beginIterator.nextIndex();
+            createSprite("cardBack_2.png", opponentOffsetX, opponentOffsetY - index*15, 0, Constants.MapLayers.TILES.asValue());
+        }
+    }
+
+    private void createCards() {
+        Collections.shuffle(itemIdentifiers);
+        for (ListIterator<String> beginIterator = itemIdentifiers.listIterator(); beginIterator.hasNext();) {
+            String beginIdentifier = beginIterator.next();
+            playerCards.add(new Item(beginIdentifier, 1));
+            opponentCards.add(new Item(beginIdentifier, 2));
+        }
+
+        drawCards();
     }
 
     private void drawMap() {
@@ -101,29 +138,9 @@ public class Referee extends AbstractReferee {
         }
     }
 
-    private void drawCards() {
-        int cardWidth = 128;
-        int cardHeight = 256;
-        int playerOffsetX = 100 + cardWidth / 2;
-        int playerOffsetY = 25 + cardHeight / 2;
-        int opponentOffsetX = SCREEN_WIDTH - (100 + cardWidth / 2);
-        int opponentOffsetY = SCREEN_HEIGHT - (150 + cardHeight / 2);
-
-        for (ListIterator<String> beginIterator = itemIdentifiers.listIterator(); beginIterator.hasNext();) {
-            beginIterator.next();
-            int index = beginIterator.nextIndex();
-            createSprite("cardBack_1.png", playerOffsetX, playerOffsetY + index*15, 0, Constants.MapLayers.TILES.asValue());
-            createSprite("cardBack_2.png", opponentOffsetX, opponentOffsetY - index*15, 0, Constants.MapLayers.TILES.asValue());
-        }
-
-    }
-
     private void createMap() {
         map = new GameMap();
         drawMap();
-
-        Collections.shuffle(itemIdentifiers);
-        drawCards();
     }
 
     private void createBackground() {
