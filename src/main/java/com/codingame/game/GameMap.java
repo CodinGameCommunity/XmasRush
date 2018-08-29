@@ -111,18 +111,60 @@ public class GameMap {
         return tileModels.get(tileModels.size() - index - 1);
     }
 
-    public TileModel pushRow(TileModel tile, int row) {
-        // TODO
-        /*TileModel poppedTile = get(row, 0);
-        for (int i = 0; i < Constants.MAP_WIDTH - 1; i++) {
-            TileController tileController = tileControllers.get(row * Constants.MAP_WIDTH + i);
-            TileModel nextTileModel = tileModels.get(row * Constants.MAP_WIDTH + i + 1);
-            tileModels.set(row * Constants.MAP_WIDTH + i, nextTileModel);
-            tileController.setPosInMap(nextTileModel.pos);
+    public TileController pushLine(TileController tile, int index, Constants.PushDirection dir) {
+        if (index % 2 == 0) {
+            // only odd rows are pushable
+            throw new RuntimeException();
         }
-        tileModels.set(row * Constants.MAP_WIDTH, tile);
-        tileControllers.get((row + 1) * Constants.MAP_WIDTH - 1).setPosInMap(new Vector2(row, 0));
-        return poppedTile;*/
+        if (dir == Constants.PushDirection.LEFT) {
+            TileController poppedTile = tileControllers.get(index * Constants.MAP_WIDTH);
+            for (int i = 0; i < Constants.MAP_WIDTH - 1; i++) {
+                int currIndex = index * Constants.MAP_WIDTH + i;
+                TileController nextTile = tileControllers.get(currIndex + 1);
+                tileControllers.set(currIndex, nextTile);
+                tileControllers.get(currIndex).setPosInMap(new Vector2(index, i));
+            }
+            int lastIndex = (index + 1) * Constants.MAP_WIDTH - 1;
+            tileControllers.set(lastIndex, tile);
+            tileControllers.get(lastIndex).setPosInMap(new Vector2(index, Constants.MAP_WIDTH - 1));
+            return poppedTile;
+        } else if (dir == Constants.PushDirection.RIGHT) {
+            TileController poppedTile = tileControllers.get((index + 1) * Constants.MAP_WIDTH - 1);
+            for (int i = Constants.MAP_WIDTH - 1; i > 0; i--) {
+                int currIndex = index * Constants.MAP_WIDTH + i;
+                TileController prevTile = tileControllers.get(currIndex - 1);
+                tileControllers.set(currIndex, prevTile);
+                tileControllers.get(currIndex).setPosInMap(new Vector2(index, i));
+            }
+            int firstIndex = index * Constants.MAP_WIDTH;
+            tileControllers.set(firstIndex, tile);
+            tileControllers.get(firstIndex).setPosInMap(new Vector2(index, 0));
+            return poppedTile;
+        } else if (dir == Constants.PushDirection.UP) {
+            TileController poppedTile = tileControllers.get(index);
+            for (int i = 0; i < Constants.MAP_HEIGHT - 1; i++) {
+                int currIndex = i * Constants.MAP_WIDTH + index;
+                TileController nextTile = tileControllers.get(currIndex + Constants.MAP_WIDTH);
+                tileControllers.set(currIndex, nextTile);
+                tileControllers.get(currIndex).setPosInMap(new Vector2(i, index));
+            }
+            int lastIndex = (Constants.MAP_HEIGHT - 1) * Constants.MAP_WIDTH + 1;
+            tileControllers.set(lastIndex, tile);
+            tileControllers.get(lastIndex).setPosInMap(new Vector2(Constants.MAP_HEIGHT - 1, index));
+            return poppedTile;
+        } else if (dir == Constants.PushDirection.DOWN) {
+            TileController poppedTile = tileControllers.get((Constants.MAP_HEIGHT - 1) * Constants.MAP_WIDTH + index);
+            for (int i = Constants.MAP_HEIGHT - 1; i > 0; i--) {
+                int currIndex = i * Constants.MAP_WIDTH + index;
+                TileController prevTile = tileControllers.get(currIndex - Constants.MAP_WIDTH);
+                tileControllers.set(currIndex, prevTile);
+                tileControllers.get(currIndex).setPosInMap(new Vector2(i, index));
+            }
+            int firstIndex = index;
+            tileControllers.set(firstIndex, tile);
+            tileControllers.get(firstIndex).setPosInMap(new Vector2(0, index));
+            return poppedTile;
+        }
         return null;
     }
 }

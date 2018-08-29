@@ -1,10 +1,14 @@
 package com.codingame.game;
 
 import com.codingame.game.Controller.TileController;
+import com.codingame.game.InputActions.AbstractAction;
+import com.codingame.game.InputActions.InvalidAction;
+import com.codingame.game.InputActions.PushAction;
 import com.codingame.game.Model.TileModel;
-import com.codingame.game.View.TileView;
 import com.codingame.game.Utils.Constants;
 import com.codingame.game.Utils.Vector2;
+import com.codingame.game.View.TileView;
+import com.codingame.gameengine.core.AbstractPlayer;
 import com.codingame.gameengine.core.AbstractReferee;
 import com.codingame.gameengine.core.MultiplayerGameManager;
 import com.codingame.gameengine.module.entities.GraphicEntityModule;
@@ -25,8 +29,8 @@ public class Referee extends AbstractReferee {
     private Vector2 playerPosition;
     private Vector2 opponentPosition;
 
-    private TileController playerTileController;
-    private TileController opponentTileController;
+    private TileController playerTile;
+    private TileController opponentTile;
 
     @Override
     public void init() {
@@ -43,9 +47,6 @@ public class Referee extends AbstractReferee {
         createMap();
         createPlayerTiles();
         createCards();
-
-        //playerTileModel = map.pushRow(playerTileModel, 3);
-        //playerTileController.setPosAbsolute(new Vector2(Constants.PLAYER_TILE_POS_X, Constants.PLAYER_TILE_POS_Y));
     }
 
     private Long getSeed(Properties params) {
@@ -154,13 +155,13 @@ public class Referee extends AbstractReferee {
     private void createPlayerTiles() {
         TileModel playerTileModel = new TileModel("0110", Vector2.INVALID);
         TileModel opponentTileModel = new TileModel("1001", Vector2.INVALID);
-        playerTileController = new TileController(playerTileModel, new TileView());
-        opponentTileController = new TileController(opponentTileModel, new TileView());
-        playerTileController.init();
-        opponentTileController.init();
+        playerTile = new TileController(playerTileModel, new TileView());
+        opponentTile = new TileController(opponentTileModel, new TileView());
+        playerTile.init();
+        opponentTile.init();
 
-        playerTileController.setPosAbsolute(new Vector2(Constants.PLAYER_TILE_POS_X, Constants.PLAYER_TILE_POS_Y));
-        opponentTileController.setPosAbsolute(new Vector2(Constants.OPPONENT_TILE_POS_X, Constants.OPPONENT_TILE_POS_Y));
+        playerTile.setPosAbsolute(new Vector2(Constants.PLAYER_TILE_POS_X, Constants.PLAYER_TILE_POS_Y));
+        opponentTile.setPosAbsolute(new Vector2(Constants.OPPONENT_TILE_POS_X, Constants.OPPONENT_TILE_POS_Y));
     }
 
     private void createBackground() {
@@ -197,8 +198,29 @@ public class Referee extends AbstractReferee {
         }
     }
 
+    private void doPlayerActions() {
+        for (Player player : gameManager.getActivePlayers()) {
+            try {
+                AbstractAction action = player.getAction();
+                if (action instanceof PushAction) {
+                    PushAction pushAction = (PushAction) action;
+                    if (player.getIndex() == 0) {
+                        playerTile = map.pushLine(playerTile, pushAction.id, pushAction.direction.asValue());
+                        playerTile.setPosAbsolute(new Vector2(Constants.PLAYER_TILE_POS_X, Constants.PLAYER_TILE_POS_Y));
+                    } else if (player.getIndex() == 1) {
+                        opponentTile = map.pushLine(opponentTile, pushAction.id, pushAction.direction.asValue());
+                        opponentTile.setPosAbsolute(new Vector2(Constants.OPPONENT_TILE_POS_X, Constants.OPPONENT_TILE_POS_Y));
+                    }
+                }
+            } catch (NumberFormatException | AbstractPlayer.TimeoutException | InvalidAction e) {
+                player.deactivate("Eliminated!");
+            }
+        }
+    }
+
     @Override
     public void gameTurn(int turn) {
         sendPlayerInputs();
+        doPlayerActions();
     }
 }
