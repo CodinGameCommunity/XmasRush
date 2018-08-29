@@ -1,5 +1,8 @@
 package com.codingame.game;
 
+import com.codingame.game.Controller.TileController;
+import com.codingame.game.Model.TileModel;
+import com.codingame.game.View.TileView;
 import com.codingame.game.Utils.Constants;
 import com.codingame.game.Utils.Vector2;
 import com.codingame.gameengine.core.AbstractReferee;
@@ -11,17 +14,10 @@ import com.google.inject.Inject;
 import java.util.*;
 
 public class Referee extends AbstractReferee {
-    private static int SCREEN_WIDTH = 1920;
-    private static int SCREEN_HEIGHT = 1080;
-
     @Inject private MultiplayerGameManager<Player> gameManager;
     @Inject private GraphicEntityModule graphicEntityModule;
 
-    private GameMap map = null;
-
-    List<String> itemIdentifiers = new ArrayList<>(Arrays.asList(
-            "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"
-    ));
+    private GameMap map;
 
     private List<Item> playerCards = new ArrayList<>();
     private List<Item> opponentCards = new ArrayList<>();
@@ -29,8 +25,13 @@ public class Referee extends AbstractReferee {
     private Vector2 playerPosition;
     private Vector2 opponentPosition;
 
+    private TileController playerTileController;
+    private TileController opponentTileController;
+
     @Override
     public void init() {
+        TileView.graphicEntityModule = graphicEntityModule;
+
         Properties params = gameManager.getGameParameters();
         Constants.random = new Random(getSeed(params));
 
@@ -40,7 +41,11 @@ public class Referee extends AbstractReferee {
         createBackground();
         createPlayers();
         createMap();
+        createPlayerTiles();
         createCards();
+
+        //playerTileModel = map.pushRow(playerTileModel, 3);
+        //playerTileController.setPosAbsolute(new Vector2(Constants.PLAYER_TILE_POS_X, Constants.PLAYER_TILE_POS_Y));
     }
 
     private Long getSeed(Properties params) {
@@ -52,14 +57,11 @@ public class Referee extends AbstractReferee {
     }
 
     private void drawPlayers() {
-        int tileSpace = 5;
-        int mapOffsetX = SCREEN_WIDTH / 2 - (Constants.MAP_WIDTH * Constants.TILE_SIZE) / 2 + Constants.TILE_SIZE / 2 - tileSpace / 2 * Constants.MAP_WIDTH;
-        int mapOffsetY = SCREEN_HEIGHT / 2 - (Constants.MAP_HEIGHT * Constants.TILE_SIZE) / 2 + Constants.TILE_SIZE / 2 - tileSpace / 2 * Constants.MAP_HEIGHT;
-        int playerOffsetX = mapOffsetX + (Constants.TILE_SIZE + tileSpace) * playerPosition.x;
-        int playerOffsetY = mapOffsetY + (Constants.TILE_SIZE + tileSpace) * playerPosition.y;
+        int playerOffsetX = Constants.MAP_POS_X + (Constants.TILE_SIZE + Constants.TILE_SPACE) * playerPosition.x;
+        int playerOffsetY = Constants.MAP_POS_Y + (Constants.TILE_SIZE + Constants.TILE_SPACE) * playerPosition.y;
         createSprite("agent_1.png", playerOffsetX, playerOffsetY, 0, Constants.MapLayers.AGENTS.asValue());
-        int opponentOffsetX = mapOffsetX + (Constants.TILE_SIZE + tileSpace) * opponentPosition.x;
-        int opponentOffsetY = mapOffsetY + (Constants.TILE_SIZE + tileSpace) * opponentPosition.y;
+        int opponentOffsetX = Constants.MAP_POS_X + (Constants.TILE_SIZE + Constants.TILE_SPACE) * opponentPosition.x;
+        int opponentOffsetY = Constants.MAP_POS_Y + (Constants.TILE_SIZE + Constants.TILE_SPACE) * opponentPosition.y;
         createSprite("agent_2.png", opponentOffsetX, opponentOffsetY, 0, Constants.MapLayers.AGENTS.asValue());
     }
 
@@ -75,8 +77,8 @@ public class Referee extends AbstractReferee {
         int cardHeight = 256;
         int playerOffsetX = 100 + cardWidth / 2;
         int playerOffsetY = 25 + cardHeight / 2;
-        int opponentOffsetX = SCREEN_WIDTH - (100 + cardWidth / 2);
-        int opponentOffsetY = SCREEN_HEIGHT - (150 + cardHeight / 2);
+        int opponentOffsetX = Constants.SCREEN_WIDTH - playerOffsetX;
+        int opponentOffsetY = Constants.SCREEN_HEIGHT - playerOffsetY;
 
         for (ListIterator<Item> beginIterator = playerCards.listIterator(); beginIterator.hasNext();) {
             Item item = beginIterator.next();
@@ -100,8 +102,8 @@ public class Referee extends AbstractReferee {
     }
 
     private void createCards() {
-        Collections.shuffle(itemIdentifiers);
-        for (ListIterator<String> beginIterator = itemIdentifiers.listIterator(); beginIterator.hasNext();) {
+        Collections.shuffle(Constants.ITEM_IDENTIFIERS);
+        for (ListIterator<String> beginIterator = Constants.ITEM_IDENTIFIERS.listIterator(); beginIterator.hasNext();) {
             String beginIdentifier = beginIterator.next();
             playerCards.add(new Item(beginIdentifier, 1));
             opponentCards.add(new Item(beginIdentifier, 2));
@@ -110,11 +112,8 @@ public class Referee extends AbstractReferee {
         drawCards();
     }
 
-    private void drawMap() {
-        int tileSpace = 5;
-        int mapOffsetX = SCREEN_WIDTH / 2 - (Constants.MAP_WIDTH * Constants.TILE_SIZE) / 2 + Constants.TILE_SIZE / 2 - tileSpace / 2 * Constants.MAP_WIDTH;
-        int mapOffsetY = SCREEN_HEIGHT / 2 - (Constants.MAP_HEIGHT * Constants.TILE_SIZE) / 2 + Constants.TILE_SIZE / 2 - tileSpace / 2 * Constants.MAP_HEIGHT;
-        int x = mapOffsetX, y = mapOffsetY;
+    private void drawArrows() {
+        int x = Constants.MAP_POS_X, y = Constants.MAP_POS_Y;
         for (int i = 0; i < Constants.MAP_WIDTH; i++) {
             for (int j = 0; j < Constants.MAP_HEIGHT; j++) {
                 int arrowPosX = x, arrowPosY = y, arrowRot = 0, arrowOffset = 85;
@@ -140,60 +139,43 @@ public class Referee extends AbstractReferee {
                         createSprite("arrow.png", arrowPosX, arrowPosY, Math.toRadians(arrowRot), Constants.MapLayers.BACKGROUND.asValue());
                     }
                 }
-
-                createSprite("tile_background.png", x, y, Math.toRadians(0), Constants.MapLayers.BACKGROUND.asValue());
-
-                Tile tile = map.get(i, j);
-                if (tile.hasUp()) {
-                    createSprite("tile_path.png", x, y, Math.toRadians(0), Constants.MapLayers.TILES.asValue());
-                }
-                if (tile.hasRight()) {
-                    createSprite("tile_path.png", x, y, Math.toRadians(90), Constants.MapLayers.TILES.asValue());
-                }
-                if (tile.hasDown()) {
-                    createSprite("tile_path.png", x, y, Math.toRadians(180), Constants.MapLayers.TILES.asValue());
-                }
-                if (tile.hasLeft()) {
-                    createSprite("tile_path.png", x, y, Math.toRadians(270), Constants.MapLayers.TILES.asValue());
-                }
-
-                if (tile.hasItem()) {
-                    String itemsPath = "items" + System.getProperty("file.separator") + "item_%s_%d.png";
-                    String spritePath = String.format(itemsPath, tile.item.getLowercaseIdentifier(), tile.item.getPlayerId());
-                    createSprite(spritePath, x, y, 0, Constants.MapLayers.ITEMS.asValue());
-                }
-
-                if (tile.isBaseTile()) {
-                    int playerBase = tile.pos.x == 0 ? 1 : 2;
-                    String spritePath = String.format("base_%d.png", playerBase);
-                    createSprite(spritePath, x, y, 0, Constants.MapLayers.ITEMS.asValue());
-                }
-
-                x += Constants.TILE_SIZE + tileSpace;
+                x += Constants.TILE_SIZE + Constants.TILE_SPACE;
             }
-            x = mapOffsetX;
-            y += Constants.TILE_SIZE + tileSpace;
+            x = Constants.MAP_POS_X;
+            y += Constants.TILE_SIZE + Constants.TILE_SPACE;
         }
     }
 
     private void createMap() {
         map = new GameMap();
-        drawMap();
+        drawArrows();
+    }
+
+    private void createPlayerTiles() {
+        TileModel playerTileModel = new TileModel("0110", Vector2.INVALID);
+        TileModel opponentTileModel = new TileModel("1001", Vector2.INVALID);
+        playerTileController = new TileController(playerTileModel, new TileView());
+        opponentTileController = new TileController(opponentTileModel, new TileView());
+        playerTileController.init();
+        opponentTileController.init();
+
+        playerTileController.setPosAbsolute(new Vector2(Constants.PLAYER_TILE_POS_X, Constants.PLAYER_TILE_POS_Y));
+        opponentTileController.setPosAbsolute(new Vector2(Constants.OPPONENT_TILE_POS_X, Constants.OPPONENT_TILE_POS_Y));
     }
 
     private void createBackground() {
         graphicEntityModule.createRectangle()
                 .setX(0)
                 .setY(0)
-                .setWidth(SCREEN_WIDTH)
-                .setHeight(SCREEN_HEIGHT)
+                .setWidth(Constants.SCREEN_WIDTH)
+                .setHeight(Constants.SCREEN_HEIGHT)
                 .setFillColor(0x669999)
                 .setZIndex(Constants.MapLayers.BACKGROUND.asValue());
 
         graphicEntityModule.createSprite()
                 .setImage("logoCG.png")
-                .setX(SCREEN_WIDTH - 230)
-                .setY(930)
+                .setX(200)
+                .setY(Constants.SCREEN_HEIGHT - 80)
                 .setAnchor(0.5);
     }
 

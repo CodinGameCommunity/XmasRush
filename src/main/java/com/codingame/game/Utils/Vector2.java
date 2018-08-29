@@ -3,6 +3,7 @@ package com.codingame.game.Utils;
 public class Vector2 {
     public int x, y;
     public static final Vector2 ZERO = new Vector2(0, 0);
+    public static final Vector2 INVALID = new Vector2(-1, -1);
 
     public Vector2() {
         this.x = this.y = 0;

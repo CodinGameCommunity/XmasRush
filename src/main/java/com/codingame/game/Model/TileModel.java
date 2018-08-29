@@ -1,27 +1,27 @@
-package com.codingame.game;
+package com.codingame.game.Model;
 
+import com.codingame.game.Item;
 import com.codingame.game.Utils.Constants;
 import com.codingame.game.Utils.Vector2;
 
-public class Tile {
-    String pattern;
-    Vector2 pos;
-    Item item;
+public class TileModel {
+    public int id;
+    public String pattern;
+    public Vector2 pos;
+    public Item item;
 
-    public Tile(String pattern) {
+    public TileModel(String pattern) {
+        this.id = -1;
         this.pattern = pattern;
         this.pos = Vector2.ZERO;
         this.item = null;
     }
 
-    public Tile(Tile tile) {
-        this.pattern = tile.pattern;
-        this.pos = new Vector2(tile.pos);
-        if (tile.item != null) {
-            this.item = new Item(tile.item);
-        } else {
-            this.item = null;
-        }
+    public TileModel(String pattern, Vector2 pos) {
+        this.id = -1;
+        this.pattern = pattern;
+        this.pos = pos;
+        this.item = null;
     }
 
     public boolean hasUp() {
@@ -55,7 +55,8 @@ public class Tile {
     }
 
     public boolean isBaseTile() {
-        return (this.pos.x == 0 && this.pos.y == 0) || (this.pos.x == Constants.MAP_WIDTH -1 && this.pos.y == Constants.MAP_HEIGHT -1);
+        return (this.pos.x == 0 && this.pos.y == 0)
+                || (this.pos.x == Constants.MAP_WIDTH - 1 && this.pos.y == Constants.MAP_HEIGHT - 1);
     }
 
     public boolean isEmpty() {
