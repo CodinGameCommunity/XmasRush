@@ -6,34 +6,28 @@ import com.codingame.game.Utils.Constants;
 import com.codingame.game.Utils.Vector2;
 import com.codingame.game.View.TileView;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class GameMap {
-    private List<TileController> tileControllers = new ArrayList<>();
+    private TileController[][] tileControllers = new TileController[Constants.MAP_WIDTH][Constants.MAP_HEIGHT];
 
-    // format is UP, RIGHT, DOWN, LEFT represented as binary digits
-    private List<TileModel> tileModels = new ArrayList<>(Arrays.asList(
-            new TileModel("0110"), new TileModel("0000"), new TileModel("0111"), new TileModel("0000"),
-            new TileModel("0111"), new TileModel("0000"), new TileModel("0011"), new TileModel("0000"),
-            new TileModel("0000"), new TileModel("0000"), new TileModel("0000"), new TileModel("0000"),
-            new TileModel("0000"), new TileModel("0000"), new TileModel("1110"), new TileModel("0000"),
-            new TileModel("1110"), new TileModel("0000"), new TileModel("0111"), new TileModel("0000"),
-            new TileModel("1011"), new TileModel("0000"), new TileModel("0000"), new TileModel("0000"),
-            new TileModel("0000"), new TileModel("0000"), new TileModel("0000"), new TileModel("0000"),
-            new TileModel("1110"), new TileModel("0000"), new TileModel("1101"), new TileModel("0000"),
-            new TileModel("1011"), new TileModel("0000"), new TileModel("1011"), new TileModel("0000"),
-            new TileModel("0000"), new TileModel("0000"), new TileModel("0000"), new TileModel("0000"),
-            new TileModel("0000"), new TileModel("0000"), new TileModel("1100"), new TileModel("0000"),
-            new TileModel("1101"), new TileModel("0000"), new TileModel("1101"), new TileModel("0000"),
-            new TileModel("1001")
-    ));
+    // pattern format is UP, RIGHT, DOWN, LEFT represented as binary digits
+    private static final String[][] tilePatterns = {
+            { "0110", "0000", "0111", "0000", "0111", "0000", "0011" },
+            { "0000", "0000", "0000", "0000", "0000", "0000", "0000" },
+            { "1110", "0000", "1110", "0000", "0111", "0000", "1011" },
+            { "0000", "0000", "0000", "0000", "0000", "0000", "0000" },
+            { "1110", "0000", "1101", "0000", "1011", "0000", "1011" },
+            { "0000", "0000", "0000", "0000", "0000", "0000", "0000" },
+            { "1100", "0000", "1101", "0000", "1101", "0000", "1001" }
+    };
 
-    private List<TileModel> availableTileModels = new ArrayList<>(Arrays.asList(
-            new TileModel("0110"), new TileModel("0110"), new TileModel("0110"), new TileModel("0110"),
-            new TileModel("0110"), new TileModel("0110"), new TileModel("0110"), new TileModel("0110"),
-            new TileModel("1101"), new TileModel("1101"), new TileModel("1101"), new TileModel("1010"),
-            new TileModel("1010"), new TileModel("1010"), new TileModel("1010"), new TileModel("1010"),
-            new TileModel("1010")
+    private List<String> availableTilePatterns = new ArrayList<>(Arrays.asList(
+            "0110", "0110", "0110", "0110", "0110", "0110", "0110", "0110",
+            "1101", "1101", "1101",
+            "1010", "1010", "1010", "1010", "1010", "1010"
     ));
 
     public GameMap() {
@@ -41,74 +35,80 @@ public class GameMap {
         int tileId = 0;
         for (int i = 0; i < Constants.MAP_WIDTH; i++) {
             for (int j = 0; j < Constants.MAP_HEIGHT; j++) {
-                TileModel tileModel = get(i, j);
+                TileModel tileModel = new TileModel(get(i, j), new Vector2(i, j));
                 tileModel.id = tileId++;
-                tileModel.pos = new Vector2(i, j);
                 TileController tileController = new TileController(tileModel, new TileView());
                 tileController.init();
                 tileController.setPosInMap(tileModel.pos);
-                tileControllers.add(tileController);
+                tileControllers[i][j] = tileController;
             }
         }
 
         // set up empty tiles
-        for (int i = 0; i < tileModels.size(); i++) {
-            // set up tiles above the secondary diagonal
-            if (i % Constants.MAP_WIDTH >= Constants.MAP_WIDTH - i / Constants.MAP_HEIGHT) continue;
+        for (int i = 0; i < Constants.MAP_WIDTH; i++) {
+            for (int j = 0; j < Constants.MAP_HEIGHT; j++) {
+                // set up tiles above the secondary diagonal
+                if (i + j > Constants.MAP_WIDTH - 1) {
+                    continue;
+                }
 
-            // only set up empty tiles
-            TileModel tileModel = tileModels.get(i);
-            if (!tileModel.isEmpty()) continue;
+                // only set up empty tiles
+                TileController tileController = tileControllers[i][j];
+                if (!tileController.isEmpty()) continue;
 
-            TileModel availableTileModel = takeRandomAvailableTile();
-            TileController tileController = tileControllers.get(tileModel.id);
-            tileController.setPattern(availableTileModel.pattern);
-            int rotTimes = Constants.random.nextInt(3);
-            tileController.rotate(rotTimes);
+                String availableTilePattern = takeRandomAvailableTilePattern();
+                tileController.setPattern(availableTilePattern);
+                int rotTimes = Constants.random.nextInt(3);
+                tileController.rotate(rotTimes);
 
-            // do not duplicate the center tile
-            if (tileModel.isCenterTile()) continue;
+                // do not duplicate the center tile
+                if (tileController.isCenterTile()) continue;
 
-            // mirror a new tile via the secondary diagonal
-            TileModel mirroredTileModel = tileModels.get(tileModels.size() - i - 1);
-            tileController = tileControllers.get(mirroredTileModel.id);
-            tileController.setPattern(availableTileModel.pattern);
-            tileController.rotate(rotTimes + 2); // rotate 180 deg to be symmetric
+                // mirror a new tile via the secondary diagonal
+                tileController = getOppositeTile(i, j);
+                tileController.setPattern(availableTilePattern);
+                tileController.rotate(rotTimes + 2); // rotate 180 deg to be symmetric
+            }
         }
 
         // set up items
         for (String identifier : Constants.ITEM_IDENTIFIERS) {
             Item item = new Item(identifier, 1);
-            TileModel tileModel = getRandomMapTile();
-            while (tileModel.isCenterTile() || tileModel.isBaseTile() || tileModel.hasItem()) {
-                tileModel = getRandomMapTile();
+            TileController tileController = getRandomMapTile();
+            while (tileController.isCenterTile() || tileController.isBaseTile() || tileController.hasItem()) {
+                tileController = getRandomMapTile();
             }
-            tileControllers.get(tileModel.id).addItem(item);
+            int row = tileController.getPos().x;
+            int col = tileController.getPos().y;
+            tileControllers[row][col].addItem(item);
 
+            // add the mirrored item
             item = new Item(identifier, 2);
-            tileModel = getOppositeTile(tileModel.id);
-            tileControllers.get(tileModel.id).addItem(item);
+            tileController = getOppositeTile(row, col);
+            tileControllers[tileController.getPos().x][tileController.getPos().y].addItem(item);
         }
     }
 
-    public TileModel get(int i, int j) {
-        return tileModels.get(i * Constants.MAP_WIDTH + j);
+    public String get(int i, int j) {
+        return tilePatterns[i][j];
     }
 
-    private TileModel takeRandomAvailableTile() {
-        int index = Constants.random.nextInt(availableTileModels.size());
-        TileModel tile = availableTileModels.get(index);
-        availableTileModels.remove(index);
-        return tile;
+    private String takeRandomAvailableTilePattern() {
+        int index = Constants.random.nextInt(availableTilePatterns.size());
+        String pattern = availableTilePatterns.get(index);
+        availableTilePatterns.remove(index);
+        return pattern;
     }
 
-    private TileModel getRandomMapTile() {
-        int index = Constants.random.nextInt(tileModels.size());
-        return tileModels.get(index);
+    private TileController getRandomMapTile() {
+        int index = Constants.random.nextInt(Constants.MAP_WIDTH * Constants.MAP_HEIGHT);
+        int row = index / Constants.MAP_WIDTH;
+        int col = index % Constants.MAP_WIDTH;
+        return tileControllers[row][col];
     }
 
-    private TileModel getOppositeTile(int index) {
-        return tileModels.get(tileModels.size() - index - 1);
+    private TileController getOppositeTile(int row, int col) {
+        return tileControllers[Constants.MAP_WIDTH - row - 1][Constants.MAP_HEIGHT - col - 1];
     }
 
     public TileController pushLine(TileController tile, int index, Constants.PushDirection dir) {
@@ -116,53 +116,43 @@ public class GameMap {
             // only odd rows are pushable
             throw new RuntimeException();
         }
+        int lastRowIndex = Constants.MAP_WIDTH - 1;
+        int lastColIndex = Constants.MAP_HEIGHT - 1;
         if (dir == Constants.PushDirection.LEFT) {
-            TileController poppedTile = tileControllers.get(index * Constants.MAP_WIDTH);
-            for (int i = 0; i < Constants.MAP_WIDTH - 1; i++) {
-                int currIndex = index * Constants.MAP_WIDTH + i;
-                TileController nextTile = tileControllers.get(currIndex + 1);
-                tileControllers.set(currIndex, nextTile);
-                tileControllers.get(currIndex).setPosInMap(new Vector2(index, i));
+            TileController poppedTile = tileControllers[index][0];
+            for (int i = 0; i < lastRowIndex; i++) {
+                tileControllers[index][i] = tileControllers[index][i + 1];
+                tileControllers[index][i].setPosInMap(new Vector2(index, i));
             }
-            int lastIndex = (index + 1) * Constants.MAP_WIDTH - 1;
-            tileControllers.set(lastIndex, tile);
-            tileControllers.get(lastIndex).setPosInMap(new Vector2(index, Constants.MAP_WIDTH - 1));
+            tileControllers[index][lastRowIndex] = tile;
+            tileControllers[index][lastRowIndex].setPosInMap(new Vector2(index, lastRowIndex));
             return poppedTile;
         } else if (dir == Constants.PushDirection.RIGHT) {
-            TileController poppedTile = tileControllers.get((index + 1) * Constants.MAP_WIDTH - 1);
+            TileController poppedTile = tileControllers[index][lastRowIndex];
             for (int i = Constants.MAP_WIDTH - 1; i > 0; i--) {
-                int currIndex = index * Constants.MAP_WIDTH + i;
-                TileController prevTile = tileControllers.get(currIndex - 1);
-                tileControllers.set(currIndex, prevTile);
-                tileControllers.get(currIndex).setPosInMap(new Vector2(index, i));
+                tileControllers[index][i] = tileControllers[index][i - 1];
+                tileControllers[index][i].setPosInMap(new Vector2(index, i));
             }
-            int firstIndex = index * Constants.MAP_WIDTH;
-            tileControllers.set(firstIndex, tile);
-            tileControllers.get(firstIndex).setPosInMap(new Vector2(index, 0));
+            tileControllers[index][0] = tile;
+            tileControllers[index][0].setPosInMap(new Vector2(index, 0));
             return poppedTile;
         } else if (dir == Constants.PushDirection.UP) {
-            TileController poppedTile = tileControllers.get(index);
+            TileController poppedTile = tileControllers[0][index];
             for (int i = 0; i < Constants.MAP_HEIGHT - 1; i++) {
-                int currIndex = i * Constants.MAP_WIDTH + index;
-                TileController nextTile = tileControllers.get(currIndex + Constants.MAP_WIDTH);
-                tileControllers.set(currIndex, nextTile);
-                tileControllers.get(currIndex).setPosInMap(new Vector2(i, index));
+                tileControllers[i][index] = tileControllers[i + 1][index];
+                tileControllers[i][index].setPosInMap(new Vector2(i, index));
             }
-            int lastIndex = (Constants.MAP_HEIGHT - 1) * Constants.MAP_WIDTH + 1;
-            tileControllers.set(lastIndex, tile);
-            tileControllers.get(lastIndex).setPosInMap(new Vector2(Constants.MAP_HEIGHT - 1, index));
+            tileControllers[lastColIndex][index] = tile;
+            tileControllers[lastColIndex][index].setPosInMap(new Vector2(lastColIndex, index));
             return poppedTile;
         } else if (dir == Constants.PushDirection.DOWN) {
-            TileController poppedTile = tileControllers.get((Constants.MAP_HEIGHT - 1) * Constants.MAP_WIDTH + index);
+            TileController poppedTile = tileControllers[lastColIndex][index];
             for (int i = Constants.MAP_HEIGHT - 1; i > 0; i--) {
-                int currIndex = i * Constants.MAP_WIDTH + index;
-                TileController prevTile = tileControllers.get(currIndex - Constants.MAP_WIDTH);
-                tileControllers.set(currIndex, prevTile);
-                tileControllers.get(currIndex).setPosInMap(new Vector2(i, index));
+                tileControllers[i][index] = tileControllers[i - 1][index];
+                tileControllers[i][index].setPosInMap(new Vector2(i, index));
             }
-            int firstIndex = index;
-            tileControllers.set(firstIndex, tile);
-            tileControllers.get(firstIndex).setPosInMap(new Vector2(0, index));
+            tileControllers[0][index] = tile;
+            tileControllers[0][index].setPosInMap(new Vector2(0, index));
             return poppedTile;
         }
         return null;

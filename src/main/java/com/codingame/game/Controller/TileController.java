@@ -48,4 +48,24 @@ public class TileController {
         model.putItem(item);
         view.addItem(item);
     }
+
+    public boolean isBaseTile() {
+        return model.isBaseTile();
+    }
+
+    public boolean isEmpty() {
+        return model.isEmpty();
+    }
+
+    public boolean isCenterTile() {
+        return model.isCenterTile();
+    }
+
+    public boolean hasItem() {
+        return model.hasItem();
+    }
+
+    public Vector2 getPos() {
+        return model.pos;
+    }
 }
