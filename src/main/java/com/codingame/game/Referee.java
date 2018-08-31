@@ -198,19 +198,23 @@ public class Referee extends AbstractReferee {
         }
     }
 
+    private void doPushAction(PushAction action, Player player) {
+        if (player.getIndex() == 0) {
+            playerTile = map.pushLine(playerTile, action.id, action.direction.asValue());
+            playerTile.setPosAbsolute(new Vector2(Constants.PLAYER_TILE_POS_X, Constants.PLAYER_TILE_POS_Y));
+        } else if (player.getIndex() == 1) {
+            opponentTile = map.pushLine(opponentTile, action.id, action.direction.asValue());
+            opponentTile.setPosAbsolute(new Vector2(Constants.OPPONENT_TILE_POS_X, Constants.OPPONENT_TILE_POS_Y));
+        }
+    }
+
     private void doPlayerActions() {
         for (Player player : gameManager.getActivePlayers()) {
             try {
                 AbstractAction action = player.getAction();
                 if (action instanceof PushAction) {
                     PushAction pushAction = (PushAction) action;
-                    if (player.getIndex() == 0) {
-                        playerTile = map.pushLine(playerTile, pushAction.id, pushAction.direction.asValue());
-                        playerTile.setPosAbsolute(new Vector2(Constants.PLAYER_TILE_POS_X, Constants.PLAYER_TILE_POS_Y));
-                    } else if (player.getIndex() == 1) {
-                        opponentTile = map.pushLine(opponentTile, pushAction.id, pushAction.direction.asValue());
-                        opponentTile.setPosAbsolute(new Vector2(Constants.OPPONENT_TILE_POS_X, Constants.OPPONENT_TILE_POS_Y));
-                    }
+                    doPushAction(pushAction, player);
                 }
             } catch (NumberFormatException | AbstractPlayer.TimeoutException | InvalidAction e) {
                 player.deactivate("Eliminated!");
