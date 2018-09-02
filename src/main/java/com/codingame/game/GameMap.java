@@ -127,7 +127,7 @@ public class GameMap {
             return poppedTile;
         } else if (dir == Constants.PushDirection.RIGHT) {
             TileController poppedTile = tileControllers[index][lastRowIndex];
-            for (int i = Constants.MAP_WIDTH - 1; i > 0; i--) {
+            for (int i = lastRowIndex; i > 0; i--) {
                 tileControllers[index][i] = tileControllers[index][i - 1];
                 tileControllers[index][i].setPosInMap(new Vector2(index, i));
             }
@@ -136,7 +136,7 @@ public class GameMap {
             return poppedTile;
         } else if (dir == Constants.PushDirection.UP) {
             TileController poppedTile = tileControllers[0][index];
-            for (int i = 0; i < Constants.MAP_HEIGHT - 1; i++) {
+            for (int i = 0; i < lastColIndex; i++) {
                 tileControllers[i][index] = tileControllers[i + 1][index];
                 tileControllers[i][index].setPosInMap(new Vector2(i, index));
             }
@@ -145,7 +145,7 @@ public class GameMap {
             return poppedTile;
         } else if (dir == Constants.PushDirection.DOWN) {
             TileController poppedTile = tileControllers[lastColIndex][index];
-            for (int i = Constants.MAP_HEIGHT - 1; i > 0; i--) {
+            for (int i = lastColIndex; i > 0; i--) {
                 tileControllers[i][index] = tileControllers[i - 1][index];
                 tileControllers[i][index].setPosInMap(new Vector2(i, index));
             }
