@@ -102,9 +102,26 @@ public class Referee extends AbstractReferee {
         }
     }
 
+    private List<String> getShuffledItemIdentifiers() {
+        List<String> shuffledItems = new ArrayList<>(Constants.ITEM_IDENTIFIERS);
+        Random rnd = Constants.random;
+
+        //Fisher-Yates shuffle
+        for (int i = shuffledItems.size() - 1; i > 0; i--) {
+            int index = rnd.nextInt(shuffledItems.size());
+            String a = shuffledItems.get(index);
+            shuffledItems.set(index, shuffledItems.get(i));
+            shuffledItems.set(i, a);
+
+        }
+
+        return shuffledItems;
+    }
+
     private void createCards() {
-        Collections.shuffle(Constants.ITEM_IDENTIFIERS);
-        for (ListIterator<String> beginIterator = Constants.ITEM_IDENTIFIERS.listIterator(); beginIterator.hasNext();) {
+        List<String> shuffledItemIdentifiers = getShuffledItemIdentifiers();
+
+        for (ListIterator<String> beginIterator = shuffledItemIdentifiers.listIterator(); beginIterator.hasNext();) {
             String beginIdentifier = beginIterator.next();
             playerCards.add(new Item(beginIdentifier, 1));
             opponentCards.add(new Item(beginIdentifier, 2));

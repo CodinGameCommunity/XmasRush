@@ -42,9 +42,9 @@ public class Constants {
         }
     }
 
-    public static final List<String> ITEM_IDENTIFIERS = new ArrayList<>(Arrays.asList(
+    public static final List<String> ITEM_IDENTIFIERS = Arrays.asList(
             "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"
-    ));
+    );
 
     public enum PushDirection {
         UP,
