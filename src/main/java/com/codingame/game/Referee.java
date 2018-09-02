@@ -198,29 +198,52 @@ public class Referee extends AbstractReferee {
         }
     }
 
+    private void doPushAction(Player player, PushAction action) {
+        if (player.getIndex() == 0) {
+            playerTile = map.pushLine(playerTile, action.id, action.direction.asValue());
+            playerTile.setPosAbsolute(new Vector2(Constants.PLAYER_TILE_POS_X, Constants.PLAYER_TILE_POS_Y));
+        } else if (player.getIndex() == 1) {
+            opponentTile = map.pushLine(opponentTile, action.id, action.direction.asValue());
+            opponentTile.setPosAbsolute(new Vector2(Constants.OPPONENT_TILE_POS_X, Constants.OPPONENT_TILE_POS_Y));
+        }
+    }
+
     private void doPlayerActions() {
-        for (Player player : gameManager.getActivePlayers()) {
+        List<PlayerAction> playerPushRowActions = new ArrayList<>();
+        List<PlayerAction> playerPushColumnActions = new ArrayList<>();
+        for (Player player: gameManager.getActivePlayers()) {
             try {
                 AbstractAction action = player.getAction();
                 if (action instanceof PushAction) {
                     PushAction pushAction = (PushAction) action;
-                    if (player.getIndex() == 0) {
-                        playerTile = map.pushLine(playerTile, pushAction.id, pushAction.direction.asValue());
-                        playerTile.setPosAbsolute(new Vector2(Constants.PLAYER_TILE_POS_X, Constants.PLAYER_TILE_POS_Y));
-                    } else if (player.getIndex() == 1) {
-                        opponentTile = map.pushLine(opponentTile, pushAction.id, pushAction.direction.asValue());
-                        opponentTile.setPosAbsolute(new Vector2(Constants.OPPONENT_TILE_POS_X, Constants.OPPONENT_TILE_POS_Y));
+                    if (pushAction.direction.asValue() == Constants.PushDirection.RIGHT || pushAction.direction.asValue() == Constants.PushDirection.LEFT) {
+                        playerPushRowActions.add(new PlayerAction(player, pushAction));
+                    } else {
+                        playerPushColumnActions.add(new PlayerAction(player, pushAction));
                     }
                 }
             } catch (NumberFormatException | AbstractPlayer.TimeoutException | InvalidAction e) {
                 player.deactivate("Eliminated!");
             }
         }
+
+        playerPushRowActions.forEach(playerAction -> doPushAction(playerAction.player, (PushAction) playerAction.action));
+        playerPushColumnActions.forEach(playerAction -> doPushAction(playerAction.player, (PushAction) playerAction.action));
     }
 
     @Override
     public void gameTurn(int turn) {
         sendPlayerInputs();
         doPlayerActions();
+    }
+
+    static class PlayerAction {
+        Player player;
+        AbstractAction action;
+
+        public PlayerAction(Player player, AbstractAction action) {
+            this.player = player;
+            this.action = action;
+        }
     }
 }
