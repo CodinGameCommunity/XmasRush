@@ -16,6 +16,7 @@ import com.codingame.gameengine.module.entities.Sprite;
 import com.google.inject.Inject;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Referee extends AbstractReferee {
     @Inject private MultiplayerGameManager<Player> gameManager;
@@ -216,11 +217,6 @@ public class Referee extends AbstractReferee {
         }
     }
 
-    private void doPushAction(Player player, PushAction action) {
-        TileController tile = map.pushLine(player.getTile(), action.id, action.direction.asValue());
-        tile.setPosAbsolute(player.getTilePosition());
-    }
-
     private void doPlayerActions() {
         List<PlayerAction> playerPushRowActions = new ArrayList<>();
         List<PlayerAction> playerPushColumnActions = new ArrayList<>();
@@ -239,9 +235,20 @@ public class Referee extends AbstractReferee {
                 player.deactivate("Eliminated!");
             }
         }
+        List<Integer> pushedRows = new ArrayList<>();
+        playerPushRowActions.forEach(playerAction -> {
+            PushAction pushAction = (PushAction) playerAction.action;
+            pushedRows.add(pushAction.id);
+            TileController tile = map.pushRow(playerAction.player.getTile(), pushAction.id, pushAction.direction.asValue());
+            tile.setPosAbsolute(playerAction.player.getTilePosition());
+        });
 
-        playerPushRowActions.forEach(playerAction -> doPushAction(playerAction.player, (PushAction) playerAction.action));
-        playerPushColumnActions.forEach(playerAction -> doPushAction(playerAction.player, (PushAction) playerAction.action));
+        final List<Integer> rowsToSkip = pushedRows;
+        playerPushColumnActions.forEach(playerAction -> {
+            PushAction pushAction = (PushAction) playerAction.action;
+            TileController tile = map.pushColumn(playerAction.player.getTile(), pushAction.id, pushAction.direction.asValue(), rowsToSkip);
+            tile.setPosAbsolute(playerAction.player.getTilePosition());
+        });
     }
 
     @Override
