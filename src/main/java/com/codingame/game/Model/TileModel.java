@@ -5,20 +5,17 @@ import com.codingame.game.Utils.Constants;
 import com.codingame.game.Utils.Vector2;
 
 public class TileModel {
-    public int id;
     public String pattern;
     public Vector2 pos;
     public Item item;
 
     public TileModel(String pattern) {
-        this.id = -1;
         this.pattern = pattern;
-        this.pos = Vector2.ZERO;
+        this.pos = Vector2.INVALID;
         this.item = null;
     }
 
     public TileModel(String pattern, Vector2 pos) {
-        this.id = -1;
         this.pattern = pattern;
         this.pos = pos;
         this.item = null;

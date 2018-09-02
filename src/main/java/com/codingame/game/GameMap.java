@@ -32,11 +32,9 @@ public class GameMap {
 
     public GameMap() {
         // initialize tiles ids and positions
-        int tileId = 0;
         for (int i = 0; i < Constants.MAP_WIDTH; i++) {
             for (int j = 0; j < Constants.MAP_HEIGHT; j++) {
                 TileModel tileModel = new TileModel(get(i, j), new Vector2(i, j));
-                tileModel.id = tileId++;
                 TileController tileController = new TileController(tileModel, new TileView());
                 tileController.init();
                 tileController.setPosInMap(tileModel.pos);

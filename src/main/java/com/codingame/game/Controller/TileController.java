@@ -33,10 +33,12 @@ public class TileController {
     }
 
     public void setPosInMap(Vector2 pos) {
+        model.pos = pos;
         view.setPosInMap(pos.y, pos.x);
     }
 
     public void setPosAbsolute(Vector2 pos) {
+        model.pos = Vector2.INVALID;
         view.setPosAbsolute(pos.x, pos.y);
     }
 

@@ -153,10 +153,8 @@ public class Referee extends AbstractReferee {
     }
 
     private void createPlayerTiles() {
-        TileModel playerTileModel = new TileModel("0110", Vector2.INVALID);
-        TileModel opponentTileModel = new TileModel("1001", Vector2.INVALID);
-        playerTile = new TileController(playerTileModel, new TileView());
-        opponentTile = new TileController(opponentTileModel, new TileView());
+        playerTile = new TileController(new TileModel("0110"), new TileView());
+        opponentTile = new TileController(new TileModel("1001"), new TileView());
         playerTile.init();
         opponentTile.init();
 
