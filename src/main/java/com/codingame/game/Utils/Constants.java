@@ -1,6 +1,5 @@
 package com.codingame.game.Utils;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;

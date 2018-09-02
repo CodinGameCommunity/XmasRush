@@ -23,14 +23,11 @@ public class Referee extends AbstractReferee {
 
     private GameMap map;
 
+    private Player player;
+    private Player opponent;
+
     private List<Item> playerCards = new ArrayList<>();
     private List<Item> opponentCards = new ArrayList<>();
-
-    private Vector2 playerPosition;
-    private Vector2 opponentPosition;
-
-    private TileController playerTile;
-    private TileController opponentTile;
 
     @Override
     public void init() {
@@ -58,17 +55,20 @@ public class Referee extends AbstractReferee {
     }
 
     private void drawPlayers() {
-        int playerOffsetX = Constants.MAP_POS_X + (Constants.TILE_SIZE + Constants.TILE_SPACE) * playerPosition.x;
-        int playerOffsetY = Constants.MAP_POS_Y + (Constants.TILE_SIZE + Constants.TILE_SPACE) * playerPosition.y;
+        int playerOffsetX = Constants.MAP_POS_X + (Constants.TILE_SIZE + Constants.TILE_SPACE) * this.player.getAgentPosition().x;
+        int playerOffsetY = Constants.MAP_POS_Y + (Constants.TILE_SIZE + Constants.TILE_SPACE) * this.player.getAgentPosition().y;
         createSprite("agent_1.png", playerOffsetX, playerOffsetY, 0, Constants.MapLayers.AGENTS.asValue());
-        int opponentOffsetX = Constants.MAP_POS_X + (Constants.TILE_SIZE + Constants.TILE_SPACE) * opponentPosition.x;
-        int opponentOffsetY = Constants.MAP_POS_Y + (Constants.TILE_SIZE + Constants.TILE_SPACE) * opponentPosition.y;
+        int opponentOffsetX = Constants.MAP_POS_X + (Constants.TILE_SIZE + Constants.TILE_SPACE) * this.opponent.getAgentPosition().x;
+        int opponentOffsetY = Constants.MAP_POS_Y + (Constants.TILE_SIZE + Constants.TILE_SPACE) * this.opponent.getAgentPosition().y;
         createSprite("agent_2.png", opponentOffsetX, opponentOffsetY, 0, Constants.MapLayers.AGENTS.asValue());
     }
 
     private void createPlayers() {
-        playerPosition = new Vector2(0, 0);
-        opponentPosition = new Vector2(Constants.MAP_WIDTH - 1, Constants.MAP_HEIGHT - 1);
+        this.player = gameManager.getPlayer(0);
+        this.opponent = gameManager.getPlayer(1);
+
+        this.player.setAgentPosition(new Vector2(0, 0));
+        this.opponent .setAgentPosition(new Vector2(Constants.MAP_WIDTH - 1, Constants.MAP_HEIGHT - 1));
 
         drawPlayers();
     }
@@ -170,13 +170,16 @@ public class Referee extends AbstractReferee {
     }
 
     private void createPlayerTiles() {
-        playerTile = new TileController(new TileModel("0110"), new TileView());
-        opponentTile = new TileController(new TileModel("1001"), new TileView());
+        TileController playerTile = new TileController(new TileModel("0110"), new TileView());
+        TileController opponentTile = new TileController(new TileModel("1001"), new TileView());
         playerTile.init();
         opponentTile.init();
 
         playerTile.setPosAbsolute(new Vector2(Constants.PLAYER_TILE_POS_X, Constants.PLAYER_TILE_POS_Y));
         opponentTile.setPosAbsolute(new Vector2(Constants.OPPONENT_TILE_POS_X, Constants.OPPONENT_TILE_POS_Y));
+
+        player.setTile(playerTile);
+        opponent.setTile(opponentTile);
     }
 
     private void createBackground() {
@@ -214,13 +217,8 @@ public class Referee extends AbstractReferee {
     }
 
     private void doPushAction(Player player, PushAction action) {
-        if (player.getIndex() == 0) {
-            playerTile = map.pushLine(playerTile, action.id, action.direction.asValue());
-            playerTile.setPosAbsolute(new Vector2(Constants.PLAYER_TILE_POS_X, Constants.PLAYER_TILE_POS_Y));
-        } else if (player.getIndex() == 1) {
-            opponentTile = map.pushLine(opponentTile, action.id, action.direction.asValue());
-            opponentTile.setPosAbsolute(new Vector2(Constants.OPPONENT_TILE_POS_X, Constants.OPPONENT_TILE_POS_Y));
-        }
+        TileController tile = map.pushLine(player.getTile(), action.id, action.direction.asValue());
+        tile.setPosAbsolute(player.getTilePosition());
     }
 
     private void doPlayerActions() {
