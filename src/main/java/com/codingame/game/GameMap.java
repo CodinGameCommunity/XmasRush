@@ -118,7 +118,16 @@ public class GameMap {
         if (dir == Constants.PushDirection.UP) {
             TileController poppedTile = tileControllers[0][index];
             for (int i = 0; i < lastColIndex; i++) {
-                tileControllers[i][index] = tileControllers[i + 1][index];
+                if (rowsToSkip.contains(i)) {
+                    continue;
+                }
+
+                int fromIndex = i+1;
+                while (rowsToSkip.contains(fromIndex)) {
+                    fromIndex++;
+                }
+
+                tileControllers[i][index] = tileControllers[fromIndex][index];
                 tileControllers[i][index].setPosInMap(new Vector2(i, index));
             }
             tileControllers[lastColIndex][index] = tile;
@@ -127,7 +136,16 @@ public class GameMap {
         } else if (dir == Constants.PushDirection.DOWN) {
             TileController poppedTile = tileControllers[lastColIndex][index];
             for (int i = lastColIndex; i > 0; i--) {
-                tileControllers[i][index] = tileControllers[i - 1][index];
+                if (rowsToSkip.contains(i)) {
+                    continue;
+                }
+
+                int fromIndex = i-1;
+                while (rowsToSkip.contains(fromIndex)) {
+                    fromIndex--;
+                }
+
+                tileControllers[i][index] = tileControllers[fromIndex][index];
                 tileControllers[i][index].setPosInMap(new Vector2(i, index));
             }
             tileControllers[0][index] = tile;
