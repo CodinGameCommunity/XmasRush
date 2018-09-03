@@ -1,13 +1,19 @@
 package com.codingame.game;
+import com.codingame.game.Controller.TileController;
 import com.codingame.game.InputActions.AbstractAction;
 import com.codingame.game.InputActions.InvalidAction;
 import com.codingame.game.InputActions.PushAction;
+import com.codingame.game.Utils.Constants;
+import com.codingame.game.Utils.Vector2;
 import com.codingame.gameengine.core.AbstractMultiplayerPlayer;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Player extends AbstractMultiplayerPlayer {
+    private TileController tile;
+    private Vector2 agentPosition;
+
     private static final Pattern PLAYER_INPUT_PUSH_PATTERN = Pattern
             .compile("(?<pushAction>\\bpush\\b) (?<id>[1,3,5]) (?<direction>(\\bup\\b|\\bright\\b|\\bdown\\b|\\bleft\\b))",
                     Pattern.CASE_INSENSITIVE);
@@ -28,6 +34,36 @@ public class Player extends AbstractMultiplayerPlayer {
         } catch (Exception e) {
             throw new InvalidAction("Invalid output.");
         }
+    }
+
+    public void setTile(TileController tile) {
+        this.tile = tile;
+    }
+    public TileController getTile() {
+        return this.tile;
+    }
+
+    public void setAgentPosition(Vector2 position) {
+        this.agentPosition = position;
+    }
+
+    public Vector2 getAgentPosition() {
+        return this.agentPosition;
+    }
+
+    public Vector2 getTilePosition() {
+        int x;
+        int y;
+
+        if (this.getIndex() == 0) {
+            x = Constants.PLAYER_TILE_POS_X;
+            y = Constants.PLAYER_TILE_POS_Y;
+        } else {
+            x = Constants.OPPONENT_TILE_POS_X;
+            y = Constants.OPPONENT_TILE_POS_Y;
+        }
+
+        return new Vector2(x, y);
     }
 
     @Override

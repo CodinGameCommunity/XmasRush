@@ -109,13 +109,58 @@ public class GameMap {
         return tileControllers[Constants.MAP_WIDTH - row - 1][Constants.MAP_HEIGHT - col - 1];
     }
 
-    public TileController pushLine(TileController tile, int index, Constants.PushDirection dir) {
+    public TileController pushColumn(TileController tile, int index, Constants.PushDirection dir, List<Integer> rowsToSkip) {
+        if (index % 2 == 0) {
+            // only odd rows are pushable
+            throw new RuntimeException();
+        }
+        int lastColIndex = Constants.MAP_HEIGHT - 1;
+        if (dir == Constants.PushDirection.UP) {
+            TileController poppedTile = tileControllers[0][index];
+            for (int i = 0; i < lastColIndex; i++) {
+                if (rowsToSkip.contains(i)) {
+                    continue;
+                }
+
+                int fromIndex = i+1;
+                while (rowsToSkip.contains(fromIndex)) {
+                    fromIndex++;
+                }
+
+                tileControllers[i][index] = tileControllers[fromIndex][index];
+                tileControllers[i][index].setPosInMap(new Vector2(i, index));
+            }
+            tileControllers[lastColIndex][index] = tile;
+            tileControllers[lastColIndex][index].setPosInMap(new Vector2(lastColIndex, index));
+            return poppedTile;
+        } else if (dir == Constants.PushDirection.DOWN) {
+            TileController poppedTile = tileControllers[lastColIndex][index];
+            for (int i = lastColIndex; i > 0; i--) {
+                if (rowsToSkip.contains(i)) {
+                    continue;
+                }
+
+                int fromIndex = i-1;
+                while (rowsToSkip.contains(fromIndex)) {
+                    fromIndex--;
+                }
+
+                tileControllers[i][index] = tileControllers[fromIndex][index];
+                tileControllers[i][index].setPosInMap(new Vector2(i, index));
+            }
+            tileControllers[0][index] = tile;
+            tileControllers[0][index].setPosInMap(new Vector2(0, index));
+            return poppedTile;
+        }
+        return null;
+    }
+
+    public TileController pushRow(TileController tile, int index, Constants.PushDirection dir) {
         if (index % 2 == 0) {
             // only odd rows are pushable
             throw new RuntimeException();
         }
         int lastRowIndex = Constants.MAP_WIDTH - 1;
-        int lastColIndex = Constants.MAP_HEIGHT - 1;
         if (dir == Constants.PushDirection.LEFT) {
             TileController poppedTile = tileControllers[index][0];
             for (int i = 0; i < lastRowIndex; i++) {
@@ -133,24 +178,6 @@ public class GameMap {
             }
             tileControllers[index][0] = tile;
             tileControllers[index][0].setPosInMap(new Vector2(index, 0));
-            return poppedTile;
-        } else if (dir == Constants.PushDirection.UP) {
-            TileController poppedTile = tileControllers[0][index];
-            for (int i = 0; i < lastColIndex; i++) {
-                tileControllers[i][index] = tileControllers[i + 1][index];
-                tileControllers[i][index].setPosInMap(new Vector2(i, index));
-            }
-            tileControllers[lastColIndex][index] = tile;
-            tileControllers[lastColIndex][index].setPosInMap(new Vector2(lastColIndex, index));
-            return poppedTile;
-        } else if (dir == Constants.PushDirection.DOWN) {
-            TileController poppedTile = tileControllers[lastColIndex][index];
-            for (int i = lastColIndex; i > 0; i--) {
-                tileControllers[i][index] = tileControllers[i - 1][index];
-                tileControllers[i][index].setPosInMap(new Vector2(i, index));
-            }
-            tileControllers[0][index] = tile;
-            tileControllers[0][index].setPosInMap(new Vector2(0, index));
             return poppedTile;
         }
         return null;
