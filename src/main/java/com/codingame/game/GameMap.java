@@ -111,7 +111,7 @@ public class GameMap {
 
     public TileController pushColumn(TileController tile, int index, Constants.PushDirection dir, List<Integer> rowsToSkip) {
         if (index % 2 == 0) {
-            // only odd rows are pushable
+            // only odd columns are pushable
             throw new RuntimeException();
         }
         int lastColIndex = Constants.MAP_HEIGHT - 1;
