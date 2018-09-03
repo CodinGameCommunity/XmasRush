@@ -45,7 +45,7 @@ public class Constants {
             "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"
     );
 
-    public enum PushDirection {
+    public enum Direction {
         UP,
         RIGHT,
         DOWN,

@@ -3,7 +3,7 @@ package com.codingame.game;
 import com.codingame.game.Controller.TileController;
 import com.codingame.game.InputActions.AbstractAction;
 import com.codingame.game.InputActions.InvalidAction;
-import com.codingame.game.InputActions.PushAction;
+import com.codingame.game.InputActions.Action;
 import com.codingame.game.Model.TileModel;
 import com.codingame.game.Utils.Constants;
 import com.codingame.game.Utils.Vector2;
@@ -16,7 +16,6 @@ import com.codingame.gameengine.module.entities.Sprite;
 import com.google.inject.Inject;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class Referee extends AbstractReferee {
     @Inject private MultiplayerGameManager<Player> gameManager;
@@ -223,9 +222,9 @@ public class Referee extends AbstractReferee {
         for (Player player: gameManager.getActivePlayers()) {
             try {
                 AbstractAction action = player.getAction();
-                if (action instanceof PushAction) {
-                    PushAction pushAction = (PushAction) action;
-                    if (pushAction.direction.asValue() == Constants.PushDirection.RIGHT || pushAction.direction.asValue() == Constants.PushDirection.LEFT) {
+                if (action instanceof Action) {
+                    Action pushAction = (Action) action;
+                    if (pushAction.direction.asValue() == Constants.Direction.RIGHT || pushAction.direction.asValue() == Constants.Direction.LEFT) {
                         playerPushRowActions.add(new PlayerAction(player, pushAction));
                     } else {
                         playerPushColumnActions.add(new PlayerAction(player, pushAction));
@@ -237,16 +236,16 @@ public class Referee extends AbstractReferee {
         }
         List<Integer> pushedRows = new ArrayList<>();
         playerPushRowActions.forEach(playerAction -> {
-            PushAction pushAction = (PushAction) playerAction.action;
-            pushedRows.add(pushAction.id);
-            TileController tile = map.pushRow(playerAction.player.getTile(), pushAction.id, pushAction.direction.asValue());
+            Action action = (Action) playerAction.action;
+            pushedRows.add(action.id);
+            TileController tile = map.pushRow(playerAction.player.getTile(), action.id, action.direction.asValue());
             tile.setPosAbsolute(playerAction.player.getTilePosition());
         });
 
         final List<Integer> rowsToSkip = pushedRows;
         playerPushColumnActions.forEach(playerAction -> {
-            PushAction pushAction = (PushAction) playerAction.action;
-            TileController tile = map.pushColumn(playerAction.player.getTile(), pushAction.id, pushAction.direction.asValue(), rowsToSkip);
+            Action action = (Action) playerAction.action;
+            TileController tile = map.pushColumn(playerAction.player.getTile(), action.id, action.direction.asValue(), rowsToSkip);
             tile.setPosAbsolute(playerAction.player.getTilePosition());
         });
     }
