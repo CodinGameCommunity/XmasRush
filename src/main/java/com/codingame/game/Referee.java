@@ -1,12 +1,15 @@
 package com.codingame.game;
 
+import com.codingame.game.Controller.PlayerController;
 import com.codingame.game.Controller.TileController;
 import com.codingame.game.InputActions.AbstractAction;
 import com.codingame.game.InputActions.InvalidAction;
-import com.codingame.game.InputActions.Action;
+import com.codingame.game.InputActions.MoveAction;
+import com.codingame.game.InputActions.PushAction;
 import com.codingame.game.Model.TileModel;
 import com.codingame.game.Utils.Constants;
 import com.codingame.game.Utils.Vector2;
+import com.codingame.game.View.PlayerView;
 import com.codingame.game.View.TileView;
 import com.codingame.gameengine.core.AbstractPlayer;
 import com.codingame.gameengine.core.AbstractReferee;
@@ -23,8 +26,8 @@ public class Referee extends AbstractReferee {
 
     private GameMap map;
 
-    private Player player;
-    private Player opponent;
+    private PlayerController playerController;
+    private PlayerController opponentController;
 
     private List<Item> playerCards = new ArrayList<>();
     private List<Item> opponentCards = new ArrayList<>();
@@ -32,6 +35,7 @@ public class Referee extends AbstractReferee {
     @Override
     public void init() {
         TileView.graphicEntityModule = graphicEntityModule;
+        PlayerView.graphicEntityModule = graphicEntityModule;
 
         Properties params = gameManager.getGameParameters();
         Constants.random = new Random(getSeed(params));
@@ -54,23 +58,12 @@ public class Referee extends AbstractReferee {
         }
     }
 
-    private void drawPlayers() {
-        int playerOffsetX = Constants.MAP_POS_X + (Constants.TILE_SIZE + Constants.TILE_SPACE) * this.player.getAgentPosition().x;
-        int playerOffsetY = Constants.MAP_POS_Y + (Constants.TILE_SIZE + Constants.TILE_SPACE) * this.player.getAgentPosition().y;
-        createSprite("agent_1.png", playerOffsetX, playerOffsetY, 0, Constants.MapLayers.AGENTS.asValue());
-        int opponentOffsetX = Constants.MAP_POS_X + (Constants.TILE_SIZE + Constants.TILE_SPACE) * this.opponent.getAgentPosition().x;
-        int opponentOffsetY = Constants.MAP_POS_Y + (Constants.TILE_SIZE + Constants.TILE_SPACE) * this.opponent.getAgentPosition().y;
-        createSprite("agent_2.png", opponentOffsetX, opponentOffsetY, 0, Constants.MapLayers.AGENTS.asValue());
-    }
-
     private void createPlayers() {
-        this.player = gameManager.getPlayer(0);
-        this.opponent = gameManager.getPlayer(1);
+        this.playerController = new PlayerController(gameManager.getPlayer(0), new PlayerView(0));
+        this.opponentController = new PlayerController(gameManager.getPlayer(1), new PlayerView(1));
 
-        this.player.setAgentPosition(new Vector2(0, 0));
-        this.opponent .setAgentPosition(new Vector2(Constants.MAP_WIDTH - 1, Constants.MAP_HEIGHT - 1));
-
-        drawPlayers();
+        this.playerController.setPosInMap(new Vector2(0, 0));
+        this.opponentController.setPosInMap(new Vector2(Constants.MAP_WIDTH - 1, Constants.MAP_HEIGHT - 1));
     }
 
     private void drawCards() {
@@ -91,14 +84,14 @@ public class Referee extends AbstractReferee {
                 String spritePath = String.format(itemsPath, item.getLowercaseIdentifier(), item.getPlayerId());
                 createSprite(spritePath, playerOffsetX, playerOffsetY + index*15, 0, Constants.MapLayers.ITEMS.asValue());
             } else {
-                createSprite("cardBack_1.png", playerOffsetX, playerOffsetY + index*15, 0, Constants.MapLayers.TILES.asValue());
+                createSprite("cardBack_0.png", playerOffsetX, playerOffsetY + index*15, 0, Constants.MapLayers.TILES.asValue());
             }
         }
 
         for (ListIterator<Item> beginIterator = opponentCards.listIterator(); beginIterator.hasNext();) {
             Item item = beginIterator.next();
             int index = beginIterator.nextIndex();
-            createSprite("cardBack_2.png", opponentOffsetX, opponentOffsetY - index*15, 0, Constants.MapLayers.TILES.asValue());
+            createSprite("cardBack_1.png", opponentOffsetX, opponentOffsetY - index*15, 0, Constants.MapLayers.TILES.asValue());
         }
     }
 
@@ -112,7 +105,6 @@ public class Referee extends AbstractReferee {
             String a = shuffledItems.get(index);
             shuffledItems.set(index, shuffledItems.get(i));
             shuffledItems.set(i, a);
-
         }
 
         return shuffledItems;
@@ -123,8 +115,8 @@ public class Referee extends AbstractReferee {
 
         for (ListIterator<String> beginIterator = shuffledItemIdentifiers.listIterator(); beginIterator.hasNext();) {
             String beginIdentifier = beginIterator.next();
-            playerCards.add(new Item(beginIdentifier, 1));
-            opponentCards.add(new Item(beginIdentifier, 2));
+            playerCards.add(new Item(beginIdentifier, 0));
+            opponentCards.add(new Item(beginIdentifier, 1));
         }
 
         drawCards();
@@ -178,8 +170,8 @@ public class Referee extends AbstractReferee {
         playerTile.setPosAbsolute(new Vector2(Constants.PLAYER_TILE_POS_X, Constants.PLAYER_TILE_POS_Y));
         opponentTile.setPosAbsolute(new Vector2(Constants.OPPONENT_TILE_POS_X, Constants.OPPONENT_TILE_POS_Y));
 
-        player.setTile(playerTile);
-        opponent.setTile(opponentTile);
+        playerController.setTile(playerTile);
+        opponentController.setTile(opponentTile);
     }
 
     private void createBackground() {
@@ -222,12 +214,19 @@ public class Referee extends AbstractReferee {
         for (Player player: gameManager.getActivePlayers()) {
             try {
                 AbstractAction action = player.getAction();
-                if (action instanceof Action) {
-                    Action pushAction = (Action) action;
-                    if (pushAction.direction.asValue() == Constants.Direction.RIGHT || pushAction.direction.asValue() == Constants.Direction.LEFT) {
+                if (action instanceof PushAction) {
+                    PushAction pushAction = (PushAction)action;
+                    if (pushAction.direction == Constants.Direction.RIGHT || pushAction.direction == Constants.Direction.LEFT) {
                         playerPushRowActions.add(new PlayerAction(player, pushAction));
                     } else {
                         playerPushColumnActions.add(new PlayerAction(player, pushAction));
+                    }
+                } else if (action instanceof MoveAction) {
+                    MoveAction moveAction = (MoveAction)action;
+                    List<MoveAction.Step> steps = moveAction.steps;
+                    for (MoveAction.Step step : steps) {
+                        PlayerController controller = (player.getIndex() == 0 ? this.playerController : this.opponentController);
+                        controller.moveAgentBy(step.direction.asValue().mult(step.amount));
                     }
                 }
             } catch (NumberFormatException | AbstractPlayer.TimeoutException | InvalidAction e) {
@@ -236,16 +235,16 @@ public class Referee extends AbstractReferee {
         }
         List<Integer> pushedRows = new ArrayList<>();
         playerPushRowActions.forEach(playerAction -> {
-            Action action = (Action) playerAction.action;
-            pushedRows.add(action.id);
-            TileController tile = map.pushRow(playerAction.player.getTile(), action.id, action.direction.asValue());
+            PushAction action = (PushAction) playerAction.action;
+            pushedRows.add(action.lineId);
+            TileController tile = map.pushRow(playerAction.player.getTile(), action.lineId, action.direction);
             tile.setPosAbsolute(playerAction.player.getTilePosition());
         });
 
         final List<Integer> rowsToSkip = pushedRows;
         playerPushColumnActions.forEach(playerAction -> {
-            Action action = (Action) playerAction.action;
-            TileController tile = map.pushColumn(playerAction.player.getTile(), action.id, action.direction.asValue(), rowsToSkip);
+            PushAction action = (PushAction) playerAction.action;
+            TileController tile = map.pushColumn(playerAction.player.getTile(), action.lineId, action.direction, rowsToSkip);
             tile.setPosAbsolute(playerAction.player.getTilePosition());
         });
     }

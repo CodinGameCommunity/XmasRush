@@ -71,7 +71,7 @@ public class GameMap {
 
         // set up items
         for (String identifier : Constants.ITEM_IDENTIFIERS) {
-            Item item = new Item(identifier, 1);
+            Item item = new Item(identifier, 0);
             TileController tileController = getRandomMapTile();
             while (tileController.isCenterTile() || tileController.isBaseTile() || tileController.hasItem()) {
                 tileController = getRandomMapTile();
@@ -81,7 +81,7 @@ public class GameMap {
             tileControllers[row][col].addItem(item);
 
             // add the mirrored item
-            item = new Item(identifier, 2);
+            item = new Item(identifier, 1);
             tileController = getOppositeTile(row, col);
             tileControllers[tileController.getPos().x][tileController.getPos().y].addItem(item);
         }

@@ -3,6 +3,7 @@ package com.codingame.game.Utils;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import java.util.regex.Pattern;
 
 public class Constants {
     public static final int TILE_SIZE = 128;
@@ -45,10 +46,26 @@ public class Constants {
             "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"
     );
 
+    public static final Pattern PLAYER_INPUT_PUSH_PATTERN = Pattern
+            .compile("(?<pushAction>\\bpush\\b) (?<id>[1,3,5]) (?<direction>(\\bup\\b|\\bright\\b|\\bdown\\b|\\bleft\\b))",
+                    Pattern.CASE_INSENSITIVE);
+    public static final Pattern PLAYER_INPUT_MOVE_PATTERN = Pattern
+            .compile("(?<moveAction>\\bmove\\b) ((?<amount>[1-6]) (?<direction>(\\bup\\b|\\bright\\b|\\bdown\\b|\\bleft\\b))(;)?)+",
+                    Pattern.CASE_INSENSITIVE);
+
     public enum Direction {
-        UP,
-        RIGHT,
-        DOWN,
-        LEFT
+        UP(Vector2.UP),
+        RIGHT(Vector2.RIGHT),
+        DOWN(Vector2.DOWN),
+        LEFT(Vector2.LEFT);
+
+        private final Vector2 value;
+        Direction(Vector2 value) {
+            this.value = value;
+        }
+        public Vector2 asValue() {
+            return value;
+        }
+
     }
 }

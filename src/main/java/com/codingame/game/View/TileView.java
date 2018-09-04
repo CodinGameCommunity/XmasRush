@@ -123,6 +123,6 @@ public class TileView {
         if (tile.hasDown()) addDown();
         if (tile.hasLeft()) addLeft();
         if (tile.hasItem()) addItem(tile.item);
-        if (tile.isBaseTile()) setBaseTile(tile.pos.x == 0 ? 1 : 2);
+        if (tile.isBaseTile()) setBaseTile(tile.pos.x == 0 ? 0 : 1);
     }
 }
