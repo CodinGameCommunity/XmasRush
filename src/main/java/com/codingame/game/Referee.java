@@ -258,6 +258,7 @@ public class Referee extends AbstractReferee {
             Item topCard = player.getTopCard();
             if (tile.hasItem() && tile.getItem().getLowercaseIdentifier().equals(topCard.getLowercaseIdentifier()) && tile.getItem().getPlayerId() == player.getIndex()) {
                 player.removeCard(topCard);
+                tile.removeItem();
             }
         });
     }
