@@ -124,8 +124,8 @@ public class Referee extends AbstractReferee {
 
         for (ListIterator<String> beginIterator = shuffledItemIdentifiers.listIterator(); beginIterator.hasNext();) {
             String beginIdentifier = beginIterator.next();
-            player.addItemCard(new Item(beginIdentifier, 1));
-            opponent.addItemCard(new Item(beginIdentifier, 2));
+            player.addItemCard(new Item(beginIdentifier, player.getIndex()));
+            opponent.addItemCard(new Item(beginIdentifier, opponent.getIndex()));
         }
 
         drawCards();
@@ -256,7 +256,7 @@ public class Referee extends AbstractReferee {
             Vector2 pos = player.getAgentPosition();
             TileController tile = map.getTile(pos.x, pos.y);
             Item topCard = player.getTopCard();
-            if (tile.hasItem() && tile.getItem().getLowercaseIdentifier().equals(topCard.getLowercaseIdentifier())) {
+            if (tile.hasItem() && tile.getItem().getLowercaseIdentifier().equals(topCard.getLowercaseIdentifier()) && tile.getItem().getPlayerId() == player.getIndex()) {
                 player.removeCard(topCard);
             }
         });
