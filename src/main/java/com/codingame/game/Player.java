@@ -7,12 +7,15 @@ import com.codingame.game.Utils.Constants;
 import com.codingame.game.Utils.Vector2;
 import com.codingame.gameengine.core.AbstractMultiplayerPlayer;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Player extends AbstractMultiplayerPlayer {
     private TileController tile;
     private Vector2 agentPosition;
+    private List<Item> cards = new ArrayList<>();
 
     private static final Pattern PLAYER_INPUT_PUSH_PATTERN = Pattern
             .compile("(?<pushAction>\\bpush\\b) (?<id>[1,3,5]) (?<direction>(\\bup\\b|\\bright\\b|\\bdown\\b|\\bleft\\b))",
@@ -64,6 +67,22 @@ public class Player extends AbstractMultiplayerPlayer {
         }
 
         return new Vector2(x, y);
+    }
+
+    public void addItemCard(Item item) {
+        this.cards.add(item);
+    }
+
+    public List<Item> getCards() {
+        return this.cards;
+    }
+
+    public Item getTopCard() {
+        return this.cards.get(this.cards.size()-1);
+    }
+
+    public void removeCard(Item item) {
+        this.cards.remove(item);
     }
 
     @Override

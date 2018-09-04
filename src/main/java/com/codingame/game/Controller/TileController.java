@@ -67,6 +67,10 @@ public class TileController {
         return model.hasItem();
     }
 
+    public Item getItem() {
+        return model.item;
+    }
+
     public Vector2 getPos() {
         return model.pos;
     }

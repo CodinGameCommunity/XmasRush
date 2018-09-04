@@ -27,9 +27,6 @@ public class Referee extends AbstractReferee {
     private Player player;
     private Player opponent;
 
-    private List<Item> playerCards = new ArrayList<>();
-    private List<Item> opponentCards = new ArrayList<>();
-
     @Override
     public void init() {
         TileView.graphicEntityModule = graphicEntityModule;
@@ -82,6 +79,9 @@ public class Referee extends AbstractReferee {
         int opponentOffsetX = Constants.SCREEN_WIDTH - playerOffsetX;
         int opponentOffsetY = Constants.SCREEN_HEIGHT - playerOffsetY;
 
+        List<Item> playerCards = player.getCards();
+        List<Item> opponentCards = opponent.getCards();
+
         for (ListIterator<Item> beginIterator = playerCards.listIterator(); beginIterator.hasNext();) {
             Item item = beginIterator.next();
             int index = beginIterator.nextIndex();
@@ -124,8 +124,8 @@ public class Referee extends AbstractReferee {
 
         for (ListIterator<String> beginIterator = shuffledItemIdentifiers.listIterator(); beginIterator.hasNext();) {
             String beginIdentifier = beginIterator.next();
-            playerCards.add(new Item(beginIdentifier, 1));
-            opponentCards.add(new Item(beginIdentifier, 2));
+            player.addItemCard(new Item(beginIdentifier, 1));
+            opponent.addItemCard(new Item(beginIdentifier, 2));
         }
 
         drawCards();
