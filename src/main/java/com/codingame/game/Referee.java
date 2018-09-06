@@ -113,7 +113,6 @@ public class Referee extends AbstractReferee {
             String a = shuffledItems.get(index);
             shuffledItems.set(index, shuffledItems.get(i));
             shuffledItems.set(i, a);
-
         }
 
         return shuffledItems;
@@ -263,11 +262,26 @@ public class Referee extends AbstractReferee {
         });
     }
 
+    private void checkForWinner() {
+        gameManager.getActivePlayers().forEach(player -> {
+            if (player.getCards().size() == 0)
+            {
+                declareWinner(player);
+                gameManager.endGame();
+            }
+        });
+    }
+
+    private void declareWinner(Player player) {
+        System.out.println(player.getNicknameToken() + " is a winner!");
+    }
+
     @Override
     public void gameTurn(int turn) {
         sendPlayerInputs();
         doPlayerActions();
         checkForFinishedItems();
+        checkForWinner();
     }
 
     static class PlayerAction {
