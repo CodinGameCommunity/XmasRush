@@ -28,9 +28,6 @@ public class Referee extends AbstractReferee {
 
     private List<PlayerController> playerControllers = new ArrayList<>();
 
-    private List<Item> playerCards = new ArrayList<>();
-    private List<Item> opponentCards = new ArrayList<>();
-
     @Override
     public void init() {
         TileView.graphicEntityModule = graphicEntityModule;
@@ -241,10 +238,23 @@ public class Referee extends AbstractReferee {
         });
     }
 
+    private void checkForFinishedItems() {
+        gameManager.getActivePlayers().forEach(player -> {
+            Vector2 pos = player.getAgentPosition();
+            TileController tile = map.getTile(pos.x, pos.y);
+            Item topCard = player.getTopCard();
+            if (tile.hasItem() && tile.getItem().getLowercaseIdentifier().equals(topCard.getLowercaseIdentifier()) && tile.getItem().getPlayerId() == player.getIndex()) {
+                player.removeCard(topCard);
+                tile.removeItem();
+            }
+        });
+    }
+
     @Override
     public void gameTurn(int turn) {
         sendPlayerInputs();
         doPlayerActions();
+        checkForFinishedItems();
     }
 
     static class PlayerAction {

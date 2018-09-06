@@ -91,6 +91,10 @@ public class GameMap {
         return tilePatterns[i][j];
     }
 
+    public TileController getTile(int i, int j) {
+        return tileControllers[i][j];
+    }
+
     private String takeRandomAvailableTilePattern() {
         int index = Constants.random.nextInt(availableTilePatterns.size());
         String pattern = availableTilePatterns.get(index);

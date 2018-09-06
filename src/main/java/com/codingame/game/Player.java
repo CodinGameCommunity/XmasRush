@@ -7,6 +7,8 @@ import com.codingame.game.Utils.Constants;
 import com.codingame.game.Utils.Vector2;
 import com.codingame.gameengine.core.AbstractMultiplayerPlayer;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 
 public class Player extends AbstractMultiplayerPlayer {
@@ -44,6 +46,22 @@ public class Player extends AbstractMultiplayerPlayer {
 
     public Vector2 getAgentPosition() {
         return this.pos;
+    }
+
+    public void addItemCard(Item item) {
+        this.cards.add(item);
+    }
+
+    public List<Item> getCards() {
+        return this.cards;
+    }
+
+    public Item getTopCard() {
+        return this.cards.get(this.cards.size()-1);
+    }
+
+    public void removeCard(Item item) {
+        this.cards.remove(item);
     }
 
     @Override
