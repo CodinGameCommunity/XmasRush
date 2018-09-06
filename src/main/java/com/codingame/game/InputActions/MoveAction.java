@@ -14,18 +14,25 @@ public class MoveAction extends AbstractAction {
             this.direction = direction;
         }
     }
-    public List<Step> steps = new ArrayList<>();
+    public List<Step> steps;
 
-    public MoveAction(int amount, Constants.Direction direction)
-    {
+    public MoveAction() {
+        this.steps = new ArrayList<>();
+    }
+
+    public void addAction(int amount, Constants.Direction direction) {
         steps.add(new Step(amount, direction));
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("MOVE ");
-        for (Step step : steps) {
-            sb.append(String.format("%d %s", step.amount, step.direction.name()));
+
+        for (int i = 0; i < steps.size(); i++) {
+            if (i > 0) {
+                sb.append(';');
+            }
+            sb.append(String.format("%d %s", steps.get(i).amount, steps.get(i).direction.name()));
         }
         return sb.toString();
     }

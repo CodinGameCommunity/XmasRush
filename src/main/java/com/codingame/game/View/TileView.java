@@ -92,8 +92,8 @@ public class TileView {
     }
 
     public void setPosInMap(int i, int j) {
-        int x = Constants.MAP_POS_X + i * (Constants.TILE_SIZE + Constants.TILE_SPACE);
-        int y = Constants.MAP_POS_Y + j * (Constants.TILE_SIZE + Constants.TILE_SPACE);
+        int x = Constants.MAP_POS_X + i * (Constants.TILE_SIZE + Constants.TILES_OFFSET);
+        int y = Constants.MAP_POS_Y + j * (Constants.TILE_SIZE + Constants.TILES_OFFSET);
         group.setX(x).setY(y);
     }
 

@@ -26,8 +26,7 @@ public class Referee extends AbstractReferee {
 
     private GameMap map;
 
-    private PlayerController playerController;
-    private PlayerController opponentController;
+    private List<PlayerController> playerControllers = new ArrayList<>();
 
     private List<Item> playerCards = new ArrayList<>();
     private List<Item> opponentCards = new ArrayList<>();
@@ -59,39 +58,34 @@ public class Referee extends AbstractReferee {
     }
 
     private void createPlayers() {
-        this.playerController = new PlayerController(gameManager.getPlayer(0), new PlayerView(0));
-        this.opponentController = new PlayerController(gameManager.getPlayer(1), new PlayerView(1));
-
-        this.playerController.setPosInMap(new Vector2(0, 0));
-        this.opponentController.setPosInMap(new Vector2(Constants.MAP_WIDTH - 1, Constants.MAP_HEIGHT - 1));
+        for (Player player : gameManager.getActivePlayers()) {
+            PlayerController playerController = new PlayerController(player, new PlayerView(player.getIndex()));
+            playerController.setPosInMap(Constants.PLAYER_POSITIONS.get(player.getIndex()));
+            playerControllers.add(playerController);
+        }
     }
 
     private void drawCards() {
-        int cardWidth = 128;
-        int cardHeight = 256;
-        int playerOffsetX = 100 + cardWidth / 2;
-        int playerOffsetY = 25 + cardHeight / 2;
-        int opponentOffsetX = Constants.SCREEN_WIDTH - playerOffsetX;
-        int opponentOffsetY = Constants.SCREEN_HEIGHT - playerOffsetY;
-
+        // player items
         for (ListIterator<Item> beginIterator = playerCards.listIterator(); beginIterator.hasNext();) {
             Item item = beginIterator.next();
             int index = beginIterator.nextIndex();
 
             if (index == playerCards.size()) {
-                createSprite("cardFront.png", playerOffsetX, playerOffsetY + index*15, 0, Constants.MapLayers.TILES.asValue());
+                createSprite("cardFront.png", Constants.PLAYER_CARDS_POS_X, Constants.PLAYER_CARDS_POS_Y + index * Constants.CARDS_OFFSET, 0, Constants.MapLayers.TILES.asValue());
                 String itemsPath = "items" + System.getProperty("file.separator") + "item_%s_%d.png";
                 String spritePath = String.format(itemsPath, item.getLowercaseIdentifier(), item.getPlayerId());
-                createSprite(spritePath, playerOffsetX, playerOffsetY + index*15, 0, Constants.MapLayers.ITEMS.asValue());
+                createSprite(spritePath, Constants.PLAYER_CARDS_POS_X, Constants.PLAYER_CARDS_POS_Y + index * Constants.CARDS_OFFSET, 0, Constants.MapLayers.ITEMS.asValue());
             } else {
-                createSprite("cardBack_0.png", playerOffsetX, playerOffsetY + index*15, 0, Constants.MapLayers.TILES.asValue());
+                createSprite("cardBack_0.png", Constants.PLAYER_CARDS_POS_X, Constants.PLAYER_CARDS_POS_Y + index * Constants.CARDS_OFFSET, 0, Constants.MapLayers.TILES.asValue());
             }
         }
 
+        // opponent items
         for (ListIterator<Item> beginIterator = opponentCards.listIterator(); beginIterator.hasNext();) {
             Item item = beginIterator.next();
             int index = beginIterator.nextIndex();
-            createSprite("cardBack_1.png", opponentOffsetX, opponentOffsetY - index*15, 0, Constants.MapLayers.TILES.asValue());
+            createSprite("cardBack_1.png", Constants.OPPONENT_CARDS_POS_X, Constants.OPPONENT_CARDS_POS_Y - index * Constants.CARDS_OFFSET, 0, Constants.MapLayers.TILES.asValue());
         }
     }
 
@@ -149,10 +143,10 @@ public class Referee extends AbstractReferee {
                         createSprite("arrow.png", arrowPosX, arrowPosY, Math.toRadians(arrowRot), Constants.MapLayers.BACKGROUND.asValue());
                     }
                 }
-                x += Constants.TILE_SIZE + Constants.TILE_SPACE;
+                x += Constants.TILE_SIZE + Constants.TILES_OFFSET;
             }
             x = Constants.MAP_POS_X;
-            y += Constants.TILE_SIZE + Constants.TILE_SPACE;
+            y += Constants.TILE_SIZE + Constants.TILES_OFFSET;
         }
     }
 
@@ -170,8 +164,8 @@ public class Referee extends AbstractReferee {
         playerTile.setPosAbsolute(new Vector2(Constants.PLAYER_TILE_POS_X, Constants.PLAYER_TILE_POS_Y));
         opponentTile.setPosAbsolute(new Vector2(Constants.OPPONENT_TILE_POS_X, Constants.OPPONENT_TILE_POS_Y));
 
-        playerController.setTile(playerTile);
-        opponentController.setTile(opponentTile);
+        playerControllers.get(0).setTile(playerTile);
+        playerControllers.get(1).setTile(opponentTile);
     }
 
     private void createBackground() {
@@ -201,33 +195,31 @@ public class Referee extends AbstractReferee {
     }
 
     private void sendPlayerInputs() {
-        for (Player p : gameManager.getActivePlayers()) {
+        for (Player player : gameManager.getActivePlayers()) {
             // TODO: send actual inputs
-            p.sendInputLine("0");
-            p.execute();
+            player.sendInputLine("0");
+            player.execute();
         }
     }
 
     private void doPlayerActions() {
         List<PlayerAction> playerPushRowActions = new ArrayList<>();
         List<PlayerAction> playerPushColumnActions = new ArrayList<>();
-        for (Player player: gameManager.getActivePlayers()) {
+        for (Player player : gameManager.getActivePlayers()) {
             try {
+                PlayerController playerController = playerControllers.get(player.getIndex());
                 AbstractAction action = player.getAction();
                 if (action instanceof PushAction) {
                     PushAction pushAction = (PushAction)action;
                     if (pushAction.direction == Constants.Direction.RIGHT || pushAction.direction == Constants.Direction.LEFT) {
-                        playerPushRowActions.add(new PlayerAction(player, pushAction));
+                        playerPushRowActions.add(new PlayerAction(playerController, pushAction));
                     } else {
-                        playerPushColumnActions.add(new PlayerAction(player, pushAction));
+                        playerPushColumnActions.add(new PlayerAction(playerController, pushAction));
                     }
                 } else if (action instanceof MoveAction) {
                     MoveAction moveAction = (MoveAction)action;
                     List<MoveAction.Step> steps = moveAction.steps;
-                    for (MoveAction.Step step : steps) {
-                        PlayerController controller = (player.getIndex() == 0 ? this.playerController : this.opponentController);
-                        controller.moveAgentBy(step.direction.asValue().mult(step.amount));
-                    }
+                    playerController.moveAgentBy(steps);
                 }
             } catch (NumberFormatException | AbstractPlayer.TimeoutException | InvalidAction e) {
                 player.deactivate("Eliminated!");
@@ -256,10 +248,10 @@ public class Referee extends AbstractReferee {
     }
 
     static class PlayerAction {
-        Player player;
+        PlayerController player;
         AbstractAction action;
 
-        public PlayerAction(Player player, AbstractAction action) {
+        public PlayerAction(PlayerController player, AbstractAction action) {
             this.player = player;
             this.action = action;
         }

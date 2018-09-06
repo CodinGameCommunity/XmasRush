@@ -1,5 +1,4 @@
 package com.codingame.game;
-import com.codingame.game.Controller.TileController;
 import com.codingame.game.InputActions.AbstractAction;
 import com.codingame.game.InputActions.InvalidAction;
 import com.codingame.game.InputActions.MoveAction;
@@ -11,7 +10,6 @@ import com.codingame.gameengine.core.AbstractMultiplayerPlayer;
 import java.util.regex.Matcher;
 
 public class Player extends AbstractMultiplayerPlayer {
-    private TileController tile;
     private Vector2 pos;
 
     public AbstractAction getAction() throws TimeoutException, InvalidAction {
@@ -23,8 +21,13 @@ public class Player extends AbstractMultiplayerPlayer {
                 return new PushAction(Integer.parseInt(matchPush.group("id")),
                         Constants.Direction.valueOf(matchPush.group("direction")));
             } else if (matchMove.matches()) {
-                return new MoveAction(Integer.parseInt(matchMove.group("amount")),
-                        Constants.Direction.valueOf(matchMove.group("direction")));
+                Matcher tokensMatcher = Constants.PLAYER_INPUT_MOVE_TOKENS_PATTERN.matcher(playerAction);
+                MoveAction moveAction = new MoveAction();
+                while (tokensMatcher.find()) {
+                    moveAction.addAction(Integer.parseInt(tokensMatcher.group("amount")),
+                            Constants.Direction.valueOf(tokensMatcher.group("direction")));
+                }
+                return moveAction;
             } else {
                 throw new InvalidAction("Invalid output.");
             }
@@ -35,35 +38,12 @@ public class Player extends AbstractMultiplayerPlayer {
         }
     }
 
-    public void setTile(TileController tile) {
-        this.tile = tile;
-    }
-
-    public TileController getTile() {
-        return this.tile;
-    }
-
     public void setAgentPosition(Vector2 pos) {
         this.pos = pos;
     }
 
     public Vector2 getAgentPosition() {
         return this.pos;
-    }
-
-    public Vector2 getTilePosition() {
-        int x;
-        int y;
-
-        if (this.getIndex() == 0) {
-            x = Constants.PLAYER_TILE_POS_X;
-            y = Constants.PLAYER_TILE_POS_Y;
-        } else {
-            x = Constants.OPPONENT_TILE_POS_X;
-            y = Constants.OPPONENT_TILE_POS_Y;
-        }
-
-        return new Vector2(x, y);
     }
 
     @Override
