@@ -88,4 +88,8 @@ public class PlayerController {
     public void removeCard(Item item) {
         this.cards.remove(item);
     }
+
+    public boolean hasCards() {
+        return !this.cards.isEmpty();
+    }
 }

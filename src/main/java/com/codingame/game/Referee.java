@@ -234,8 +234,7 @@ public class Referee extends AbstractReferee {
 
     private void checkForWinner() {
         gameManager.getActivePlayers().forEach(player -> {
-            if (player.getCards().size() == 0)
-            {
+            if (!playerControllers.get(player.getIndex()).hasCards()) {
                 declareWinner(player);
                 gameManager.endGame();
             }
