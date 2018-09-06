@@ -1,0 +1,2 @@
+gameloop
+write join("PUSH", "1", "RIGHT")
