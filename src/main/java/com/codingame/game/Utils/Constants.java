@@ -59,6 +59,11 @@ public class Constants {
             new Vector2(Constants.MAP_WIDTH - 1, Constants.MAP_HEIGHT - 1)
     );
 
+    public static final List<Vector2> CARDS_POSITIONS = Arrays.asList(
+            new Vector2(PLAYER_CARDS_POS_X, PLAYER_CARDS_POS_Y),
+            new Vector2(OPPONENT_CARDS_POS_X, OPPONENT_CARDS_POS_Y)
+    );
+
     public static final Pattern PLAYER_INPUT_PUSH_PATTERN = Pattern
             .compile("(?<pushAction>\\bpush\\b) (?<id>[1,3,5]) (?<direction>(\\bup\\b|\\bright\\b|\\bdown\\b|\\bleft\\b))",
                     Pattern.CASE_INSENSITIVE);

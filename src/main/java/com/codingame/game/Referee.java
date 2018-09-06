@@ -9,6 +9,7 @@ import com.codingame.game.InputActions.PushAction;
 import com.codingame.game.Model.TileModel;
 import com.codingame.game.Utils.Constants;
 import com.codingame.game.Utils.Vector2;
+import com.codingame.game.View.CardView;
 import com.codingame.game.View.PlayerView;
 import com.codingame.game.View.TileView;
 import com.codingame.gameengine.core.AbstractPlayer;
@@ -32,6 +33,7 @@ public class Referee extends AbstractReferee {
     public void init() {
         TileView.graphicEntityModule = graphicEntityModule;
         PlayerView.graphicEntityModule = graphicEntityModule;
+        CardView.graphicEntityModule = graphicEntityModule;
 
         Properties params = gameManager.getGameParameters();
         Constants.random = new Random(getSeed(params));
@@ -62,30 +64,6 @@ public class Referee extends AbstractReferee {
         }
     }
 
-    private void drawCards() {
-        // player items
-        for (ListIterator<Item> beginIterator = playerCards.listIterator(); beginIterator.hasNext();) {
-            Item item = beginIterator.next();
-            int index = beginIterator.nextIndex();
-
-            if (index == playerCards.size()) {
-                createSprite("cardFront.png", Constants.PLAYER_CARDS_POS_X, Constants.PLAYER_CARDS_POS_Y + index * Constants.CARDS_OFFSET, 0, Constants.MapLayers.TILES.asValue());
-                String itemsPath = "items" + System.getProperty("file.separator") + "item_%s_%d.png";
-                String spritePath = String.format(itemsPath, item.getLowercaseIdentifier(), item.getPlayerId());
-                createSprite(spritePath, Constants.PLAYER_CARDS_POS_X, Constants.PLAYER_CARDS_POS_Y + index * Constants.CARDS_OFFSET, 0, Constants.MapLayers.ITEMS.asValue());
-            } else {
-                createSprite("cardBack_0.png", Constants.PLAYER_CARDS_POS_X, Constants.PLAYER_CARDS_POS_Y + index * Constants.CARDS_OFFSET, 0, Constants.MapLayers.TILES.asValue());
-            }
-        }
-
-        // opponent items
-        for (ListIterator<Item> beginIterator = opponentCards.listIterator(); beginIterator.hasNext();) {
-            Item item = beginIterator.next();
-            int index = beginIterator.nextIndex();
-            createSprite("cardBack_1.png", Constants.OPPONENT_CARDS_POS_X, Constants.OPPONENT_CARDS_POS_Y - index * Constants.CARDS_OFFSET, 0, Constants.MapLayers.TILES.asValue());
-        }
-    }
-
     private List<String> getShuffledItemIdentifiers() {
         List<String> shuffledItems = new ArrayList<>(Constants.ITEM_IDENTIFIERS);
         Random rnd = Constants.random;
@@ -102,15 +80,18 @@ public class Referee extends AbstractReferee {
     }
 
     private void createCards() {
-        List<String> shuffledItemIdentifiers = getShuffledItemIdentifiers();
+        List<String> shuffledItemIds = getShuffledItemIdentifiers();
 
-        for (ListIterator<String> beginIterator = shuffledItemIdentifiers.listIterator(); beginIterator.hasNext();) {
-            String beginIdentifier = beginIterator.next();
-            playerCards.add(new Item(beginIdentifier, 0));
-            opponentCards.add(new Item(beginIdentifier, 1));
+        for (Player player : gameManager.getPlayers()) {
+            for (int i = 0; i < shuffledItemIds.size(); i++) {
+                int playerId = player.getIndex();
+                int orientation = playerId == 0 ? 1 : -1;
+                Vector2 cardPos = new Vector2(Constants.CARDS_POSITIONS.get(playerId)).add(new Vector2(0, orientation * i * Constants.CARDS_OFFSET));
+                playerControllers.get(player.getIndex()).addItemCard(new Item(shuffledItemIds.get(i), player.getIndex()), cardPos);
+            }
         }
 
-        drawCards();
+        playerControllers.get(0).flipTopCard();
     }
 
     private void drawArrows() {
@@ -240,11 +221,12 @@ public class Referee extends AbstractReferee {
 
     private void checkForFinishedItems() {
         gameManager.getActivePlayers().forEach(player -> {
+            PlayerController playerController = playerControllers.get(player.getIndex());
             Vector2 pos = player.getAgentPosition();
             TileController tile = map.getTile(pos.x, pos.y);
-            Item topCard = player.getTopCard();
+            Item topCard = playerController.getTopCardItem();
             if (tile.hasItem() && tile.getItem().getLowercaseIdentifier().equals(topCard.getLowercaseIdentifier()) && tile.getItem().getPlayerId() == player.getIndex()) {
-                player.removeCard(topCard);
+                playerController.removeCard(topCard);
                 tile.removeItem();
             }
         });

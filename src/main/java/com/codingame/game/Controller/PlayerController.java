@@ -2,17 +2,21 @@ package com.codingame.game.Controller;
 
 import com.codingame.game.InputActions.InvalidAction;
 import com.codingame.game.InputActions.MoveAction;
+import com.codingame.game.Item;
 import com.codingame.game.Player;
 import com.codingame.game.Utils.Constants;
 import com.codingame.game.Utils.Vector2;
+import com.codingame.game.View.CardView;
 import com.codingame.game.View.PlayerView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PlayerController {
     private Player model;
     private PlayerView view;
     private TileController tile;
+    private List<CardController> cards = new ArrayList<>();
 
     public PlayerController(Player model, PlayerView view) {
         this.model = model;
@@ -64,5 +68,24 @@ public class PlayerController {
         }
 
         return new Vector2(x, y);
+    }
+
+    public void addItemCard(Item item, Vector2 pos) {
+        CardView view = new CardView(this.model.getIndex(), item.getLowercaseIdentifier());
+        view.setPosAbsolute(pos.x, pos.y);
+        CardController card = new CardController(item, view);
+        this.cards.add(card);
+    }
+
+    public Item getTopCardItem() {
+        return this.cards.get(this.cards.size() - 1).getItem();
+    }
+
+    public void flipTopCard() {
+        this.cards.get(this.cards.size() - 1).flip();
+    }
+
+    public void removeCard(Item item) {
+        this.cards.remove(item);
     }
 }
