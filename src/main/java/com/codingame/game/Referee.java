@@ -284,6 +284,15 @@ public class Referee extends AbstractReferee {
         checkForWinner();
     }
 
+    @Override
+    public void onEnd() {
+        gameManager.getActivePlayers().forEach(player -> {
+            // Player score will be the number of remaining cards
+            player.setScore(player.getCards().size());
+            System.out.println(player.getNicknameToken() + " score is " + player.getScore());
+        });
+    }
+
     static class PlayerAction {
         Player player;
         AbstractAction action;
