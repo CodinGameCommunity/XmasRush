@@ -71,7 +71,7 @@ public class GameMap {
 
         // set up items
         for (String identifier : Constants.ITEM_IDENTIFIERS) {
-            Item item = new Item(identifier, 1);
+            Item item = new Item(identifier, 0);
             TileController tileController = getRandomMapTile();
             while (tileController.isCenterTile() || tileController.isBaseTile() || tileController.hasItem()) {
                 tileController = getRandomMapTile();
@@ -81,7 +81,7 @@ public class GameMap {
             tileControllers[row][col].addItem(item);
 
             // add the mirrored item
-            item = new Item(identifier, 2);
+            item = new Item(identifier, 1);
             tileController = getOppositeTile(row, col);
             tileControllers[tileController.getPos().x][tileController.getPos().y].addItem(item);
         }
@@ -113,13 +113,13 @@ public class GameMap {
         return tileControllers[Constants.MAP_WIDTH - row - 1][Constants.MAP_HEIGHT - col - 1];
     }
 
-    public TileController pushColumn(TileController tile, int index, Constants.PushDirection dir, List<Integer> rowsToSkip) {
+    public TileController pushColumn(TileController tile, int index, Constants.Direction dir, List<Integer> rowsToSkip) {
         if (index % 2 == 0) {
             // only odd columns are pushable
             throw new RuntimeException();
         }
         int lastColIndex = Constants.MAP_HEIGHT - 1;
-        if (dir == Constants.PushDirection.UP) {
+        if (dir == Constants.Direction.UP) {
             TileController poppedTile = tileControllers[0][index];
             for (int i = 0; i < lastColIndex; i++) {
                 if (rowsToSkip.contains(i)) {
@@ -137,7 +137,7 @@ public class GameMap {
             tileControllers[lastColIndex][index] = tile;
             tileControllers[lastColIndex][index].setPosInMap(new Vector2(lastColIndex, index));
             return poppedTile;
-        } else if (dir == Constants.PushDirection.DOWN) {
+        } else if (dir == Constants.Direction.DOWN) {
             TileController poppedTile = tileControllers[lastColIndex][index];
             for (int i = lastColIndex; i > 0; i--) {
                 if (rowsToSkip.contains(i)) {
@@ -159,13 +159,13 @@ public class GameMap {
         return null;
     }
 
-    public TileController pushRow(TileController tile, int index, Constants.PushDirection dir) {
+    public TileController pushRow(TileController tile, int index, Constants.Direction dir) {
         if (index % 2 == 0) {
             // only odd rows are pushable
             throw new RuntimeException();
         }
         int lastRowIndex = Constants.MAP_WIDTH - 1;
-        if (dir == Constants.PushDirection.LEFT) {
+        if (dir == Constants.Direction.LEFT) {
             TileController poppedTile = tileControllers[index][0];
             for (int i = 0; i < lastRowIndex; i++) {
                 tileControllers[index][i] = tileControllers[index][i + 1];
@@ -174,7 +174,7 @@ public class GameMap {
             tileControllers[index][lastRowIndex] = tile;
             tileControllers[index][lastRowIndex].setPosInMap(new Vector2(index, lastRowIndex));
             return poppedTile;
-        } else if (dir == Constants.PushDirection.RIGHT) {
+        } else if (dir == Constants.Direction.RIGHT) {
             TileController poppedTile = tileControllers[index][lastRowIndex];
             for (int i = lastRowIndex; i > 0; i--) {
                 tileControllers[index][i] = tileControllers[index][i - 1];

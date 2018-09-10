@@ -3,41 +3,26 @@ package com.codingame.game.InputActions;
 import com.codingame.game.Utils.Constants;
 
 public class PushAction extends AbstractAction {
-    public enum PushDirection {
-        UP(Constants.PushDirection.UP),
-        RIGHT(Constants.PushDirection.RIGHT),
-        DOWN(Constants.PushDirection.DOWN),
-        LEFT(Constants.PushDirection.LEFT);
+    public int lineId;
+    public Constants.Direction direction;
 
-        private final Constants.PushDirection value;
-        PushDirection(Constants.PushDirection value) {
-            this.value = value;
-        }
-        public Constants.PushDirection asValue() {
-            return value;
-        }
-    }
-
-    public int id;
-    public PushDirection direction;
-
-    public PushAction(int id, PushDirection direction) {
-        this.id = id;
+    public PushAction(int lineId, Constants.Direction direction)
+    {
+        this.lineId = lineId;
         this.direction = direction;
     }
 
     @Override
     public String toString() {
-        return id + " " + this.direction;
+        return String.format("PUSH %d %s", lineId, direction);
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof PushAction) {
-            PushAction other = (PushAction) obj;
-            return this.id == other.id && this.direction == other.direction;
-        } else {
-            return false;
-        }
+    public boolean equals(Object other) {
+        if (other == null) return false;
+        if (other == this) return true;
+        if (!(other instanceof PushAction)) return false;
+        PushAction action = (PushAction)other;
+        return this.toString().equals(action.toString());
     }
 }

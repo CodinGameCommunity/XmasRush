@@ -92,8 +92,8 @@ public class TileView {
     }
 
     public void setPosInMap(int i, int j) {
-        int x = Constants.MAP_POS_X + i * (Constants.TILE_SIZE + Constants.TILE_SPACE);
-        int y = Constants.MAP_POS_Y + j * (Constants.TILE_SIZE + Constants.TILE_SPACE);
+        int x = Constants.MAP_POS_X + i * (Constants.TILE_SIZE + Constants.TILES_OFFSET);
+        int y = Constants.MAP_POS_Y + j * (Constants.TILE_SIZE + Constants.TILES_OFFSET);
         group.setX(x).setY(y);
     }
 
@@ -123,6 +123,6 @@ public class TileView {
         if (tile.hasDown()) addDown();
         if (tile.hasLeft()) addLeft();
         if (tile.hasItem()) addItem(tile.item);
-        if (tile.isBaseTile()) setBaseTile(tile.pos.x == 0 ? 1 : 2);
+        if (tile.isBaseTile()) setBaseTile(tile.pos.x == 0 ? 0 : 1);
     }
 }
