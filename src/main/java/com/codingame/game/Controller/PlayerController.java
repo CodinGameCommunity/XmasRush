@@ -92,4 +92,8 @@ public class PlayerController {
     public boolean hasCards() {
         return !this.cards.isEmpty();
     }
+
+    public int getNumCards() {
+        return this.cards.size();
+    }
 }

@@ -257,7 +257,7 @@ public class Referee extends AbstractReferee {
     public void onEnd() {
         gameManager.getActivePlayers().forEach(player -> {
             // Player score will be the number of solved cards
-            player.setScore(Constants.ITEM_IDENTIFIERS.size() - player.getCards().size());
+            player.setScore(Constants.ITEM_IDENTIFIERS.size() - playerControllers.get(player.getIndex()).getNumCards());
             System.out.println(player.getNicknameToken() + " score is " + player.getScore());
         });
     }
