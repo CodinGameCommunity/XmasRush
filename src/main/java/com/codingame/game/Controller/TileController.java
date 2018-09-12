@@ -2,6 +2,7 @@ package com.codingame.game.Controller;
 
 import com.codingame.game.Item;
 import com.codingame.game.Model.TileModel;
+import com.codingame.game.Utils.Constants;
 import com.codingame.game.Utils.Vector2;
 import com.codingame.game.View.TileView;
 
@@ -77,5 +78,26 @@ public class TileController {
 
     public Vector2 getPos() {
         return model.pos;
+    }
+
+    public boolean hasDir(Constants.Direction dir) {
+        if (dir == Constants.Direction.UP) return model.hasUp();
+        if (dir == Constants.Direction.DOWN) return model.hasDown();
+        if (dir == Constants.Direction.LEFT) return model.hasLeft();
+        if (dir == Constants.Direction.RIGHT) return model.hasRight();
+        return false;
+    }
+
+    public boolean hasOppDir(Constants.Direction dir) {
+        if (dir == Constants.Direction.UP) return model.hasDown();
+        if (dir == Constants.Direction.DOWN) return model.hasUp();
+        if (dir == Constants.Direction.LEFT) return model.hasRight();
+        if (dir == Constants.Direction.RIGHT) return model.hasLeft();
+        return false;
+    }
+
+    @Override
+    public String toString() {
+        return this.model.pattern;
     }
 }

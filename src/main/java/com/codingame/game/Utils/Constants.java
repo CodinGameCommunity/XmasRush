@@ -75,10 +75,10 @@ public class Constants {
                     Pattern.CASE_INSENSITIVE);
 
     public enum Direction {
-        UP(Vector2.UP),
-        RIGHT(Vector2.RIGHT),
-        DOWN(Vector2.DOWN),
-        LEFT(Vector2.LEFT);
+        UP(Vector2.LEFT),
+        RIGHT(Vector2.DOWN),
+        DOWN(Vector2.RIGHT),
+        LEFT(Vector2.UP);
 
         private final Vector2 value;
         Direction(Vector2 value) {

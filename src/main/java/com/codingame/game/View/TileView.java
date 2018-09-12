@@ -114,7 +114,6 @@ public class TileView {
         if (right != null) right.setRotation(right.getRotation() + angle);
         if (down != null) down.setRotation(down.getRotation() + angle);
         if (left != null) left.setRotation(left.getRotation() + angle);
-
     }
 
     public void init(TileModel tile) {
