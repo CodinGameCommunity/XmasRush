@@ -27,9 +27,7 @@ public class TileController {
         if (numTimes == 0) {
             return;
         }
-        model.pattern = model.pattern.substring(model.pattern.length() - numTimes)
-                + model.pattern.substring(0, model.pattern.length() - numTimes);
-
+        model.rotate(numTimes);
         view.rotate(numTimes);
     }
 
