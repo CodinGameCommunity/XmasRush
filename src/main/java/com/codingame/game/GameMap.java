@@ -215,7 +215,7 @@ public class GameMap {
         double time = 0;
         for (MoveAction.Step step : steps) {
             if (!canMove(playerController, step)) {
-                throw new InvalidAction("Invalid move!");
+                throw new InvalidAction(step.toString());
             }
             time += 1.0 / steps.size();
             Vector2 offset = step.direction.asValue().mult(step.amount);

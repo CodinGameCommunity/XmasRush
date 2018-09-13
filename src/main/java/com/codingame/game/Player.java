@@ -12,29 +12,23 @@ import java.util.regex.Matcher;
 public class Player extends AbstractMultiplayerPlayer {
     private Vector2 pos;
 
-    public AbstractAction getAction() throws TimeoutException, InvalidAction {
-        try {
-            String playerAction = this.getOutputs().get(0);
-            Matcher matchPush = Constants.PLAYER_INPUT_PUSH_PATTERN.matcher(playerAction);
-            Matcher matchMove = Constants.PLAYER_INPUT_MOVE_PATTERN.matcher(playerAction);
-            if (matchPush.matches()) {
-                return new PushAction(Integer.parseInt(matchPush.group("id")),
-                        Constants.Direction.valueOf(matchPush.group("direction")));
-            } else if (matchMove.matches()) {
-                Matcher tokensMatcher = Constants.PLAYER_INPUT_MOVE_TOKENS_PATTERN.matcher(playerAction);
-                MoveAction moveAction = new MoveAction();
-                while (tokensMatcher.find()) {
-                    moveAction.addAction(Integer.parseInt(tokensMatcher.group("amount")),
-                            Constants.Direction.valueOf(tokensMatcher.group("direction")));
-                }
-                return moveAction;
-            } else {
-                throw new InvalidAction("Invalid output.");
+    public AbstractAction getAction() throws TimeoutException, IndexOutOfBoundsException, InvalidAction {
+        String playerAction = this.getOutputs().get(0);
+        Matcher matchPush = Constants.PLAYER_INPUT_PUSH_PATTERN.matcher(playerAction);
+        Matcher matchMove = Constants.PLAYER_INPUT_MOVE_PATTERN.matcher(playerAction);
+        if (matchPush.matches()) {
+            return new PushAction(Integer.parseInt(matchPush.group("id")),
+                    Constants.Direction.valueOf(matchPush.group("direction")));
+        } else if (matchMove.matches()) {
+            Matcher tokensMatcher = Constants.PLAYER_INPUT_MOVE_TOKENS_PATTERN.matcher(playerAction);
+            MoveAction moveAction = new MoveAction();
+            while (tokensMatcher.find()) {
+                moveAction.addAction(Integer.parseInt(tokensMatcher.group("amount")),
+                        Constants.Direction.valueOf(tokensMatcher.group("direction")));
             }
-        } catch (TimeoutException | InvalidAction e) {
-            throw e;
-        } catch (Exception e) {
-            throw new InvalidAction("Invalid output.");
+            return moveAction;
+        } else {
+            throw new InvalidAction(playerAction);
         }
     }
 
