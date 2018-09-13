@@ -98,4 +98,8 @@ public class TileController {
     public String toString() {
         return this.model.pattern;
     }
+
+    public String toInputString() {
+        return model.toInputString();
+    }
 }

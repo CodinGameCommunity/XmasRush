@@ -78,4 +78,12 @@ public class TileModel {
                 + pattern.substring(0, pattern.length() - numTimes);
         updateDirections();
     }
+
+    public String toInputString() {
+        if (item != null) {
+            return String.format("%s%c%d", pattern, item.getLowercaseIdentifier(), item.getPlayerId());
+        } else {
+            return String.format("%s--", pattern);
+        }
+    }
 }
