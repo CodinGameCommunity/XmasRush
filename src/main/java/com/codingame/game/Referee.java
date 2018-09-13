@@ -39,7 +39,7 @@ public class Referee extends AbstractReferee {
         Constants.random = new Random(getSeed(params));
 
         // TODO: update this when we have gameplay
-        gameManager.setMaxTurns(1);
+        gameManager.setMaxTurns(5);
 
         createBackground();
         createPlayers();
@@ -205,17 +205,19 @@ public class Referee extends AbstractReferee {
         }
         List<Integer> pushedRows = new ArrayList<>();
         playerPushRowActions.forEach(playerAction -> {
-            PushAction action = (PushAction) playerAction.action;
+            PushAction action = (PushAction)playerAction.action;
             pushedRows.add(action.lineId);
             TileController tile = map.pushRow(playerAction.player.getTile(), action.lineId, action.direction);
             tile.setPosAbsolute(playerAction.player.getTilePosition());
+            playerAction.player.setTile(tile);
         });
 
         final List<Integer> rowsToSkip = pushedRows;
         playerPushColumnActions.forEach(playerAction -> {
-            PushAction action = (PushAction) playerAction.action;
+            PushAction action = (PushAction)playerAction.action;
             TileController tile = map.pushColumn(playerAction.player.getTile(), action.lineId, action.direction, rowsToSkip);
             tile.setPosAbsolute(playerAction.player.getTilePosition());
+            playerAction.player.setTile(tile);
         });
     }
 

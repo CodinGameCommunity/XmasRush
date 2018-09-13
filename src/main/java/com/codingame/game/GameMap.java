@@ -129,7 +129,7 @@ public class GameMap {
                     continue;
                 }
 
-                int fromIndex = i+1;
+                int fromIndex = i + 1;
                 while (rowsToSkip.contains(fromIndex)) {
                     fromIndex++;
                 }
@@ -147,7 +147,7 @@ public class GameMap {
                     continue;
                 }
 
-                int fromIndex = i-1;
+                int fromIndex = i - 1;
                 while (rowsToSkip.contains(fromIndex)) {
                     fromIndex--;
                 }
@@ -202,7 +202,7 @@ public class GameMap {
                 return false;
             }
             // move to the next tile
-            pos = pos.add(step.direction.asValue());
+            pos.add(step.direction.asValue());
             if (!isInBounds(pos)
                     || !getTile(pos.x, pos.y).hasOppDir(step.direction)) { // check if the current tile we moved to has a path to the previous tile
                 return false;
@@ -218,7 +218,7 @@ public class GameMap {
                 throw new InvalidAction("Invalid move!");
             }
             time += 1.0 / steps.size();
-            Vector2 offset = step.direction.asValue().mult(step.amount);
+            Vector2 offset = new Vector2(step.direction.asValue()).mult(step.amount);
             Vector2 pos = new Vector2(playerController.getPos());
             pos.add(offset);
             playerController.setPosInMap(pos, time);
