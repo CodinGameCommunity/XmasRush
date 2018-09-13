@@ -197,7 +197,7 @@ public class Referee extends AbstractReferee {
                 } else if (action instanceof MoveAction) {
                     MoveAction moveAction = (MoveAction)action;
                     List<MoveAction.Step> steps = moveAction.steps;
-                    playerController.moveAgentBy(steps);
+                    map.moveAgentBy(playerController, steps);
                 }
             } catch (NumberFormatException | AbstractPlayer.TimeoutException | InvalidAction e) {
                 player.deactivate("Eliminated!");

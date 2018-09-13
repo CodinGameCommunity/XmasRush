@@ -6,7 +6,7 @@ public class Player1 {
 
         while (true) {
             String input = scanner.nextLine();
-            System.out.println("MOVE 2 DOWN;1 RIGHT");
+            System.out.println("MOVE 2 DOWN;1 RIGHT;1 UP");
         }
     }
 }

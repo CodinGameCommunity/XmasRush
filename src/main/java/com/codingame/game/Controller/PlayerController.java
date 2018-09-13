@@ -1,7 +1,5 @@
 package com.codingame.game.Controller;
 
-import com.codingame.game.InputActions.InvalidAction;
-import com.codingame.game.InputActions.MoveAction;
 import com.codingame.game.Item;
 import com.codingame.game.Player;
 import com.codingame.game.Utils.Constants;
@@ -25,22 +23,12 @@ public class PlayerController {
 
     public void setPosInMap(Vector2 pos) {
         model.setAgentPosition(pos);
-        view.setPosInMap(pos.y, pos.x);
+        view.setPosInMap(pos, 1.0);
     }
 
-    public void moveAgentBy(List<MoveAction.Step> steps) throws InvalidAction {
-        double time = 0;
-        for (MoveAction.Step step : steps) {
-            Vector2 offset = step.direction.asValue().mult(step.amount);
-            Vector2 newPos = model.getAgentPosition().add(offset);
-            if (newPos.x < 0 || newPos.y < 0 || newPos.x >= Constants.MAP_WIDTH || newPos.y >= Constants.MAP_HEIGHT) {
-                throw new InvalidAction("Out of map bounds!");
-            }
-            model.setAgentPosition(newPos);
-
-            time += 1.0 / steps.size();
-            view.setPosInMap(newPos.x, newPos.y, time);
-        }
+    public void setPosInMap(Vector2 pos, double time) {
+        model.setAgentPosition(pos);
+        view.setPosInMap(pos, time);
     }
 
     public Vector2 getPos() {

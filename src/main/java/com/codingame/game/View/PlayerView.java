@@ -1,6 +1,7 @@
 package com.codingame.game.View;
 
 import com.codingame.game.Utils.Constants;
+import com.codingame.game.Utils.Vector2;
 import com.codingame.gameengine.module.entities.GraphicEntityModule;
 import com.codingame.gameengine.module.entities.Sprite;
 
@@ -16,14 +17,14 @@ public class PlayerView {
                 .setZIndex(Constants.MapLayers.AGENTS.asValue());
     }
 
-    public void setPosInMap(int i, int j) {
-        int x = Constants.MAP_POS_X + i * (Constants.TILE_SIZE + Constants.TILES_OFFSET);
-        int y = Constants.MAP_POS_Y + j * (Constants.TILE_SIZE + Constants.TILES_OFFSET);
+    public void setPosInMap(Vector2 pos) {
+        int x = Constants.MAP_POS_X + pos.y * (Constants.TILE_SIZE + Constants.TILES_OFFSET);
+        int y = Constants.MAP_POS_Y + pos.x * (Constants.TILE_SIZE + Constants.TILES_OFFSET);
         sprite.setX(x).setY(y);
     }
 
-    public void setPosInMap(int i, int j, double time) {
-        setPosInMap(i, j);
+    public void setPosInMap(Vector2 pos, double time) {
+        setPosInMap(pos);
         graphicEntityModule.commitEntityState(time, sprite);
     }
 }

@@ -1,6 +1,9 @@
 package com.codingame.game;
 
+import com.codingame.game.Controller.PlayerController;
 import com.codingame.game.Controller.TileController;
+import com.codingame.game.InputActions.InvalidAction;
+import com.codingame.game.InputActions.MoveAction;
 import com.codingame.game.Model.TileModel;
 import com.codingame.game.Utils.Constants;
 import com.codingame.game.Utils.Vector2;
@@ -185,5 +188,40 @@ public class GameMap {
             return poppedTile;
         }
         return null;
+    }
+
+    private boolean isInBounds(Vector2 pos) {
+        return (pos.x >= 0 && pos.y >= 0 && pos.x < Constants.MAP_WIDTH && pos.y < Constants.MAP_HEIGHT);
+    }
+
+    private boolean canMove(PlayerController playerController, MoveAction.Step step) {
+        Vector2 pos = new Vector2(playerController.getPos());
+        for (int i = 0; i < step.amount; i++) {
+            // check if the current tile has a path to the next tile
+            if (!getTile(pos.x, pos.y).hasDir(step.direction)) {
+                return false;
+            }
+            // move to the next tile
+            pos = pos.add(step.direction.asValue());
+            if (!isInBounds(pos)
+                    || !getTile(pos.x, pos.y).hasOppDir(step.direction)) { // check if the current tile we moved to has a path to the previous tile
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public void moveAgentBy(PlayerController playerController, List<MoveAction.Step> steps) throws InvalidAction {
+        double time = 0;
+        for (MoveAction.Step step : steps) {
+            if (!canMove(playerController, step)) {
+                throw new InvalidAction("Invalid move!");
+            }
+            time += 1.0 / steps.size();
+            Vector2 offset = step.direction.asValue().mult(step.amount);
+            Vector2 pos = new Vector2(playerController.getPos());
+            pos.add(offset);
+            playerController.setPosInMap(pos, time);
+        }
     }
 }
