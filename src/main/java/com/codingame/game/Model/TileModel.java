@@ -27,6 +27,11 @@ public class TileModel {
         updateDirections();
     }
 
+    public void setPattern(String pattern) {
+        this.pattern = pattern;
+        updateDirections();
+    }
+
     public boolean hasUp() {
         return hasUp;
     }
@@ -81,7 +86,7 @@ public class TileModel {
 
     public String toInputString() {
         if (item != null) {
-            return String.format("%s%c%d", pattern, item.getLowercaseIdentifier(), item.getPlayerId());
+            return String.format("%s%s%d", pattern, item.getUpperCaseIdentifier(), item.getPlayerId());
         } else {
             return String.format("%s--", pattern);
         }

@@ -39,7 +39,7 @@ public class GameMap {
             for (int j = 0; j < Constants.MAP_HEIGHT; j++) {
                 TileModel tileModel = new TileModel(get(i, j), new Vector2(i, j));
                 TileController tileController = new TileController(tileModel, new TileView());
-                tileController.init();
+                tileController.initView();
                 tileController.setPosInMap(tileModel.pos);
                 tileControllers[i][j] = tileController;
             }
