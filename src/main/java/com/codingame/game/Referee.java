@@ -136,8 +136,8 @@ public class Referee extends AbstractReferee {
     private void createPlayerTiles() {
         TileController playerTile = new TileController(new TileModel("0110"), new TileView());
         TileController opponentTile = new TileController(new TileModel("1001"), new TileView());
-        playerTile.init();
-        opponentTile.init();
+        playerTile.initView();
+        opponentTile.initView();
 
         playerTile.setPosAbsolute(new Vector2(Constants.PLAYER_TILE_POS_X, Constants.PLAYER_TILE_POS_Y));
         opponentTile.setPosAbsolute(new Vector2(Constants.OPPONENT_TILE_POS_X, Constants.OPPONENT_TILE_POS_Y));
@@ -225,7 +225,7 @@ public class Referee extends AbstractReferee {
             Vector2 pos = player.getAgentPosition();
             TileController tile = map.getTile(pos.x, pos.y);
             Item topCard = playerController.getTopCardItem();
-            if (tile.hasItem() && tile.getItem().getLowercaseIdentifier().equals(topCard.getLowercaseIdentifier()) && tile.getItem().getPlayerId() == player.getIndex()) {
+            if (tile.hasItem() && tile.getItem().getLowerCaseIdentifier().equals(topCard.getLowerCaseIdentifier()) && tile.getItem().getPlayerId() == player.getIndex()) {
                 playerController.removeCard(topCard);
                 tile.removeItem();
             }

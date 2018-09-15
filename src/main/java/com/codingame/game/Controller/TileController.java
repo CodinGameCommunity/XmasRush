@@ -16,9 +16,9 @@ public class TileController {
     }
 
     public void setPattern(String pattern) {
-        model.pattern = pattern;
+        model.setPattern(pattern);
 
-        init();
+        initView();
     }
 
     public void rotate(int numTimes) {
@@ -27,9 +27,7 @@ public class TileController {
         if (numTimes == 0) {
             return;
         }
-        model.pattern = model.pattern.substring(model.pattern.length() - numTimes)
-                + model.pattern.substring(0, model.pattern.length() - numTimes);
-
+        model.rotate(numTimes);
         view.rotate(numTimes);
     }
 
@@ -43,7 +41,7 @@ public class TileController {
         view.setPosAbsolute(pos.x, pos.y);
     }
 
-    public void init() {
+    public void initView() {
         view.init(this.model);
     }
 
@@ -99,5 +97,9 @@ public class TileController {
     @Override
     public String toString() {
         return this.model.pattern;
+    }
+
+    public String toInputString() {
+        return model.toInputString();
     }
 }

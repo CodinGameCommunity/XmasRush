@@ -9,8 +9,12 @@ public class Item {
         this.playerId = playerId;
     }
 
-    public String getLowercaseIdentifier() {
+    public String getLowerCaseIdentifier() {
         return this.identifier.toLowerCase();
+    }
+
+    public String getUpperCaseIdentifier() {
+        return this.identifier.toUpperCase();
     }
 
     public int getPlayerId() {
