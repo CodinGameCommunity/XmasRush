@@ -91,6 +91,11 @@ public class TileView {
         group.add(this.item);
     }
 
+    public void removeItem() {
+        this.item.setVisible(false);
+        group.remove(this.item);
+    }
+
     public void setPosInMap(int i, int j) {
         int x = Constants.MAP_POS_X + i * (Constants.TILE_SIZE + Constants.TILES_OFFSET);
         int y = Constants.MAP_POS_Y + j * (Constants.TILE_SIZE + Constants.TILES_OFFSET);

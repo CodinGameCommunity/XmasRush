@@ -1,13 +1,12 @@
 package com.codingame.game;
 
+import com.codingame.game.Controller.CardController;
 import com.codingame.game.Controller.PlayerController;
 import com.codingame.game.Controller.TileController;
-import com.codingame.game.InputActions.AbstractAction;
-import com.codingame.game.InputActions.InvalidAction;
-import com.codingame.game.InputActions.MoveAction;
-import com.codingame.game.InputActions.PushAction;
+import com.codingame.game.InputActions.*;
 import com.codingame.game.Model.TileModel;
 import com.codingame.game.Utils.Constants;
+import com.codingame.game.Utils.Utils;
 import com.codingame.game.Utils.Vector2;
 import com.codingame.game.View.CardView;
 import com.codingame.game.View.PlayerView;
@@ -17,6 +16,7 @@ import com.codingame.gameengine.core.AbstractReferee;
 import com.codingame.gameengine.core.MultiplayerGameManager;
 import com.codingame.gameengine.module.entities.GraphicEntityModule;
 import com.codingame.gameengine.module.entities.Sprite;
+import com.codingame.gameengine.module.entities.Text;
 import com.google.inject.Inject;
 
 import java.util.*;
@@ -29,6 +29,8 @@ public class Referee extends AbstractReferee {
 
     private List<PlayerController> playerControllers = new ArrayList<>();
 
+    private Text turnText;
+
     @Override
     public void init() {
         TileView.graphicEntityModule = graphicEntityModule;
@@ -38,14 +40,14 @@ public class Referee extends AbstractReferee {
         Properties params = gameManager.getGameParameters();
         Constants.random = new Random(getSeed(params));
 
-        // TODO: update this when we have gameplay
-        gameManager.setMaxTurns(5);
+        gameManager.setMaxTurns(150);
 
         createBackground();
         createPlayers();
         createMap();
         createPlayerTiles();
         createCards();
+        createTexts();
     }
 
     private Long getSeed(Properties params) {
@@ -87,11 +89,21 @@ public class Referee extends AbstractReferee {
                 int playerId = player.getIndex();
                 int orientation = playerId == 0 ? 1 : -1;
                 Vector2 cardPos = new Vector2(Constants.CARDS_POSITIONS.get(playerId)).add(new Vector2(0, orientation * i * Constants.CARDS_OFFSET));
-                playerControllers.get(player.getIndex()).addItemCard(new Item(shuffledItemIds.get(i), player.getIndex()), cardPos);
+                playerControllers.get(player.getIndex()).addCard(new Item(shuffledItemIds.get(i), player.getIndex()), cardPos);
             }
         }
 
         playerControllers.get(0).flipTopCard();
+    }
+
+    private void createTexts() {
+        turnText = graphicEntityModule.createText(String.format("Turn: %s", Action.Type.PUSH))
+                .setX(Constants.TURN_TEXT_POS_X)
+                .setY(Constants.TURN_TEXT_POS_Y)
+                .setFontSize(50)
+                .setFillColor(0x000000)
+                .setAnchorX(1)
+                .setAnchorY(1);
     }
 
     private void drawArrows() {
@@ -109,8 +121,7 @@ public class Referee extends AbstractReferee {
                         arrowRot = 0;
                         createSprite("arrow.png", arrowPosX, arrowPosY, Math.toRadians(arrowRot), Constants.MapLayers.BACKGROUND.asValue());
                     }
-                }
-                else if (i % 2 != 0) {
+                } else if (i % 2 != 0) {
                     if (j == 0) {
                         arrowPosX -= arrowOffset;
                         arrowRot = 90;
@@ -180,33 +191,36 @@ public class Referee extends AbstractReferee {
         }
     }
 
-    private void doPlayerActions() {
+    private void doPlayerActions(Action.Type turnType) {
         List<PlayerAction> playerPushRowActions = new ArrayList<>();
         List<PlayerAction> playerPushColumnActions = new ArrayList<>();
         for (Player player : gameManager.getActivePlayers()) {
             try {
                 PlayerController playerController = playerControllers.get(player.getIndex());
-                AbstractAction action = player.getAction();
-                if (action instanceof PushAction) {
+                Action action = player.getAction();
+                if (action instanceof PushAction && turnType == Action.Type.PUSH) {
                     PushAction pushAction = (PushAction)action;
                     if (pushAction.direction == Constants.Direction.RIGHT || pushAction.direction == Constants.Direction.LEFT) {
                         playerPushRowActions.add(new PlayerAction(playerController, pushAction));
                     } else {
                         playerPushColumnActions.add(new PlayerAction(playerController, pushAction));
                     }
-                } else if (action instanceof MoveAction) {
+                } else if (action instanceof MoveAction && turnType == Action.Type.MOVE) {
                     MoveAction moveAction = (MoveAction)action;
                     List<MoveAction.Step> steps = moveAction.steps;
                     map.moveAgentBy(playerController, steps);
+                } else {
+                    throw new InvalidAction(String.format("can't \"%s\" while expecting a %s action", action, turnType));
                 }
-            } catch (AbstractPlayer.TimeoutException e) {
-                player.deactivate(String.format("%s: timeout!", player.getNicknameToken()));
+            } catch (AbstractPlayer.TimeoutException | IndexOutOfBoundsException e) {
+                player.deactivate(String.format("%s: timeout", player.getNicknameToken()));
+                gameManager.addToGameSummary(String.format("%s: timeout - no input provided", player.getNicknameToken()));
             } catch (InvalidAction e) {
-                player.deactivate(String.format("%s: invalid input \"%s\"!", player.getNicknameToken(), e.getMessage()));
-            } catch (IndexOutOfBoundsException e) {
-                player.deactivate(String.format("%s: no input provided!", player.getNicknameToken()));
+                player.deactivate(String.format("%s: invalid input", player.getNicknameToken()));
+                gameManager.addToGameSummary(String.format("%s: invalid input - %s", player.getNicknameToken(), e.getMessage()));
             }
         }
+
         List<Integer> pushedRows = new ArrayList<>();
         playerPushRowActions.forEach(playerAction -> {
             PushAction action = (PushAction)playerAction.action;
@@ -214,6 +228,16 @@ public class Referee extends AbstractReferee {
             TileController tile = map.pushRow(playerAction.player.getTile(), action.lineId, action.direction);
             tile.setPosAbsolute(playerAction.player.getTilePosition());
             playerAction.player.setTile(tile);
+
+            // if there's a player on the pushed row move them too
+            for (Player player : gameManager.getActivePlayers()) {
+                if (player.getAgentPosition().x == action.lineId) {
+                    Vector2 pos = new Vector2(playerControllers.get(player.getIndex()).getPos());
+                    pos.add(action.direction.asValue());
+                    pos.y = Utils.wrap(pos.y, 0, Constants.MAP_HEIGHT - 1);
+                    playerControllers.get(player.getIndex()).setPosInMap(pos);
+                }
+            }
         });
 
         final List<Integer> rowsToSkip = pushedRows;
@@ -222,6 +246,20 @@ public class Referee extends AbstractReferee {
             TileController tile = map.pushColumn(playerAction.player.getTile(), action.lineId, action.direction, rowsToSkip);
             tile.setPosAbsolute(playerAction.player.getTilePosition());
             playerAction.player.setTile(tile);
+
+            // if there's a player on the pushed column move them too
+            for (Player player : gameManager.getActivePlayers()) {
+                if (player.getAgentPosition().y == action.lineId) {
+                    Vector2 pos = new Vector2(playerControllers.get(player.getIndex()).getPos());
+                    pos.add(action.direction.asValue());
+                    // add the extra offset for pushed rows
+                    if (rowsToSkip.contains(pos.x)) {
+                        pos.add(action.direction.asValue());
+                    }
+                    pos.x = Utils.wrap(pos.x, 0, Constants.MAP_WIDTH - 1);
+                    playerControllers.get(player.getIndex()).setPosInMap(pos);
+                }
+            }
         });
     }
 
@@ -230,10 +268,15 @@ public class Referee extends AbstractReferee {
             PlayerController playerController = playerControllers.get(player.getIndex());
             Vector2 pos = player.getAgentPosition();
             TileController tile = map.getTile(pos.x, pos.y);
-            Item topCard = playerController.getTopCardItem();
-            if (tile.hasItem() && tile.getItem().getLowerCaseIdentifier().equals(topCard.getLowerCaseIdentifier()) && tile.getItem().getPlayerId() == player.getIndex()) {
-                playerController.removeCard(topCard);
+            if (!tile.hasItem()) return;
+
+            CardController topCard = playerController.getTopCard();
+            if (tile.getItem().getIdentifier().equals(topCard.getItem().getIdentifier())
+                    && tile.getItem().getPlayerId() == player.getIndex()) {
+                playerController.removeTopCard();
+                playerController.flipTopCard();
                 tile.removeItem();
+                gameManager.addToGameSummary(String.format("%s: completed a quest card", player.getNicknameToken()));
             }
         });
     }
@@ -248,13 +291,20 @@ public class Referee extends AbstractReferee {
     }
 
     private void declareWinner(Player player) {
-        System.out.println(player.getNicknameToken() + " is a winner!");
+        gameManager.addToGameSummary(player.getNicknameToken() + " is a winner!");
+    }
+
+    private void updateTexts(Action.Type turnType) {
+        turnText.setText(String.format("Turn: %s", turnType));
+        graphicEntityModule.commitEntityState(0, turnText);
     }
 
     @Override
     public void gameTurn(int turn) {
+        Action.Type turnType = Action.Type.fromInt(turn % 2);
+        updateTexts(turnType);
         sendPlayerInputs();
-        doPlayerActions();
+        doPlayerActions(turnType);
         checkForFinishedItems();
         checkForWinner();
     }
@@ -270,9 +320,9 @@ public class Referee extends AbstractReferee {
 
     static class PlayerAction {
         PlayerController player;
-        AbstractAction action;
+        Action action;
 
-        public PlayerAction(PlayerController player, AbstractAction action) {
+        public PlayerAction(PlayerController player, Action action) {
             this.player = player;
             this.action = action;
         }

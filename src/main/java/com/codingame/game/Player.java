@@ -1,5 +1,5 @@
 package com.codingame.game;
-import com.codingame.game.InputActions.AbstractAction;
+import com.codingame.game.InputActions.Action;
 import com.codingame.game.InputActions.InvalidAction;
 import com.codingame.game.InputActions.MoveAction;
 import com.codingame.game.InputActions.PushAction;
@@ -12,7 +12,7 @@ import java.util.regex.Matcher;
 public class Player extends AbstractMultiplayerPlayer {
     private Vector2 pos;
 
-    public AbstractAction getAction() throws TimeoutException, IndexOutOfBoundsException, InvalidAction {
+    public Action getAction() throws TimeoutException, IndexOutOfBoundsException, InvalidAction {
         String playerAction = this.getOutputs().get(0);
         Matcher matchPush = Constants.PLAYER_INPUT_PUSH_PATTERN.matcher(playerAction);
         Matcher matchMove = Constants.PLAYER_INPUT_MOVE_PATTERN.matcher(playerAction);

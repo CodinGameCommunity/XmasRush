@@ -34,6 +34,8 @@ public class Constants {
     public static final int OPPONENT_CARDS_POS_X = Constants.SCREEN_WIDTH - PLAYER_CARDS_POS_X;
     public static final int OPPONENT_CARDS_POS_Y = Constants.SCREEN_HEIGHT - PLAYER_CARDS_POS_Y;
 
+    public static final int TURN_TEXT_POS_X = Constants.SCREEN_WIDTH - 50;
+    public static final int TURN_TEXT_POS_Y = 100;
 
     public enum MapLayers {
         BACKGROUND(0),

@@ -46,4 +46,8 @@ public class CardView {
         front.setVisible(!front.isVisible());
         item.setVisible(!item.isVisible());
     }
+
+    public void hide() {
+        group.setVisible(false);
+    }
 }
