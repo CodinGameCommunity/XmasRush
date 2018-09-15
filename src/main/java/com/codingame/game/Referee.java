@@ -199,8 +199,12 @@ public class Referee extends AbstractReferee {
                     List<MoveAction.Step> steps = moveAction.steps;
                     map.moveAgentBy(playerController, steps);
                 }
-            } catch (NumberFormatException | AbstractPlayer.TimeoutException | InvalidAction e) {
-                player.deactivate("Eliminated!");
+            } catch (AbstractPlayer.TimeoutException e) {
+                player.deactivate(String.format("%s: timeout!", player.getNicknameToken()));
+            } catch (InvalidAction e) {
+                player.deactivate(String.format("%s: invalid input \"%s\"!", player.getNicknameToken(), e.getMessage()));
+            } catch (IndexOutOfBoundsException e) {
+                player.deactivate(String.format("%s: no input provided!", player.getNicknameToken()));
             }
         }
         List<Integer> pushedRows = new ArrayList<>();

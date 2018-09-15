@@ -13,6 +13,10 @@ public class MoveAction extends AbstractAction {
             this.amount = amount;
             this.direction = direction;
         }
+        @Override
+        public String toString() {
+            return String.format("MOVE %d %s", amount, direction);
+        }
     }
     public List<Step> steps;
 
