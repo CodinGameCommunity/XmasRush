@@ -198,17 +198,21 @@ public class Referee extends AbstractReferee {
             try {
                 PlayerController playerController = playerControllers.get(player.getIndex());
                 Action action = player.getAction();
-                if (action instanceof PushAction && turnType == Action.Type.PUSH) {
+                if (turnType == Action.Type.PUSH && action instanceof PushAction) {
                     PushAction pushAction = (PushAction)action;
                     if (pushAction.direction == Constants.Direction.RIGHT || pushAction.direction == Constants.Direction.LEFT) {
                         playerPushRowActions.add(new PlayerAction(playerController, pushAction));
                     } else {
                         playerPushColumnActions.add(new PlayerAction(playerController, pushAction));
                     }
-                } else if (action instanceof MoveAction && turnType == Action.Type.MOVE) {
-                    MoveAction moveAction = (MoveAction)action;
-                    List<MoveAction.Step> steps = moveAction.steps;
-                    map.moveAgentBy(playerController, steps);
+                } else if (turnType == Action.Type.MOVE) {
+                    if (action instanceof MoveAction) {
+                        MoveAction moveAction = (MoveAction) action;
+                        List<MoveAction.Step> steps = moveAction.steps;
+                        map.moveAgentBy(playerController, steps);
+                    } else if (action instanceof PassAction) {
+                        // do nothing
+                    }
                 } else {
                     throw new InvalidAction(String.format("can't \"%s\" while expecting a %s action", action, turnType));
                 }

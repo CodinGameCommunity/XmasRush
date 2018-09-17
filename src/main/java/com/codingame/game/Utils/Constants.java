@@ -76,6 +76,10 @@ public class Constants {
             .compile("(?<amount>[1-6]) (?<direction>(?:\\bup\\b|\\bright\\b|\\bdown\\b|\\bleft\\b))",
                     Pattern.CASE_INSENSITIVE);
 
+    public static final Pattern PLAYER_INPUT_PASS_PATTERN = Pattern
+            .compile("PASS",
+                    Pattern.CASE_INSENSITIVE);
+
     public enum Direction {
         UP(Vector2.LEFT),
         RIGHT(Vector2.DOWN),
