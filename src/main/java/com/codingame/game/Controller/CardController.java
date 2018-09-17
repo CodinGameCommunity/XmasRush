@@ -19,4 +19,9 @@ public class CardController {
     public void flip() {
         view.flip();
     }
+
+    public void remove() {
+        model = null;
+        view.hide();
+    }
 }

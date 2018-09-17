@@ -2,7 +2,7 @@ package com.codingame.game.InputActions;
 
 import com.codingame.game.Utils.Constants;
 
-public class PushAction extends AbstractAction {
+public class PushAction extends Action {
     public int lineId;
     public Constants.Direction direction;
 

@@ -1,2 +1,3 @@
 gameloop
-write join("PUSH", "1", "RIGHT")
+write join("PUSH", "3", "RIGHT")
+write PASS
