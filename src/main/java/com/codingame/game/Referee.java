@@ -301,7 +301,7 @@ public class Referee extends AbstractReferee {
 
     @Override
     public void gameTurn(int turn) {
-        Action.Type turnType = Action.Type.fromInt(turn % 2);
+        Action.Type turnType = Action.Type.values()[turn % 2];
         updateTexts(turnType);
         sendPlayerInputs();
         doPlayerActions(turnType);
