@@ -17,6 +17,10 @@ public class Item {
         return this.identifier.toUpperCase();
     }
 
+    public String getIdentifier() {
+        return this.identifier;
+    }
+
     public int getPlayerId() {
         return this.playerId;
     }

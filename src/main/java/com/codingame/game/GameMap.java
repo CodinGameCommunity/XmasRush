@@ -90,6 +90,18 @@ public class GameMap {
         }
     }
 
+    public String[][] getTilePatterns() {
+        if (tilePatterns == null) {
+            return null;
+        }
+
+        final String[][] result = new String[tilePatterns.length][];
+        for (int i = 0; i < tilePatterns.length; i++) {
+            result[i] = Arrays.copyOf(tilePatterns[i], tilePatterns[i].length);
+        }
+        return result;
+    }
+
     public String get(int i, int j) {
         return tilePatterns[i][j];
     }
