@@ -5,7 +5,7 @@ import com.codingame.game.Utils.Constants;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MoveAction extends AbstractAction {
+public class MoveAction extends Action {
     public class Step {
         public int amount;
         public Constants.Direction direction;

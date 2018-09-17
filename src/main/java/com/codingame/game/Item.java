@@ -13,10 +13,6 @@ public class Item {
         return this.identifier.toLowerCase();
     }
 
-    public String getUpperCaseIdentifier() {
-        return this.identifier.toUpperCase();
-    }
-
     public String getIdentifier() {
         return this.identifier;
     }

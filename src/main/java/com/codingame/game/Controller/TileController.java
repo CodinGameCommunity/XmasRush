@@ -72,6 +72,7 @@ public class TileController {
 
     public void removeItem() {
         model.item = null;
+        view.removeItem();
     }
 
     public Vector2 getPos() {

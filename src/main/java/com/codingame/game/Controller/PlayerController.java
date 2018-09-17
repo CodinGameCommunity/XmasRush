@@ -21,12 +21,22 @@ public class PlayerController {
         this.view = view;
     }
 
+    private boolean isPosValid(Vector2 pos) {
+        return (pos.x >= 0 && pos.x < Constants.MAP_WIDTH && pos.y >= 0 && pos.y < Constants.MAP_HEIGHT);
+    }
+
     public void setPosInMap(Vector2 pos) {
+        if (!isPosValid(pos)) {
+            throw new RuntimeException("Player position out of map bounds!");
+        }
         model.setAgentPosition(pos);
         view.setPosInMap(pos, 1.0);
     }
 
     public void setPosInMap(Vector2 pos, double time) {
+        if (!isPosValid(pos)) {
+            throw new RuntimeException("Player position out of map bounds!");
+        }
         model.setAgentPosition(pos);
         view.setPosInMap(pos, time);
     }
@@ -58,23 +68,35 @@ public class PlayerController {
         return new Vector2(x, y);
     }
 
-    public void addItemCard(Item item, Vector2 pos) {
+    public void addCard(Item item, Vector2 pos) {
         CardView view = new CardView(this.model.getIndex(), item.getLowerCaseIdentifier());
         view.setPosAbsolute(pos.x, pos.y);
         CardController card = new CardController(item, view);
         this.cards.add(card);
     }
 
-    public Item getTopCardItem() {
-        return this.cards.get(this.cards.size() - 1).getItem();
+    public void removeTopCard() {
+        CardController card = getTopCard();
+        card.remove();
+        this.cards.remove(card);
+    }
+
+    public void removeCard(CardController cardController) {
+        for (CardController card : cards) {
+            if (card == cardController) {
+                card.remove();
+                this.cards.remove(card);
+                break;
+            }
+        }
+    }
+
+    public CardController getTopCard() {
+        return this.cards.get(this.cards.size() - 1);
     }
 
     public void flipTopCard() {
-        this.cards.get(this.cards.size() - 1).flip();
-    }
-
-    public void removeCard(Item item) {
-        this.cards.remove(item);
+        getTopCard().flip();
     }
 
     public boolean hasCards() {
