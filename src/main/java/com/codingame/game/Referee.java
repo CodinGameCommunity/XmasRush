@@ -216,12 +216,15 @@ public class Referee extends AbstractReferee {
                 } else {
                     throw new InvalidAction(String.format("can't \"%s\" while expecting a %s action", action, turnType));
                 }
-            } catch (AbstractPlayer.TimeoutException | IndexOutOfBoundsException e) {
+            } catch (AbstractPlayer.TimeoutException e) {
                 player.deactivate(String.format("%s: timeout", player.getNicknameToken()));
                 gameManager.addToGameSummary(String.format("%s: timeout - no input provided", player.getNicknameToken()));
             } catch (InvalidAction e) {
                 player.deactivate(String.format("%s: invalid input", player.getNicknameToken()));
                 gameManager.addToGameSummary(String.format("%s: invalid input - %s", player.getNicknameToken(), e.getMessage()));
+            } catch (IndexOutOfBoundsException e) {
+                player.deactivate(String.format("%s: timeout", player.getNicknameToken()));
+                gameManager.addToGameSummary(String.format("%s: timeout - player provided an empty input", player.getNicknameToken()));
             }
         }
 
