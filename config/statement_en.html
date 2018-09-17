@@ -6,7 +6,26 @@
             <span class="icon icon-goal">&nbsp;</span> <span>The Goal</span>
         </h2>
         <div class="statement-goal-content">
-            TODO
+            <!-- Protocol block -->
+
+            <div class="blk">
+                <div class="title">Output for one game turn</div>
+
+                <div class="text">
+                    <span class="statement-lineno">One line</span>: the action of your agent that can be one of these:<br/>
+                    During the <b>PUSH</b> turn:
+                    <ul>
+                        <li><action>PUSH id direction</action> where <b>id</b> can be <action>1</action>, <action>3</action> or <action>5</action> and <b>direction</b> <action>UP</action>, <action>DOWN</action>, <action>LEFT</action> or <action>RIGHT</action></li>
+                        <li style="list-style-type:none">Example: <action>PUSH 3 UP</action></li>
+                    </ul>
+                    During the <b>MOVE</b> turn:
+                    <ul>
+                        <li><action>MOVE amount direction</action> where <b>amount</b> can be <action>1</action>, <action>2</action>, <action>3</action>, <action>4</action>, <action>5</action> or <action>6</action> and <b>direction</b> <action>UP</action>, <action>DOWN</action>, <action>LEFT</action> or <action>RIGHT</action></li>
+                        <li><action>PASS</action></li>
+                        <li style="list-style-type:none">Example: <action>MOVE 2 LEFT</action> or <action>PASS</action></li>
+                    </ul>
+                </div>
+                <!-- Protocol block -->
         </div>
     </div>
 </div>
