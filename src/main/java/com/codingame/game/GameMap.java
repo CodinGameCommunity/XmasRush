@@ -96,7 +96,7 @@ public class GameMap {
         for (int j = 0; j < Constants.MAP_HEIGHT; j++) {
             sb = new StringBuilder();
             sb.append(tileControllers[0][j].toInputString());
-            for (int i = 0; i < Constants.MAP_WIDTH; i++) {
+            for (int i = 1; i < Constants.MAP_WIDTH; i++) {
                 sb.append(" ");
                 sb.append(tileControllers[i][j].toInputString());
             }
