@@ -1,3 +1,7 @@
 gameloop
+loop 7
+    read line:string(48)
+read numPlayerCards:int questItemId:word(1) numOpponentCards:int
+read playerX:int playerY:int opponentX:int opponentY:int
+read playerTile:word(6) opponentTile:word(6)
 write join("PUSH", "3", "RIGHT")
-write PASS
