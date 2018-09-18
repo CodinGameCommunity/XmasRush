@@ -90,6 +90,21 @@ public class GameMap {
         }
     }
 
+    public String[] toInputStrings() {
+        final String[] result = new String[Constants.MAP_HEIGHT];
+        StringBuilder sb;
+        for (int j = 0; j < Constants.MAP_HEIGHT; j++) {
+            sb = new StringBuilder();
+            sb.append(tileControllers[0][j].toInputString());
+            for (int i = 1; i < Constants.MAP_WIDTH; i++) {
+                sb.append(" ");
+                sb.append(tileControllers[i][j].toInputString());
+            }
+            result[j] = sb.toString();
+        }
+        return result;
+    }
+
     public String get(int i, int j) {
         return tilePatterns[i][j];
     }

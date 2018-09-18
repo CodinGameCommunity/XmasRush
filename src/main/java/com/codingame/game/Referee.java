@@ -185,8 +185,35 @@ public class Referee extends AbstractReferee {
 
     private void sendPlayerInputs() {
         for (Player player : gameManager.getActivePlayers()) {
-            // TODO: send actual inputs
-            player.sendInputLine("0");
+            // Game Map
+            String[] mapRows = map.toInputStrings();
+            for (int i = 0; i < Constants.MAP_HEIGHT; i++) {
+                player.sendInputLine(mapRows[i]);
+            }
+
+            // Player deck
+            PlayerController playerController = playerControllers.get(player.getIndex());
+            player.sendInputLine(Integer.toString(playerController.getNumCards()));
+            player.sendInputLine(playerController.getTopCard().getItem().getIdentifier() + player.getIndex());
+
+            // Opponents deck
+            int opponentIndex = (player.getIndex() == 0) ? 1 : 0;
+            PlayerController opponentController = playerControllers.get(opponentIndex);
+            player.sendInputLine(Integer.toString(opponentController.getNumCards()));
+
+            // Player agent position
+            player.sendInputLine(Integer.toString(playerController.getPos().x));
+            player.sendInputLine(Integer.toString(playerController.getPos().y));
+
+            // Opponent agent position
+            player.sendInputLine(Integer.toString(opponentController.getPos().x));
+            player.sendInputLine(Integer.toString(opponentController.getPos().y));
+
+            // Player extra tile
+            player.sendInputLine(playerController.getTile().toInputString());
+
+            // Opponent extra tile
+            player.sendInputLine(opponentController.getTile().toInputString());
             player.execute();
         }
     }
