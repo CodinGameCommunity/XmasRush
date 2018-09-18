@@ -90,14 +90,17 @@ public class GameMap {
         }
     }
 
-    public String[][] getTilePatterns() {
-        if (tilePatterns == null) {
-            return null;
-        }
-
-        final String[][] result = new String[tilePatterns.length][];
-        for (int i = 0; i < tilePatterns.length; i++) {
-            result[i] = Arrays.copyOf(tilePatterns[i], tilePatterns[i].length);
+    public String[] toInputStrings() {
+        final String[] result = new String[Constants.MAP_HEIGHT];
+        StringBuilder sb;
+        for (int j = 0; j < Constants.MAP_HEIGHT; j++) {
+            sb = new StringBuilder();
+            sb.append(tileControllers[0][j].toInputString());
+            for (int i = 0; i < Constants.MAP_WIDTH; i++) {
+                sb.append(" ");
+                sb.append(tileControllers[i][j].toInputString());
+            }
+            result[j] = sb.toString();
         }
         return result;
     }

@@ -186,17 +186,9 @@ public class Referee extends AbstractReferee {
     private void sendPlayerInputs() {
         for (Player player : gameManager.getActivePlayers()) {
             // Game Map
-            String[][] tilePatterns = map.getTilePatterns();
-            String[] currentTile;
-            for (int i = 0; i < tilePatterns.length; i++) {
-                StringBuilder sb = new StringBuilder();
-                currentTile = tilePatterns[i];
-                sb.append(currentTile[0]);
-                for (int j = 1; j < currentTile.length; j++) {
-                    sb.append(" ");
-                    sb.append(currentTile[j]);
-                }
-                player.sendInputLine(sb.toString());
+            String[] mapRows = map.toInputStrings();
+            for (int i = 0; i < Constants.MAP_HEIGHT; i++) {
+                player.sendInputLine(mapRows[i]);
             }
 
             // Player deck
@@ -210,10 +202,12 @@ public class Referee extends AbstractReferee {
             player.sendInputLine(Integer.toString(opponentController.getNumCards()));
 
             // Player agent position
-            player.sendInputLine(playerController.getPos().x + " " + playerController.getPos().y);
+            player.sendInputLine(Integer.toString(playerController.getPos().x));
+            player.sendInputLine(Integer.toString(playerController.getPos().y));
 
             // Opponent agent position
-            player.sendInputLine(opponentController.getPos().x + " " + opponentController.getPos().y);
+            player.sendInputLine(Integer.toString(opponentController.getPos().x));
+            player.sendInputLine(Integer.toString(opponentController.getPos().y));
 
             // Player extra tile
             player.sendInputLine(playerController.getTile().toInputString());
