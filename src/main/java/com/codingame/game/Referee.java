@@ -221,18 +221,26 @@ public class Referee extends AbstractReferee {
     private void doPlayerActions(Action.Type turnType) {
         List<PlayerAction> playerPushRowActions = new ArrayList<>();
         List<PlayerAction> playerPushColumnActions = new ArrayList<>();
+        PushAction prevPushAction = null;
         for (Player player : gameManager.getActivePlayers()) {
             try {
                 PlayerController playerController = playerControllers.get(player.getIndex());
                 Action action = player.getAction();
                 if (turnType == Action.Type.PUSH && action instanceof PushAction) {
                     PushAction pushAction = (PushAction)action;
-                    if (pushAction.direction == Constants.Direction.RIGHT || pushAction.direction == Constants.Direction.LEFT) {
+                    // check if both players tried to push against opposite directions on the same line
+                    if (prevPushAction != null && pushAction.lineId == prevPushAction.lineId && pushAction.direction == prevPushAction.direction.getOpposite()) {
+                        gameManager.addToGameSummary("WARNING: Both players tried to push in opposite directions. Nothing happens!");
+                        // clear the previous pending commands
+                        playerPushRowActions.clear();
+                        playerPushColumnActions.clear();
+                    } else if (pushAction.direction == Constants.Direction.RIGHT || pushAction.direction == Constants.Direction.LEFT) {
                         playerPushRowActions.add(new PlayerAction(playerController, pushAction));
                     } else {
                         playerPushColumnActions.add(new PlayerAction(playerController, pushAction));
                     }
-                } else if (turnType == Action.Type.MOVE) {
+                    prevPushAction = pushAction;
+                } else if (turnType == Action.Type.MOVE && (action instanceof MoveAction || action instanceof PassAction)) {
                     if (action instanceof MoveAction) {
                         MoveAction moveAction = (MoveAction) action;
                         List<MoveAction.Step> steps = moveAction.steps;
