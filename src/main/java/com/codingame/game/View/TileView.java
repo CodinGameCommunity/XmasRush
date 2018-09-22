@@ -3,6 +3,7 @@ package com.codingame.game.View;
 import com.codingame.game.Item;
 import com.codingame.game.Model.TileModel;
 import com.codingame.game.Utils.Constants;
+import com.codingame.game.Utils.Vector2;
 import com.codingame.gameengine.module.entities.GraphicEntityModule;
 import com.codingame.gameengine.module.entities.Group;
 import com.codingame.gameengine.module.entities.Sprite;
@@ -25,10 +26,9 @@ public class TileView {
                 .setImage("tile_background.png")
                 .setAnchor(0.5)
                 .setZIndex(Constants.MapLayers.BACKGROUND.asValue());
+        graphicEntityModule.commitEntityState(0, background);
         group = graphicEntityModule.createGroup()
-                .setScale(1)
-                .setX(0)
-                .setY(0);
+                .setScale(1);
         group.add(background);
     }
 
@@ -39,6 +39,7 @@ public class TileView {
                 .setAnchor(0.5)
                 .setRotation(Math.toRadians(0))
                 .setZIndex(Constants.MapLayers.TILES.asValue());
+        graphicEntityModule.commitEntityState(0, up);
         group.add(up);
     }
 
@@ -49,6 +50,7 @@ public class TileView {
                 .setAnchor(0.5)
                 .setRotation(Math.toRadians(90))
                 .setZIndex(Constants.MapLayers.TILES.asValue());
+        graphicEntityModule.commitEntityState(0, right);
         group.add(right);
     }
 
@@ -59,6 +61,7 @@ public class TileView {
                 .setAnchor(0.5)
                 .setRotation(Math.toRadians(180))
                 .setZIndex(Constants.MapLayers.TILES.asValue());
+        graphicEntityModule.commitEntityState(0, down);
         group.add(down);
     }
 
@@ -69,6 +72,7 @@ public class TileView {
                 .setAnchor(0.5)
                 .setRotation(Math.toRadians(270))
                 .setZIndex(Constants.MapLayers.TILES.asValue());
+        graphicEntityModule.commitEntityState(0, left);
         group.add(left);
     }
 
@@ -78,6 +82,7 @@ public class TileView {
                 .setImage(spritePath)
                 .setAnchor(0.5)
                 .setZIndex(Constants.MapLayers.ITEMS.asValue());
+        graphicEntityModule.commitEntityState(0, base);
         group.add(base);
     }
 
@@ -88,6 +93,7 @@ public class TileView {
                 .setImage(spritePath)
                 .setAnchor(0.5)
                 .setZIndex(Constants.MapLayers.ITEMS.asValue());
+        graphicEntityModule.commitEntityState(0, this.item);
         group.add(this.item);
     }
 
@@ -96,14 +102,30 @@ public class TileView {
         group.remove(this.item);
     }
 
-    public void setPosInMap(int i, int j) {
-        int x = Constants.MAP_POS_X + i * (Constants.TILE_SIZE + Constants.TILES_OFFSET);
-        int y = Constants.MAP_POS_Y + j * (Constants.TILE_SIZE + Constants.TILES_OFFSET);
+    public void setPosInMap(Vector2 pos, double time) {
+        int x = Constants.MAP_POS_X + pos.y * (Constants.TILE_SIZE + Constants.TILES_OFFSET);
+        int y = Constants.MAP_POS_Y + pos.x * (Constants.TILE_SIZE + Constants.TILES_OFFSET);
         group.setX(x).setY(y);
+
+        graphicEntityModule.commitEntityState(time, group);
     }
 
-    public void setPosAbsolute(int x, int y) {
-        group.setX(x).setY(y);
+    public void setSamePosInMap(double time) {
+        group.setX(group.getX() + 1);
+
+        graphicEntityModule.commitEntityState(time, group);
+    }
+
+    public void setPosAbsolute(Vector2 pos, double time) {
+        group.setX(pos.x).setY(pos.y);
+
+        graphicEntityModule.commitEntityState(time, group);
+    }
+
+    public void setSamePosAbsolute(double time) {
+        group.setX(group.getX() + 1);
+
+        graphicEntityModule.commitEntityState(time, group);
     }
 
     public void rotate(int numTimes) {
@@ -128,5 +150,7 @@ public class TileView {
         if (tile.hasLeft()) addLeft();
         if (tile.hasItem()) addItem(tile.item);
         if (tile.isBaseTile()) setBaseTile(tile.pos.x == 0 ? 0 : 1);
+
+        graphicEntityModule.commitEntityState(0, group);
     }
 }

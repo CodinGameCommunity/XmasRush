@@ -29,7 +29,7 @@ public class Player2 {
             System.err.println(playerX + " " + playerY + " " + opponentX + " " + opponentY);
             System.err.println(playerTile + " " + opponentTile);
 
-            if (turn == 0) System.out.println("PUSH 3 DOWN");
+            if (turn == 0) System.out.println("PUSH 1 LEFT");
             if (turn == 1) System.out.println("MOVE 1 UP");
             if (turn == 2) System.out.println("PUSH 5 LEFT");
             if (turn == 3) System.out.println("MOVE 1 DOWN");

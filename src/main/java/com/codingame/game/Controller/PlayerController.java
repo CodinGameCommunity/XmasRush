@@ -26,11 +26,7 @@ public class PlayerController {
     }
 
     public void setPosInMap(Vector2 pos) {
-        if (!isPosValid(pos)) {
-            throw new RuntimeException("Player position out of map bounds!");
-        }
-        model.setAgentPosition(pos);
-        view.setPosInMap(pos, 1.0);
+        setPosInMap(pos, 0);
     }
 
     public void setPosInMap(Vector2 pos, double time) {
@@ -39,6 +35,10 @@ public class PlayerController {
         }
         model.setAgentPosition(pos);
         view.setPosInMap(pos, time);
+    }
+
+    public void setSamePosInMap(double time) {
+        view.setSamePosInMap(time);
     }
 
     public Vector2 getPos() {
@@ -79,16 +79,6 @@ public class PlayerController {
         CardController card = getTopCard();
         card.remove();
         this.cards.remove(card);
-    }
-
-    public void removeCard(CardController cardController) {
-        for (CardController card : cards) {
-            if (card == cardController) {
-                card.remove();
-                this.cards.remove(card);
-                break;
-            }
-        }
     }
 
     public CardController getTopCard() {
