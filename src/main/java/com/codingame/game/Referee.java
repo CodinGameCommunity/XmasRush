@@ -33,9 +33,7 @@ public class Referee extends AbstractReferee {
 
     @Override
     public void init() {
-        TileView.graphicEntityModule = graphicEntityModule;
-        PlayerView.graphicEntityModule = graphicEntityModule;
-        CardView.graphicEntityModule = graphicEntityModule;
+        Utils.graphicEntityModule = graphicEntityModule;
 
         Properties params = gameManager.getGameParameters();
         Constants.random = new Random(getSeed(params));

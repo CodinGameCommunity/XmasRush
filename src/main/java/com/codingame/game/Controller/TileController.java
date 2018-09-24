@@ -3,6 +3,7 @@ package com.codingame.game.Controller;
 import com.codingame.game.Item;
 import com.codingame.game.Model.TileModel;
 import com.codingame.game.Utils.Constants;
+import com.codingame.game.Utils.Utils;
 import com.codingame.game.Utils.Vector2;
 import com.codingame.game.View.TileView;
 
@@ -40,9 +41,9 @@ public class TileController {
     }
 
     public void setPosInMap(Vector2 pos, double time) {
-        /*if (!isPosValid(pos)) {
+        if (!Utils.isPosValid(pos)) {
             throw new RuntimeException("Tile position out of map bounds!");
-        }*/
+        }
         model.pos = pos;
         view.setPosInMap(pos, time);
     }

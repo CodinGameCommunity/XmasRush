@@ -3,14 +3,14 @@ package com.codingame.game.View;
 import com.codingame.game.Item;
 import com.codingame.game.Model.TileModel;
 import com.codingame.game.Utils.Constants;
+import com.codingame.game.Utils.Utils;
 import com.codingame.game.Utils.Vector2;
-import com.codingame.gameengine.module.entities.GraphicEntityModule;
 import com.codingame.gameengine.module.entities.Group;
 import com.codingame.gameengine.module.entities.Sprite;
 
-public class TileView {
-    public static GraphicEntityModule graphicEntityModule;
+import static com.codingame.game.Utils.Utils.graphicEntityModule;
 
+public class TileView {
     private Group group;
 
     private Sprite background;
@@ -103,11 +103,7 @@ public class TileView {
     }
 
     public void setPosInMap(Vector2 pos, double time) {
-        int x = Constants.MAP_POS_X + pos.y * (Constants.TILE_SIZE + Constants.TILES_OFFSET);
-        int y = Constants.MAP_POS_Y + pos.x * (Constants.TILE_SIZE + Constants.TILES_OFFSET);
-        group.setX(x).setY(y);
-
-        graphicEntityModule.commitEntityState(time, group);
+        Utils.setPosInMap(group, pos, time);
     }
 
     public void setSamePosInMap(double time) {

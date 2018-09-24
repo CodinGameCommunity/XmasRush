@@ -1,13 +1,12 @@
 package com.codingame.game.View;
 
 import com.codingame.game.Utils.Constants;
-import com.codingame.gameengine.module.entities.GraphicEntityModule;
 import com.codingame.gameengine.module.entities.Group;
 import com.codingame.gameengine.module.entities.Sprite;
 
-public class CardView {
-    public static GraphicEntityModule graphicEntityModule;
+import static com.codingame.game.Utils.Utils.graphicEntityModule;
 
+public class CardView {
     private Group group;
 
     private Sprite front;

@@ -3,6 +3,7 @@ package com.codingame.game.Controller;
 import com.codingame.game.Item;
 import com.codingame.game.Player;
 import com.codingame.game.Utils.Constants;
+import com.codingame.game.Utils.Utils;
 import com.codingame.game.Utils.Vector2;
 import com.codingame.game.View.CardView;
 import com.codingame.game.View.PlayerView;
@@ -21,16 +22,12 @@ public class PlayerController {
         this.view = view;
     }
 
-    private boolean isPosValid(Vector2 pos) {
-        return (pos.x >= 0 && pos.x < Constants.MAP_WIDTH && pos.y >= 0 && pos.y < Constants.MAP_HEIGHT);
-    }
-
     public void setPosInMap(Vector2 pos) {
         setPosInMap(pos, 0);
     }
 
     public void setPosInMap(Vector2 pos, double time) {
-        if (!isPosValid(pos)) {
+        if (!Utils.isPosValid(pos)) {
             throw new RuntimeException("Player position out of map bounds!");
         }
         model.setAgentPosition(pos);
