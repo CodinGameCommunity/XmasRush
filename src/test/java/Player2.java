@@ -4,16 +4,32 @@ public class Player2 {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
+        int boardWidth = scanner.nextInt();
+        System.err.println(boardWidth);
+        int boardHeight = scanner.nextInt();
+        System.err.println(boardHeight);
+        int numItems = scanner.nextInt();
+        if (scanner.hasNextLine()) {
+            scanner.nextLine();
+        }
+
         int turn = 0;
-        
         while (true) {
-            for (int i = 0; i < 7; i++) {
+            for (int i = 0; i < boardHeight; i++) {
                 String line = scanner.nextLine();
                 System.err.println(line);
             }
+            for (int i = 0; i < numItems; i++) {
+                String itemId = scanner.next();
+                int itemPosX = scanner.nextInt();
+                int itemPosY = scanner.nextInt();
+                int itemPlayerId = scanner.nextInt();
+                System.err.println(itemId + " " + itemPosX + " " + itemPosY + " " + itemPlayerId);
+            }
+            int turnType = scanner.nextInt();
             int numPlayerCards = scanner.nextInt();
-            String questItemId = scanner.next();
             int numOpponentCards = scanner.nextInt();
+            String questItemId = scanner.next();
             int playerX = scanner.nextInt();
             int playerY = scanner.nextInt();
             int opponentX = scanner.nextInt();
@@ -25,7 +41,7 @@ public class Player2 {
             }
 
             // testing player input
-            System.err.println(numPlayerCards + " " + questItemId + " " + numOpponentCards);
+            System.err.println(turnType + " " + numPlayerCards + " " + " " + numOpponentCards + " " + questItemId);
             System.err.println(playerX + " " + playerY + " " + opponentX + " " + opponentY);
             System.err.println(playerTile + " " + opponentTile);
 

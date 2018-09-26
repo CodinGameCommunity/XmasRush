@@ -31,6 +31,8 @@ public class Referee extends AbstractReferee {
 
     private Text turnText;
 
+    private Action.Type turnType;
+
     @Override
     public void init() {
         TileView.graphicEntityModule = graphicEntityModule;
@@ -48,6 +50,8 @@ public class Referee extends AbstractReferee {
         createPlayerTiles();
         createCards();
         createTexts();
+
+        sendInitialInputs();
     }
 
     private Long getSeed(Properties params) {
@@ -183,23 +187,45 @@ public class Referee extends AbstractReferee {
                 .setAnchor(0.5);
     }
 
+    private void sendInitialInputs() {
+        for (Player player : gameManager.getActivePlayers()) {
+            player.sendInputLine(Integer.toString(Constants.MAP_WIDTH));
+            player.sendInputLine(Integer.toString(Constants.MAP_HEIGHT));
+            player.sendInputLine(Integer.toString(map.getItems().size()));
+        }
+    }
+
     private void sendPlayerInputs() {
         for (Player player : gameManager.getActivePlayers()) {
-            // Game Map
+            // Game map
             String[] mapRows = map.toInputStrings();
             for (int i = 0; i < Constants.MAP_HEIGHT; i++) {
                 player.sendInputLine(mapRows[i]);
             }
 
+            // Map Items
+            for (Item item : map.getItems()) {
+                player.sendInputLine(item.getIdentifier());
+                Vector2 pos = item.getPos();
+                player.sendInputLine(Integer.toString(pos.x));
+                player.sendInputLine(Integer.toString(pos.y));
+                player.sendInputLine(Integer.toString(item.getPlayerId()));
+            }
+
+            // Turn type
+            player.sendInputLine(Integer.toString(turnType.getValue()));
+
             // Player deck
             PlayerController playerController = playerControllers.get(player.getIndex());
             player.sendInputLine(Integer.toString(playerController.getNumCards()));
-            player.sendInputLine(playerController.getTopCard().getItem().getIdentifier() + player.getIndex());
 
-            // Opponents deck
+            // Opponent deck
             int opponentIndex = (player.getIndex() == 0) ? 1 : 0;
             PlayerController opponentController = playerControllers.get(opponentIndex);
             player.sendInputLine(Integer.toString(opponentController.getNumCards()));
+
+            // Player item
+            player.sendInputLine(playerController.getTopCard().getItem().getIdentifier());
 
             // Player agent position
             player.sendInputLine(Integer.toString(playerController.getPos().x));
@@ -214,11 +240,12 @@ public class Referee extends AbstractReferee {
 
             // Opponent extra tile
             player.sendInputLine(opponentController.getTile().toInputString());
+
             player.execute();
         }
     }
 
-    private void doPlayerActions(Action.Type turnType) {
+    private void doPlayerActions() {
         List<PlayerAction> playerPushRowActions = new ArrayList<>();
         List<PlayerAction> playerPushColumnActions = new ArrayList<>();
         PushAction prevPushAction = null;
@@ -343,10 +370,10 @@ public class Referee extends AbstractReferee {
 
     @Override
     public void gameTurn(int turn) {
-        Action.Type turnType = Action.Type.values()[turn % 2];
+        turnType = Action.Type.fromInt(turn % 2);
         updateTexts(turnType);
         sendPlayerInputs();
-        doPlayerActions(turnType);
+        doPlayerActions();
         checkForFinishedItems();
         checkForWinner();
     }
