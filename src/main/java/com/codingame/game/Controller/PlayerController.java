@@ -66,7 +66,7 @@ public class PlayerController {
     }
 
     public void addCard(Item item, Vector2 pos) {
-        CardView view = new CardView(this.model.getIndex(), item.getLowerCaseIdentifier());
+        CardView view = new CardView(this.model.getIndex(), item.getName());
         view.setPosAbsolute(pos.x, pos.y);
         CardController card = new CardController(item, view);
         this.cards.add(card);

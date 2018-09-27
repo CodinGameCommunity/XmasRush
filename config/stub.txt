@@ -1,7 +1,17 @@
+read boardWidth:int boardHeight:int
 gameloop
-loop 7
-    read line:string(48)
-read numPlayerCards:int questItemId:word(1) numOpponentCards:int
-read playerX:int playerY:int opponentX:int opponentY:int
-read playerTile:word(6) opponentTile:word(6)
+loop boardHeight
+    read line:string(34)
+read numItems:int
+loop numItems
+	read itemName:word(10) itemX:int itemY:int itemPlayerId:int
+read turnType:int
+loop 2
+    read numPlayerCards:int questItemName:word(10) playerX:int playerY:int playerTile:word(4)
 write join("PUSH", "3", "RIGHT")
+
+STATEMENT
+Help the Christmas elves to fetch presents in a magical labyrinth!
+
+OUTPUT
+PUSH <id> <direction> | MOVE <direction> | PASS

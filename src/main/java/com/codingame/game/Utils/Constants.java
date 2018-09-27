@@ -52,8 +52,8 @@ public class Constants {
         }
     }
 
-    public static final List<String> ITEM_IDENTIFIERS = Arrays.asList(
-            "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"
+    public static final List<String> ITEM_NAMES = Arrays.asList(
+            "ARROW", "BOOK", "CANE", "CANDY", "DIAMOND", "FISH", "MASK", "KEY", "SWORD", "SCROLL", "SHIELD", "POTION"
     );
 
     public static final List<Vector2> PLAYER_POSITIONS = Arrays.asList(

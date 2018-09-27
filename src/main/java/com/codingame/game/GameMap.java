@@ -33,6 +33,8 @@ public class GameMap {
             "1010", "1010", "1010", "1010", "1010", "1010"
     ));
 
+    private List<Item> items = new ArrayList<>(Constants.ITEM_NAMES.size() * 2);
+
     public GameMap() {
         // initialize tiles ids and positions
         for (int i = 0; i < Constants.MAP_WIDTH; i++) {
@@ -73,20 +75,22 @@ public class GameMap {
         }
 
         // set up items
-        for (String identifier : Constants.ITEM_IDENTIFIERS) {
-            Item item = new Item(identifier, 0);
+        for (String name : Constants.ITEM_NAMES) {
             TileController tileController = getRandomMapTile();
             while (tileController.isCenterTile() || tileController.isBaseTile() || tileController.hasItem()) {
                 tileController = getRandomMapTile();
             }
-            int row = tileController.getPos().x;
-            int col = tileController.getPos().y;
-            tileControllers[row][col].addItem(item);
+            Vector2 tilePos = tileController.getPos();
+            Item item = new Item(name, 0, new Vector2(tilePos));
+            tileControllers[tilePos.x][tilePos.y].addItem(item);
+            items.add(item);
 
             // add the mirrored item
-            item = new Item(identifier, 1);
-            tileController = getOppositeTile(row, col);
-            tileControllers[tileController.getPos().x][tileController.getPos().y].addItem(item);
+            tileController = getOppositeTile(tilePos.x, tilePos.y);
+            tilePos = tileController.getPos();
+            item = new Item(name, 1, new Vector2(tilePos));
+            tileControllers[tilePos.x][tilePos.y].addItem(item);
+            items.add(item);
         }
     }
 
@@ -243,5 +247,9 @@ public class GameMap {
             pos.add(offset);
             playerController.setPosInMap(pos, time);
         }
+    }
+
+    public List<Item> getItems() {
+        return items;
     }
 }

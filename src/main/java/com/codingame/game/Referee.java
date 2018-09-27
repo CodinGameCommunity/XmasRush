@@ -8,7 +8,6 @@ import com.codingame.game.Model.TileModel;
 import com.codingame.game.Utils.Constants;
 import com.codingame.game.Utils.Utils;
 import com.codingame.game.Utils.Vector2;
-import com.codingame.game.View.CardView;
 import com.codingame.game.View.PlayerView;
 import com.codingame.game.View.TileView;
 import com.codingame.gameengine.core.AbstractPlayer;
@@ -31,6 +30,8 @@ public class Referee extends AbstractReferee {
 
     private Text turnText;
 
+    private Action.Type turnType;
+
     @Override
     public void init() {
         Utils.graphicEntityModule = graphicEntityModule;
@@ -46,6 +47,8 @@ public class Referee extends AbstractReferee {
         createPlayerTiles();
         createCards();
         createTexts();
+
+        sendInitialInputs();
     }
 
     private Long getSeed(Properties params) {
@@ -64,8 +67,8 @@ public class Referee extends AbstractReferee {
         }
     }
 
-    private List<String> getShuffledItemIdentifiers() {
-        List<String> shuffledItems = new ArrayList<>(Constants.ITEM_IDENTIFIERS);
+    private List<String> getShuffledItemNames() {
+        List<String> shuffledItems = new ArrayList<>(Constants.ITEM_NAMES);
         Random rnd = Constants.random;
 
         //Fisher-Yates shuffle
@@ -80,7 +83,7 @@ public class Referee extends AbstractReferee {
     }
 
     private void createCards() {
-        List<String> shuffledItemIds = getShuffledItemIdentifiers();
+        List<String> shuffledItemIds = getShuffledItemNames();
 
         for (Player player : gameManager.getPlayers()) {
             for (int i = 0; i < shuffledItemIds.size(); i++) {
@@ -181,42 +184,76 @@ public class Referee extends AbstractReferee {
                 .setAnchor(0.5);
     }
 
+    private void sendInitialInputs() {
+        for (Player player : gameManager.getActivePlayers()) {
+            player.sendInputLine(Integer.toString(Constants.MAP_WIDTH));
+            player.sendInputLine(Integer.toString(Constants.MAP_HEIGHT));
+        }
+    }
+
+    private void sendItemInputs(Player player, Item item) {
+        player.sendInputLine(item.getName());
+        Vector2 pos = item.getPos();
+        player.sendInputLine(Integer.toString(pos.x));
+        player.sendInputLine(Integer.toString(pos.y));
+        player.sendInputLine(Integer.toString(item.getPlayerId()));
+    }
+
     private void sendPlayerInputs() {
         for (Player player : gameManager.getActivePlayers()) {
-            // Game Map
+            // Game map
             String[] mapRows = map.toInputStrings();
             for (int i = 0; i < Constants.MAP_HEIGHT; i++) {
                 player.sendInputLine(mapRows[i]);
             }
 
-            // Player deck
-            PlayerController playerController = playerControllers.get(player.getIndex());
-            player.sendInputLine(Integer.toString(playerController.getNumCards()));
-            player.sendInputLine(playerController.getTopCard().getItem().getIdentifier() + player.getIndex());
+            // Items
+            int numItems = map.getItems().size();
+            TileController playerTile = playerControllers.get(0).getTile();
+            TileController opponentTile = playerControllers.get(0).getTile();
+            if (playerTile.hasItem()) {
+                numItems++;
+            }
+            if (opponentTile.hasItem()) {
+                numItems++;
+            }
+            player.sendInputLine(Integer.toString(numItems));
 
-            // Opponents deck
-            int opponentIndex = (player.getIndex() == 0) ? 1 : 0;
-            PlayerController opponentController = playerControllers.get(opponentIndex);
-            player.sendInputLine(Integer.toString(opponentController.getNumCards()));
+            for (Item item : map.getItems()) {
+                sendItemInputs(player, item);
+            }
+            if (playerTile.hasItem()) {
+                Item item = playerTile.getItem();
+                sendItemInputs(player, item);
+            }
+            if (opponentTile.hasItem()) {
+                Item item = opponentTile.getItem();
+                sendItemInputs(player, item);
+            }
 
-            // Player agent position
-            player.sendInputLine(Integer.toString(playerController.getPos().x));
-            player.sendInputLine(Integer.toString(playerController.getPos().y));
+            // Turn type
+            player.sendInputLine(Integer.toString(turnType.getValue()));
 
-            // Opponent agent position
-            player.sendInputLine(Integer.toString(opponentController.getPos().x));
-            player.sendInputLine(Integer.toString(opponentController.getPos().y));
+            // Player information
+            for (int i = 0; i < 2; i++) {
+                // Cards
+                PlayerController playerController = playerControllers.get(i);
+                player.sendInputLine(Integer.toString(playerController.getNumCards()));
+                player.sendInputLine(playerController.getTopCard().getItem().getName());
 
-            // Player extra tile
-            player.sendInputLine(playerController.getTile().toInputString());
+                // Agent position
+                player.sendInputLine(Integer.toString(playerController.getPos().x));
+                player.sendInputLine(Integer.toString(playerController.getPos().y));
 
-            // Opponent extra tile
-            player.sendInputLine(opponentController.getTile().toInputString());
+                // Push tile
+                player.sendInputLine(playerController.getTile().toInputString());
+            }
+
             player.execute();
         }
     }
 
-    private void doPlayerActions(Action.Type turnType) {
+    private void doPlayerActions() {
         List<PlayerAction> playerPushRowActions = new ArrayList<>();
         List<PlayerAction> playerPushColumnActions = new ArrayList<>();
         PushAction prevPushAction = null;
@@ -310,7 +347,7 @@ public class Referee extends AbstractReferee {
             if (!tile.hasItem()) return;
 
             CardController topCard = playerController.getTopCard();
-            if (tile.getItem().getIdentifier().equals(topCard.getItem().getIdentifier())
+            if (tile.getItem().getName().equals(topCard.getItem().getName())
                     && tile.getItem().getPlayerId() == player.getIndex()) {
                 playerController.removeTopCard();
                 playerController.flipTopCard();
@@ -340,10 +377,10 @@ public class Referee extends AbstractReferee {
 
     @Override
     public void gameTurn(int turn) {
-        Action.Type turnType = Action.Type.values()[turn % 2];
+        turnType = Action.Type.fromInt(turn % 2);
         updateTexts(turnType);
         sendPlayerInputs();
-        doPlayerActions(turnType);
+        doPlayerActions();
         checkForFinishedItems();
         checkForWinner();
     }
@@ -352,7 +389,7 @@ public class Referee extends AbstractReferee {
     public void onEnd() {
         gameManager.getActivePlayers().forEach(player -> {
             // Player score will be the number of solved cards
-            player.setScore(Constants.ITEM_IDENTIFIERS.size() - playerControllers.get(player.getIndex()).getNumCards());
+            player.setScore(Constants.ITEM_NAMES.size() - playerControllers.get(player.getIndex()).getNumCards());
             System.out.println(player.getNicknameToken() + " score is " + player.getScore());
         });
     }
