@@ -6,26 +6,30 @@
             <span class="icon icon-goal">&nbsp;</span> <span>The Goal</span>
         </h2>
         <div class="statement-goal-content">
-            <!-- Protocol block -->
-
-            <div class="blk">
-                <div class="title">Output for one game turn</div>
-
-                <div class="text">
-                    <span class="statement-lineno">One line</span>: the action of your agent that can be one of these:<br/>
-                    During the <b>PUSH</b> turn:
-                    <ul>
-                        <li><action>PUSH id direction</action> where <b>id</b> can be <action>1</action>, <action>3</action> or <action>5</action> and <b>direction</b> <action>UP</action>, <action>DOWN</action>, <action>LEFT</action> or <action>RIGHT</action></li>
-                        <li style="list-style-type:none">Example: <action>PUSH 3 UP</action></li>
-                    </ul>
-                    During the <b>MOVE</b> turn:
-                    <ul>
-                        <li><action>MOVE amount direction</action> where <b>amount</b> can be <action>1</action>, <action>2</action>, <action>3</action>, <action>4</action>, <action>5</action> or <action>6</action> and <b>direction</b> <action>UP</action>, <action>DOWN</action>, <action>LEFT</action> or <action>RIGHT</action></li>
-                        <li><action>PASS</action></li>
-                        <li style="list-style-type:none">Example: <action>MOVE 2 LEFT</action> or <action>PASS</action></li>
-                    </ul>
-                </div>
-                <!-- Protocol block -->
+            Make your way to the items on the board and be the first to complete the quest cards to win!
+        </div>
+    </div>
+    <!-- PROTOCOL -->
+    <div class="statement-section statement-protocol">
+        <!-- Protocol block -->
+        <div class="blk">
+            <div class="title">Output for one game turn</div>
+            <span class="statement-lineno">One line</span>: the action of your agent that can be one of these:<br/>
+            <div class="title">Output for a PUSH turn:</div>
+            <div class="text">
+                <ul style="padding-top: 0; padding-bottom: 0;">
+                    <li><action>PUSH id direction</action> where <b>id</b> can be <action>1</action>, <action>3</action> or <action>5</action> and <b>direction</b> <action>UP</action>, <action>DOWN</action>, <action>LEFT</action> or <action>RIGHT</action></li>
+                </ul>
+                Example: <action>PUSH 3 UP</action>
+            </div>
+            <div class="title">Output for a MOVE turn:</div>
+            <div class="text">
+                <ul style="padding-top: 0; padding-bottom: 0;">
+                    <li><action>MOVE amount direction</action> where <b>amount</b> can be <action>1</action>, <action>2</action>, <action>3</action>, <action>4</action>, <action>5</action> or <action>6</action> and <b>direction</b> <action>UP</action>, <action>DOWN</action>, <action>LEFT</action> or <action>RIGHT</action></li>
+                    <li><action>PASS</action> to skip movement</li>
+                </ul>
+                <action>MOVE</action> commands can also be chained up to 20 times using a semi-colon <action>;</action> like <action>MOVE amount direction;amount direction</action><br/>
+                Example: <action>MOVE 3 DOWN</action> or <action>MOVE 2 LEFT;1 UP;1 RIGHT</action> or <action>PASS</action></li>
             </div>
         </div>
     </div>

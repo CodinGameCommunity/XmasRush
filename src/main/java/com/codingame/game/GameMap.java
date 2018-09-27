@@ -131,75 +131,80 @@ public class GameMap {
         return tileControllers[Constants.MAP_WIDTH - row - 1][Constants.MAP_HEIGHT - col - 1];
     }
 
-    public TileController pushColumn(TileController tile, int index, Constants.Direction dir, List<Integer> rowsToSkip) {
+    public TileController pushColumn(TileController pushedTile, int index, Constants.Direction dir, List<Integer> rowsToSkip) {
         if (index % 2 == 0) {
             // only odd columns are pushable
             throw new RuntimeException();
         }
-        int lastColIndex = Constants.MAP_HEIGHT - 1;
+        boolean waitForRows = !rowsToSkip.isEmpty();
+        int lastRowIndex = Constants.MAP_WIDTH - 1;
+        if (waitForRows) {
+            for (int i = 0; i <= lastRowIndex; i++) {
+                if (rowsToSkip.contains(i)) {
+                    continue;
+                }
+                tileControllers[i][index].setPosInMap(new Vector2(i, index), 0);
+                tileControllers[i][index].setSamePosInMap(0.5);
+            }
+        }
         if (dir == Constants.Direction.UP) {
             TileController poppedTile = tileControllers[0][index];
-            for (int i = 0; i < lastColIndex; i++) {
-                if (rowsToSkip.contains(i)) {
-                    continue;
-                }
-
-                int fromIndex = i + 1;
-                while (rowsToSkip.contains(fromIndex)) {
-                    fromIndex++;
-                }
-
-                tileControllers[i][index] = tileControllers[fromIndex][index];
-                tileControllers[i][index].setPosInMap(new Vector2(i, index));
+            for (int i = 0; i < lastRowIndex; i++) {
+                tileControllers[i][index] = tileControllers[i + 1][index];
+                tileControllers[i][index].setPosInMap(new Vector2(i, index), 1);
             }
-            tileControllers[lastColIndex][index] = tile;
-            tileControllers[lastColIndex][index].setPosInMap(new Vector2(lastColIndex, index));
+
+            if (waitForRows) {
+                pushedTile.setSamePosAbsolute(0.5);
+            }
+            tileControllers[lastRowIndex][index] = pushedTile;
+            tileControllers[lastRowIndex][index].setPosInMap(new Vector2(lastRowIndex, index), 1);
             return poppedTile;
         } else if (dir == Constants.Direction.DOWN) {
-            TileController poppedTile = tileControllers[lastColIndex][index];
-            for (int i = lastColIndex; i > 0; i--) {
-                if (rowsToSkip.contains(i)) {
-                    continue;
-                }
-
-                int fromIndex = i - 1;
-                while (rowsToSkip.contains(fromIndex)) {
-                    fromIndex--;
-                }
-
-                tileControllers[i][index] = tileControllers[fromIndex][index];
-                tileControllers[i][index].setPosInMap(new Vector2(i, index));
+            TileController poppedTile = tileControllers[lastRowIndex][index];
+            if (waitForRows) {
+                poppedTile.setSamePosInMap(0.5);
             }
-            tileControllers[0][index] = tile;
-            tileControllers[0][index].setPosInMap(new Vector2(0, index));
+            for (int i = lastRowIndex; i > 0; i--) {
+                tileControllers[i][index] = tileControllers[i - 1][index];
+                tileControllers[i][index].setPosInMap(new Vector2(i, index), 1);
+            }
+            if (waitForRows) {
+                pushedTile.setSamePosAbsolute(0.5);
+            }
+            tileControllers[0][index] = pushedTile;
+            tileControllers[0][index].setPosInMap(new Vector2(0, index), 1);
             return poppedTile;
         }
         return null;
     }
-
-    public TileController pushRow(TileController tile, int index, Constants.Direction dir) {
+	
+	public TileController pushRow(TileController pushedTile, int index, Constants.Direction dir) {
         if (index % 2 == 0) {
             // only odd rows are pushable
             throw new RuntimeException();
         }
-        int lastRowIndex = Constants.MAP_WIDTH - 1;
+        int lastColIndex = Constants.MAP_HEIGHT - 1;
+        for (int i = 0; i <= lastColIndex; i++) {
+            tileControllers[index][i].setPosInMap(new Vector2(index, i), 0);
+        }
         if (dir == Constants.Direction.LEFT) {
             TileController poppedTile = tileControllers[index][0];
-            for (int i = 0; i < lastRowIndex; i++) {
+            for (int i = 0; i < lastColIndex; i++) {
                 tileControllers[index][i] = tileControllers[index][i + 1];
-                tileControllers[index][i].setPosInMap(new Vector2(index, i));
+                tileControllers[index][i].setPosInMap(new Vector2(index, i), 0.5);
             }
-            tileControllers[index][lastRowIndex] = tile;
-            tileControllers[index][lastRowIndex].setPosInMap(new Vector2(index, lastRowIndex));
+            tileControllers[index][lastColIndex] = pushedTile;
+            tileControllers[index][lastColIndex].setPosInMap(new Vector2(index, lastColIndex), 0.5);
             return poppedTile;
         } else if (dir == Constants.Direction.RIGHT) {
-            TileController poppedTile = tileControllers[index][lastRowIndex];
-            for (int i = lastRowIndex; i > 0; i--) {
+            TileController poppedTile = tileControllers[index][lastColIndex];
+            for (int i = lastColIndex; i > 0; i--) {
                 tileControllers[index][i] = tileControllers[index][i - 1];
-                tileControllers[index][i].setPosInMap(new Vector2(index, i));
+                tileControllers[index][i].setPosInMap(new Vector2(index, i), 0.5);
             }
-            tileControllers[index][0] = tile;
-            tileControllers[index][0].setPosInMap(new Vector2(index, 0));
+            tileControllers[index][0] = pushedTile;
+            tileControllers[index][0].setPosInMap(new Vector2(index, 0), 0.5);
             return poppedTile;
         }
         return null;

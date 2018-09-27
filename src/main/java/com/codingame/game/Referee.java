@@ -33,9 +33,7 @@ public class Referee extends AbstractReferee {
 
     @Override
     public void init() {
-        TileView.graphicEntityModule = graphicEntityModule;
-        PlayerView.graphicEntityModule = graphicEntityModule;
-        CardView.graphicEntityModule = graphicEntityModule;
+        Utils.graphicEntityModule = graphicEntityModule;
 
         Properties params = gameManager.getGameParameters();
         Constants.random = new Random(getSeed(params));
@@ -262,14 +260,14 @@ public class Referee extends AbstractReferee {
                 gameManager.addToGameSummary(String.format("%s: timeout - player provided an empty input", player.getNicknameToken()));
             }
         }
-
-        List<Integer> pushedRows = new ArrayList<>();
+		
+		List<Integer> pushedRows = new ArrayList<>();
         playerPushRowActions.forEach(playerAction -> {
             PushAction action = (PushAction)playerAction.action;
             pushedRows.add(action.lineId);
-            TileController tile = map.pushRow(playerAction.player.getTile(), action.lineId, action.direction);
-            tile.setPosAbsolute(playerAction.player.getTilePosition());
-            playerAction.player.setTile(tile);
+            TileController poppedTile = map.pushRow(playerAction.player.getTile(), action.lineId, action.direction);
+            poppedTile.setPosAbsolute(playerAction.player.getTilePosition(), 0.5);
+            playerAction.player.setTile(poppedTile);
 
             // if there's a player on the pushed row move them too
             for (Player player : gameManager.getActivePlayers()) {
@@ -277,7 +275,7 @@ public class Referee extends AbstractReferee {
                     Vector2 pos = new Vector2(playerControllers.get(player.getIndex()).getPos());
                     pos.add(action.direction.asValue());
                     pos.y = Utils.wrap(pos.y, 0, Constants.MAP_HEIGHT - 1);
-                    playerControllers.get(player.getIndex()).setPosInMap(pos);
+                    playerControllers.get(player.getIndex()).setPosInMap(pos, 0.5);
                 }
             }
         });
@@ -285,21 +283,20 @@ public class Referee extends AbstractReferee {
         final List<Integer> rowsToSkip = pushedRows;
         playerPushColumnActions.forEach(playerAction -> {
             PushAction action = (PushAction)playerAction.action;
-            TileController tile = map.pushColumn(playerAction.player.getTile(), action.lineId, action.direction, rowsToSkip);
-            tile.setPosAbsolute(playerAction.player.getTilePosition());
-            playerAction.player.setTile(tile);
+            TileController poppedTile = map.pushColumn(playerAction.player.getTile(), action.lineId, action.direction, rowsToSkip);
+            poppedTile.setPosAbsolute(playerAction.player.getTilePosition(), 1);
+            playerAction.player.setTile(poppedTile);
 
             // if there's a player on the pushed column move them too
             for (Player player : gameManager.getActivePlayers()) {
                 if (player.getAgentPosition().y == action.lineId) {
                     Vector2 pos = new Vector2(playerControllers.get(player.getIndex()).getPos());
                     pos.add(action.direction.asValue());
-                    // add the extra offset for pushed rows
-                    if (rowsToSkip.contains(pos.x)) {
-                        pos.add(action.direction.asValue());
-                    }
                     pos.x = Utils.wrap(pos.x, 0, Constants.MAP_WIDTH - 1);
-                    playerControllers.get(player.getIndex()).setPosInMap(pos);
+                    if (!rowsToSkip.isEmpty()) {
+                        playerControllers.get(player.getIndex()).setSamePosInMap(0.5);
+                    }
+                    playerControllers.get(player.getIndex()).setPosInMap(pos, 1);
                 }
             }
         });

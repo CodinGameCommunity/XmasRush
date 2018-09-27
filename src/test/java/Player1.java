@@ -29,14 +29,16 @@ public class Player1 {
             System.err.println(playerX + " " + playerY + " " + opponentX + " " + opponentY);
             System.err.println(playerTile + " " + opponentTile);
 
-            if (turn == 0) System.out.println("PUSH 1 LEFT");
+            if (turn == 0) System.out.println("PUSH 3 DOWN");
             if (turn == 1) System.out.println("MOVE 1 RIGHT");
             if (turn == 2) System.out.println("PUSH 1 DOWN");
             if (turn == 3) System.out.println("MOVE 1 LEFT");
             if (turn == 4) System.out.println("PUSH 1 LEFT");
-            if (turn == 5) System.out.println("MOVE 1 LEFT");
-            if (turn == 6) System.out.println("PUSH 5 UP");
-            if (turn == 7) System.out.println("MOVE 1 RIGHT");
+            if (turn == 5) System.out.println("PASS");
+            if (turn == 6) System.out.println("PUSH 1 LEFT");
+            if (turn == 7) System.out.println("PASS");
+            if (turn == 8) System.out.println("PUSH 5 UP");
+            if (turn == 9) System.out.println("MOVE 1 RIGHT");
             turn++;
         }
     }
