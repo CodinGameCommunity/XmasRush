@@ -1,23 +1,37 @@
 package com.codingame.game;
 
+import com.codingame.game.Utils.Vector2;
+
 public class Item {
-    private String identifier;
+    private String name;
     private int playerId;
+    private Vector2 pos;
 
-    public Item(String identifier, int playerId) {
-        this.identifier = identifier;
+    public Item(String name, int playerId) {
+        this.name = name;
         this.playerId = playerId;
+        this.pos = Vector2.INVALID;
     }
 
-    public String getLowerCaseIdentifier() {
-        return this.identifier.toLowerCase();
+    public Item(String name, int playerId, Vector2 pos) {
+        this.name = name;
+        this.playerId = playerId;
+        this.pos = pos;
     }
 
-    public String getIdentifier() {
-        return this.identifier;
+    public String getName() {
+        return this.name;
     }
 
     public int getPlayerId() {
         return this.playerId;
+    }
+
+    public void setPos(Vector2 pos) {
+        this.pos = pos;
+    }
+
+    public Vector2 getPos() {
+        return pos;
     }
 }
