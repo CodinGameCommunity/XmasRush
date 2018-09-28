@@ -76,7 +76,7 @@ public class GameMap {
         for (String identifier : Constants.ITEM_IDENTIFIERS) {
             Item item = new Item(identifier, 0);
             TileController tileController = getRandomMapTile();
-            while (tileController.isCenterTile() || tileController.isBaseTile() || tileController.hasItem()) {
+            while (tileController.isCenterTile() || tileController.hasItem()) {
                 tileController = getRandomMapTile();
             }
             int row = tileController.getPos().x;

@@ -19,7 +19,6 @@ public class TileView {
     private Sprite down;
     private Sprite left;
     private Sprite item;
-    private Sprite base;
 
     public TileView() {
         background = graphicEntityModule.createSprite()
@@ -74,16 +73,6 @@ public class TileView {
                 .setZIndex(Constants.MapLayers.TILES.asValue());
         graphicEntityModule.commitEntityState(0, left);
         group.add(left);
-    }
-
-    public void setBaseTile(int playerId) {
-        String spritePath = String.format("base_%d.png", playerId);
-        base = graphicEntityModule.createSprite()
-                .setImage(spritePath)
-                .setAnchor(0.5)
-                .setZIndex(Constants.MapLayers.ITEMS.asValue());
-        graphicEntityModule.commitEntityState(0, base);
-        group.add(base);
     }
 
     public void addItem(Item item) {
@@ -145,7 +134,6 @@ public class TileView {
         if (tile.hasDown()) addDown();
         if (tile.hasLeft()) addLeft();
         if (tile.hasItem()) addItem(tile.item);
-        if (tile.isBaseTile()) setBaseTile(tile.pos.x == 0 ? 0 : 1);
 
         graphicEntityModule.commitEntityState(0, group);
     }

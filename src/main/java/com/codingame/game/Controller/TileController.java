@@ -70,10 +70,6 @@ public class TileController {
         view.addItem(item);
     }
 
-    public boolean isBaseTile() {
-        return model.isBaseTile();
-    }
-
     public boolean isEmpty() {
         return model.isEmpty();
     }
