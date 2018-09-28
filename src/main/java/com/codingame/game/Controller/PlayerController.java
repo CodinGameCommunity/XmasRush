@@ -82,6 +82,16 @@ public class PlayerController {
         return this.cards.get(this.cards.size() - 1);
     }
 
+    public List<CardController> getTopCards(int numCards) {
+        int cardsSize = cards.size();
+        int maxNumCards = Math.min(numCards, cardsSize);
+        List<CardController> topCards = new ArrayList<>(maxNumCards);
+        for (int i = cardsSize - 1; i > cardsSize - maxNumCards - 1; i--) {
+            topCards.add(cards.get(i));
+        }
+        return topCards;
+    }
+
     public void flipTopCard() {
         getTopCard().flip();
     }
@@ -92,5 +102,13 @@ public class PlayerController {
 
     public int getNumCards() {
         return this.cards.size();
+    }
+
+    public int getNumQuestCards() {
+        return Math.min(this.cards.size(), Constants.NUM_QUEST_CARDS);
+    }
+
+    public int getId() {
+        return model.getIndex();
     }
 }

@@ -27,6 +27,10 @@ public class Item {
         return this.playerId;
     }
 
+    public void setPos(Vector2 pos) {
+        this.pos = pos;
+    }
+
     public Vector2 getPos() {
         return pos;
     }

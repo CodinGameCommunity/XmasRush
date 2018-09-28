@@ -39,7 +39,7 @@ public class GameMap {
         // initialize tiles ids and positions
         for (int i = 0; i < Constants.MAP_WIDTH; i++) {
             for (int j = 0; j < Constants.MAP_HEIGHT; j++) {
-                TileModel tileModel = new TileModel(get(i, j), new Vector2(i, j));
+                TileModel tileModel = new TileModel(tilePatterns[i][j], new Vector2(i, j));
                 TileController tileController = new TileController(tileModel, new TileView());
                 tileController.initView();
                 tileController.setPosInMap(tileModel.pos);
@@ -92,25 +92,6 @@ public class GameMap {
             tileControllers[tilePos.x][tilePos.y].addItem(item);
             items.add(item);
         }
-    }
-
-    public String[] toInputStrings() {
-        final String[] result = new String[Constants.MAP_HEIGHT];
-        StringBuilder sb;
-        for (int j = 0; j < Constants.MAP_HEIGHT; j++) {
-            sb = new StringBuilder();
-            sb.append(tileControllers[0][j].toInputString());
-            for (int i = 1; i < Constants.MAP_WIDTH; i++) {
-                sb.append(" ");
-                sb.append(tileControllers[i][j].toInputString());
-            }
-            result[j] = sb.toString();
-        }
-        return result;
-    }
-
-    public String get(int i, int j) {
-        return tilePatterns[i][j];
     }
 
     public TileController getTile(int i, int j) {

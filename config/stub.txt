@@ -1,17 +1,25 @@
 read boardWidth:int boardHeight:int
 gameloop
 loop boardHeight
-    read line:string(34)
+    loopline boardWidth tile:word(4)
 read numItems:int
 loop numItems
-	read itemName:word(10) itemX:int itemY:int itemPlayerId:int
+    read itemName:word(10) itemX:int itemY:int itemPlayerId:int
 read turnType:int
 loop 2
-    read numPlayerCards:int questItemName:word(10) playerX:int playerY:int playerTile:word(4)
-write join("PUSH", "3", "RIGHT")
+    read numPlayerCards:int playerX:int playerY:int playerTile:word(4)
+read numQuests:int
+loop numQuests
+    read questItemName:word(10) questPlayerId:int
+write PUSH 3 RIGHT
+
+INPUT
+numItems: the total number of items available on board and on player tiles (does not include quest cards)
+numPlayerCards: the number of cards in the stack for each player
+numQuests: the total number of available quest cards for both players
 
 STATEMENT
-Help the Christmas elves to fetch presents in a magical labyrinth!
+Help the Christmas elves fetch presents in a magical labyrinth!
 
 OUTPUT
 PUSH <id> <direction> | MOVE <direction> | PASS

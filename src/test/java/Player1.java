@@ -5,17 +5,18 @@ public class Player1 {
         Scanner in = new Scanner(System.in);
         int boardWidth = in.nextInt();
         int boardHeight = in.nextInt();
-        if (in.hasNextLine()) {
-            in.nextLine();
-        }
 
         int turn = 0;
+        // game loop
         while (true) {
             for (int i = 0; i < boardHeight; i++) {
-                String line = in.nextLine();
-                System.err.println(line);
+                for (int j = 0; j < boardWidth; j++) {
+                    String tile = in.next();
+                    System.err.print(tile + " ");
+                }
+                System.err.println();
             }
-            int numItems = in.nextInt();
+            int numItems = in.nextInt(); // the total number of items available on board and on player tiles (does not include quest cards)
             for (int i = 0; i < numItems; i++) {
                 String itemName = in.next();
                 int itemX = in.nextInt();
@@ -25,13 +26,18 @@ public class Player1 {
             }
             int turnType = in.nextInt();
             for (int i = 0; i < 2; i++) {
-                int numPlayerCards = in.nextInt();
-                String questItemName = in.next();
+                int numPlayerCards = in.nextInt(); // the number of cards in the stack for each player
                 int playerX = in.nextInt();
                 int playerY = in.nextInt();
                 String playerTile = in.next();
+                System.err.println(numPlayerCards + " " + playerX + "," + playerY + " " + playerTile);
             }
-            in.nextLine();
+            int numQuests = in.nextInt(); // the total number of available quest cards for both players
+            for (int i = 0; i < numQuests; i++) {
+                String questItemName = in.next();
+                int questPlayerId = in.nextInt();
+                System.err.println(questItemName + questPlayerId);
+            }
 
             if (turn == 0) System.out.println("PUSH 1 LEFT");
             if (turn == 1) System.out.println("MOVE 1 RIGHT");
