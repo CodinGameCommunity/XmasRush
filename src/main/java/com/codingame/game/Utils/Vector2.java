@@ -5,6 +5,8 @@ public class Vector2 {
 
     public static final Vector2 ZERO = new Vector2();
     public static final Vector2 INVALID = new Vector2(Integer.MIN_VALUE, Integer.MIN_VALUE);
+    public static final Vector2 MINUS_ONE = new Vector2(-1, -1);
+    public static final Vector2 MINUS_TWO = new Vector2(-2, -2);
     public static final Vector2 UP = new Vector2(0, -1);
     public static final Vector2 DOWN = new Vector2(0, 1);
     public static final Vector2 LEFT = new Vector2(-1, 0);

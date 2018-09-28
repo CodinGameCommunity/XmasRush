@@ -45,15 +45,25 @@ public class TileController {
             throw new RuntimeException("Tile position out of map bounds!");
         }
         model.pos = pos;
+        if (model.hasItem()) {
+            model.item.setPos(pos);
+        }
         view.setPosInMap(pos, time);
     }
 
-    public void setPosAbsolute(Vector2 pos) {
-        setPosAbsolute(pos, 0);
+    public void setPosAbsolute(Vector2 pos, int playerId) {
+        setPosAbsolute(pos, playerId, 0);
     }
 
-    public void setPosAbsolute(Vector2 pos, double time) {
+    public void setPosAbsolute(Vector2 pos, int playerId, double time) {
         model.pos = Vector2.INVALID;
+        if (model.hasItem()) {
+            if (playerId == 0) {
+                model.item.setPos(Vector2.MINUS_ONE);
+            } else {
+                model.item.setPos(Vector2.MINUS_TWO);
+            }
+        }
         view.setPosAbsolute(pos, time);
     }
 
