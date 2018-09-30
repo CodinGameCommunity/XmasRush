@@ -74,10 +74,6 @@ public class TileController {
         return model.isEmpty();
     }
 
-    public boolean isCenterTile() {
-        return model.isCenterTile();
-    }
-
     public boolean hasItem() {
         return model.hasItem();
     }
