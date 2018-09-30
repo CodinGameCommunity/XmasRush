@@ -91,6 +91,7 @@ public class Referee extends AbstractReferee {
         }
 
         playerControllers.get(0).flipTopCard();
+        playerControllers.get(1).flipTopCard();
     }
 
     private void createTexts() {
