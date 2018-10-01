@@ -1,7 +1,6 @@
 package com.codingame.game.Model;
 
 import com.codingame.game.Item;
-import com.codingame.game.Utils.Constants;
 import com.codingame.game.Utils.Vector2;
 
 public class TileModel {
@@ -61,17 +60,6 @@ public class TileModel {
 
     public void putItem(Item item) {
         this.item = item;
-    }
-
-    public boolean isCenterTile() {
-        int centerX = Constants.MAP_HEIGHT / 2;
-        int centerY = Constants.MAP_WIDTH / 2;
-        return this.pos.x == centerX && this.pos.y == centerY;
-    }
-
-    public boolean isBaseTile() {
-        return (this.pos.x == 0 && this.pos.y == 0)
-                || (this.pos.x == Constants.MAP_WIDTH - 1 && this.pos.y == Constants.MAP_HEIGHT - 1);
     }
 
     public boolean isEmpty() {

@@ -29,4 +29,14 @@ public class Utils {
     public static boolean isPosValid(Vector2 pos) {
         return (pos.x >= 0 && pos.x < Constants.MAP_WIDTH && pos.y >= 0 && pos.y < Constants.MAP_HEIGHT);
     }
+
+    public static boolean isPlayerBase(Vector2 pos) {
+        return (pos.x == 0 && pos.y == 0) || (pos.x == Constants.MAP_WIDTH - 1 && pos.y == Constants.MAP_HEIGHT - 1);
+    }
+
+    public static boolean isCenterTile(Vector2 pos) {
+        int centerX = Constants.MAP_HEIGHT / 2;
+        int centerY = Constants.MAP_WIDTH / 2;
+        return pos.x == centerX && pos.y == centerY;
+    }
 }

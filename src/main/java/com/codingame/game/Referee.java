@@ -95,6 +95,7 @@ public class Referee extends AbstractReferee {
         }
 
         playerControllers.get(0).flipTopCard();
+        playerControllers.get(1).flipTopCard();
     }
 
     private void createTexts() {
@@ -255,8 +256,9 @@ public class Referee extends AbstractReferee {
                 if (turnType == Action.Type.PUSH && action instanceof PushAction) {
                     PushAction pushAction = (PushAction)action;
                     // check if both players tried to push against opposite directions on the same line
-                    if (prevPushAction != null && pushAction.lineId == prevPushAction.lineId && pushAction.direction == prevPushAction.direction.getOpposite()) {
-                        gameManager.addToGameSummary("WARNING: Both players tried to push in opposite directions. Nothing happens!");
+                    if (prevPushAction != null && pushAction.lineId == prevPushAction.lineId
+                            && (pushAction.direction == prevPushAction.direction.getOpposite() || pushAction.direction == prevPushAction.direction)) {
+                        gameManager.addToGameSummary("WARNING: Both players tried to push the same line. Nothing happens!");
                         // clear the previous pending commands
                         playerPushRowActions.clear();
                         playerPushColumnActions.clear();

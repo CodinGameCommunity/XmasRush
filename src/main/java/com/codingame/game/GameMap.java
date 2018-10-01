@@ -6,6 +6,7 @@ import com.codingame.game.InputActions.InvalidAction;
 import com.codingame.game.InputActions.MoveAction;
 import com.codingame.game.Model.TileModel;
 import com.codingame.game.Utils.Constants;
+import com.codingame.game.Utils.Utils;
 import com.codingame.game.Utils.Vector2;
 import com.codingame.game.View.TileView;
 
@@ -65,7 +66,7 @@ public class GameMap {
                 tileController.rotate(rotTimes);
 
                 // do not duplicate the center tile
-                if (tileController.isCenterTile()) continue;
+                if (Utils.isCenterTile(tileController.getPos())) continue;
 
                 // mirror a new tile via the secondary diagonal
                 tileController = getOppositeTile(i, j);
@@ -77,7 +78,7 @@ public class GameMap {
         // set up items
         for (String name : Constants.ITEM_NAMES) {
             TileController tileController = getRandomMapTile();
-            while (tileController.isCenterTile() || tileController.isBaseTile() || tileController.hasItem()) {
+            while (Utils.isCenterTile(tileController.getPos()) || Utils.isPlayerBase(tileController.getPos()) || tileController.hasItem()) {
                 tileController = getRandomMapTile();
             }
             Vector2 tilePos = tileController.getPos();
