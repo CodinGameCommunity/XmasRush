@@ -70,10 +70,10 @@ public class Constants {
             .compile("(?<pushAction>\\bpush\\b) (?<id>[1,3,5]) (?<direction>(\\bup\\b|\\bright\\b|\\bdown\\b|\\bleft\\b))",
                     Pattern.CASE_INSENSITIVE);
     public static final Pattern PLAYER_INPUT_MOVE_PATTERN = Pattern
-            .compile("(?:\\bmove\\b) ((?<amount>[1-6]) (?<direction>(\\bup\\b|\\bright\\b|\\bdown\\b|\\bleft\\b))(?:;?))+",
+            .compile("(?:\\bmove\\b)((?: )(?<direction>(\\bup\\b|\\bright\\b|\\bdown\\b|\\bleft\\b))){1,20}",
                     Pattern.CASE_INSENSITIVE);
     public static final Pattern PLAYER_INPUT_MOVE_TOKENS_PATTERN = Pattern
-            .compile("(?<amount>[1-6]) (?<direction>(?:\\bup\\b|\\bright\\b|\\bdown\\b|\\bleft\\b))",
+            .compile("(?<direction>(?:\\bup\\b|\\bright\\b|\\bdown\\b|\\bleft\\b))",
                     Pattern.CASE_INSENSITIVE);
 
     public static final Pattern PLAYER_INPUT_PASS_PATTERN = Pattern

@@ -21,8 +21,7 @@ public class Player extends AbstractMultiplayerPlayer {
             Matcher tokensMatcher = Constants.PLAYER_INPUT_MOVE_TOKENS_PATTERN.matcher(playerAction);
             MoveAction moveAction = new MoveAction();
             while (tokensMatcher.find()) {
-                moveAction.addAction(Integer.parseInt(tokensMatcher.group("amount")),
-                        Constants.Direction.valueOf(tokensMatcher.group("direction")));
+                moveAction.addAction(Constants.Direction.valueOf(tokensMatcher.group("direction")));
             }
             return moveAction;
         } else if (matchPass.matches()) {

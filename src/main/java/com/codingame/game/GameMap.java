@@ -217,17 +217,15 @@ public class GameMap {
 
     private boolean canMove(PlayerController playerController, MoveAction.Step step) {
         Vector2 pos = new Vector2(playerController.getPos());
-        for (int i = 0; i < step.amount; i++) {
-            // check if the current tile has a path to the next tile
-            if (!getTile(pos.x, pos.y).hasDir(step.direction)) {
-                return false;
-            }
-            // move to the next tile
-            pos.add(step.direction.asValue());
-            if (!isInBounds(pos)
-                    || !getTile(pos.x, pos.y).hasOppDir(step.direction)) { // check if the current tile we moved to has a path to the previous tile
-                return false;
-            }
+        // check if the current tile has a path to the next tile
+        if (!getTile(pos.x, pos.y).hasDir(step.direction)) {
+            return false;
+        }
+        // move to the next tile
+        pos.add(step.direction.asValue());
+        if (!isInBounds(pos)
+                || !getTile(pos.x, pos.y).hasOppDir(step.direction)) { // check if the current tile we moved to has a path to the previous tile
+            return false;
         }
         return true;
     }
@@ -236,10 +234,10 @@ public class GameMap {
         double time = 0;
         for (MoveAction.Step step : steps) {
             if (!canMove(playerController, step)) {
-                throw new InvalidAction(step.toString());
+                throw new InvalidAction(step.toString(), false);
             }
             time += 1.0 / steps.size();
-            Vector2 offset = new Vector2(step.direction.asValue()).mult(step.amount);
+            Vector2 offset = new Vector2(step.direction.asValue());
             Vector2 pos = new Vector2(playerController.getPos());
             pos.add(offset);
             playerController.setPosInMap(pos, time);
