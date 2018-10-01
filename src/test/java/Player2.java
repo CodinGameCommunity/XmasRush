@@ -30,11 +30,11 @@ public class Player2 {
             System.err.println(playerTile + " " + opponentTile);
 
             if (turn == 0) System.out.println("PUSH 1 LEFT");
-            if (turn == 1) System.out.println("MOVE 1 UP");
+            if (turn == 1) System.out.println("MOVE UP");
             if (turn == 2) System.out.println("PUSH 5 LEFT");
-            if (turn == 3) System.out.println("MOVE 1 DOWN");
+            if (turn == 3) System.out.println("MOVE DOWN");
             if (turn == 4) System.out.println("PUSH 5 LEFT");
-            if (turn == 5) System.out.println("MOVE 1 RIGHT");
+            if (turn == 5) System.out.println("MOVE RIGHT");
             if (turn == 6) System.out.println("PUSH 5 LEFT");
             turn++;
         }

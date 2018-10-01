@@ -229,7 +229,7 @@ public class Referee extends AbstractReferee {
                     // check if both players tried to push against opposite directions on the same line
                     if (prevPushAction != null && pushAction.lineId == prevPushAction.lineId
                             && (pushAction.direction == prevPushAction.direction.getOpposite() || pushAction.direction == prevPushAction.direction)) {
-                        gameManager.addToGameSummary("WARNING: Both players tried to push the same line. Nothing happens!");
+                        gameManager.addToGameSummary("[WARNING] Both players tried to push the same line. Nothing happens!");
                         // clear the previous pending commands
                         playerPushRowActions.clear();
                         playerPushColumnActions.clear();
@@ -254,8 +254,12 @@ public class Referee extends AbstractReferee {
                 player.deactivate(String.format("%s: timeout", player.getNicknameToken()));
                 gameManager.addToGameSummary(String.format("%s: timeout - no input provided", player.getNicknameToken()));
             } catch (InvalidAction e) {
-                player.deactivate(String.format("%s: invalid input", player.getNicknameToken()));
-                gameManager.addToGameSummary(String.format("%s: invalid input - %s", player.getNicknameToken(), e.getMessage()));
+                if (e.isFatal()) {
+                    player.deactivate(String.format("%s: invalid input", player.getNicknameToken()));
+                    gameManager.addToGameSummary(String.format("%s: invalid input - %s", player.getNicknameToken(), e.getMessage()));
+                } else {
+                    gameManager.addToGameSummary(String.format("[WARNING] %s: invalid input - %s", player.getNicknameToken(), e.getMessage()));
+                }
             } catch (IndexOutOfBoundsException e) {
                 player.deactivate(String.format("%s: timeout", player.getNicknameToken()));
                 gameManager.addToGameSummary(String.format("%s: timeout - player provided an empty input", player.getNicknameToken()));

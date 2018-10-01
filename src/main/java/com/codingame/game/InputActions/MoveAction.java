@@ -7,15 +7,13 @@ import java.util.List;
 
 public class MoveAction extends Action {
     public class Step {
-        public int amount;
         public Constants.Direction direction;
-        public Step(int amount, Constants.Direction direction) {
-            this.amount = amount;
+        public Step(Constants.Direction direction) {
             this.direction = direction;
         }
         @Override
         public String toString() {
-            return String.format("MOVE %d %s", amount, direction);
+            return String.format("MOVE %s", direction);
         }
     }
     public List<Step> steps;
@@ -24,8 +22,8 @@ public class MoveAction extends Action {
         this.steps = new ArrayList<>();
     }
 
-    public void addAction(int amount, Constants.Direction direction) {
-        steps.add(new Step(amount, direction));
+    public void addAction(Constants.Direction direction) {
+        steps.add(new Step(direction));
     }
 
     @Override
@@ -34,9 +32,9 @@ public class MoveAction extends Action {
 
         for (int i = 0; i < steps.size(); i++) {
             if (i > 0) {
-                sb.append(';');
+                sb.append(' ');
             }
-            sb.append(String.format("%d %s", steps.get(i).amount, steps.get(i).direction.name()));
+            sb.append(steps.get(i).direction.name());
         }
         return sb.toString();
     }
