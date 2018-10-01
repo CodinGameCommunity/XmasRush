@@ -53,7 +53,7 @@ public class Constants {
     }
 
     public static final List<String> ITEM_NAMES = Arrays.asList(
-            "ARROW", "BOOK", "CANE", "CANDY", "DIAMOND", "FISH", "MASK", "KEY", "SWORD", "SCROLL", "SHIELD", "POTION"
+            "ARROW", "BOOK", "CANE", "CANDY", "DIAMOND", "FISH", "MASK", "KEY", "POTION", "SCROLL", "SHIELD", "SWORD"
     );
 
     public static final List<Vector2> PLAYER_POSITIONS = Arrays.asList(
