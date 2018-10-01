@@ -25,11 +25,11 @@
             <div class="title">Output for a MOVE turn:</div>
             <div class="text">
                 <ul style="padding-top: 0; padding-bottom: 0;">
-                    <li><action>MOVE amount direction</action> where <b>amount</b> can be <action>1</action>, <action>2</action>, <action>3</action>, <action>4</action>, <action>5</action> or <action>6</action> and <b>direction</b> <action>UP</action>, <action>DOWN</action>, <action>LEFT</action> or <action>RIGHT</action></li>
+                    <li><action>MOVE direction</action> where <b>direction</b> can be <action>UP</action>, <action>DOWN</action>, <action>LEFT</action> or <action>RIGHT</action></li>
                     <li><action>PASS</action> to skip movement</li>
                 </ul>
-                <action>MOVE</action> commands can also be chained up to 20 times using a semi-colon <action>;</action> like <action>MOVE amount direction;amount direction</action><br/>
-                Example: <action>MOVE 3 DOWN</action> or <action>MOVE 2 LEFT;1 UP;1 RIGHT</action> or <action>PASS</action></li>
+                <action>MOVE</action> commands support up to 20 directions separated by spaces like <action>MOVE direction direction direction</action><br/>
+                Example: <action>MOVE DOWN</action> or <action>MOVE LEFT UP RIGHT</action> or <action>PASS</action></li>
             </div>
         </div>
     </div>
