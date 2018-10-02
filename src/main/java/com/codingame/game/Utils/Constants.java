@@ -52,9 +52,12 @@ public class Constants {
         }
     }
 
-    public static final List<String> ITEM_IDENTIFIERS = Arrays.asList(
-            "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"
+    public static final List<String> ITEM_NAMES = Arrays.asList(
+            "ARROW", "BOOK", "CANE", "CANDY", "DIAMOND", "FISH", "MASK", "KEY", "POTION", "SCROLL", "SHIELD", "SWORD"
     );
+
+    public static final int PLAYER_INDEX = 0;
+    public static final int OPPONENT_INDEX = 1;
 
     public static final List<Vector2> PLAYER_POSITIONS = Arrays.asList(
             Vector2.ZERO,
@@ -65,6 +68,9 @@ public class Constants {
             new Vector2(PLAYER_CARDS_POS_X, PLAYER_CARDS_POS_Y),
             new Vector2(OPPONENT_CARDS_POS_X, OPPONENT_CARDS_POS_Y)
     );
+
+    // TODO: update this when adding leagues
+    public static final int NUM_QUEST_CARDS = 1;
 
     public static final Pattern PLAYER_INPUT_PUSH_PATTERN = Pattern
             .compile("(?<pushAction>\\bpush\\b) (?<id>[1,3,5]) (?<direction>(\\bup\\b|\\bright\\b|\\bdown\\b|\\bleft\\b))",

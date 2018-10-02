@@ -38,7 +38,7 @@ public class GameMap {
         // initialize tiles ids and positions
         for (int i = 0; i < Constants.MAP_WIDTH; i++) {
             for (int j = 0; j < Constants.MAP_HEIGHT; j++) {
-                TileModel tileModel = new TileModel(get(i, j), new Vector2(i, j));
+                TileModel tileModel = new TileModel(tilePatterns[i][j], new Vector2(i, j));
                 TileController tileController = new TileController(tileModel, new TileView());
                 tileController.initView();
                 tileController.setPosInMap(tileModel.pos);
@@ -74,40 +74,25 @@ public class GameMap {
         }
 
         // set up items
-        for (String identifier : Constants.ITEM_IDENTIFIERS) {
-            Item item = new Item(identifier, 0);
+        for (String name : Constants.ITEM_NAMES) {
             TileController tileController = getRandomMapTile();
             while (Utils.isCenterTile(tileController.getPos()) || Utils.isPlayerBase(tileController.getPos()) || tileController.hasItem()) {
                 tileController = getRandomMapTile();
             }
-            int row = tileController.getPos().x;
-            int col = tileController.getPos().y;
-            tileControllers[row][col].addItem(item);
+
+            addItem(tileController, name, 0);
 
             // add the mirrored item
-            item = new Item(identifier, 1);
-            tileController = getOppositeTile(row, col);
-            tileControllers[tileController.getPos().x][tileController.getPos().y].addItem(item);
+            Vector2 tilePos = tileController.getPos();
+            tileController = getOppositeTile(tilePos.x, tilePos.y);
+            addItem(tileController, name, 1);
         }
     }
 
-    public String[] toInputStrings() {
-        final String[] result = new String[Constants.MAP_HEIGHT];
-        StringBuilder sb;
-        for (int j = 0; j < Constants.MAP_HEIGHT; j++) {
-            sb = new StringBuilder();
-            sb.append(tileControllers[0][j].toInputString());
-            for (int i = 1; i < Constants.MAP_WIDTH; i++) {
-                sb.append(" ");
-                sb.append(tileControllers[i][j].toInputString());
-            }
-            result[j] = sb.toString();
-        }
-        return result;
-    }
-
-    public String get(int i, int j) {
-        return tilePatterns[i][j];
+    private void addItem(TileController tileController, String name, int playerId) {
+        Vector2 tilePos = tileController.getPos();
+        Item item = new Item(name, playerId, new Vector2(tilePos));
+        tileControllers[tilePos.x][tilePos.y].addItem(item);
     }
 
     public TileController getTile(int i, int j) {

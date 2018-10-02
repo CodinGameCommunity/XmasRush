@@ -48,12 +48,16 @@ public class TileController {
         view.setPosInMap(pos, time);
     }
 
-    public void setPosAbsolute(Vector2 pos) {
-        setPosAbsolute(pos, 0);
+    public void setPosAbsolute(int playerId, Vector2 pos) {
+        setPosAbsolute(playerId, pos, 0);
     }
 
-    public void setPosAbsolute(Vector2 pos, double time) {
-        model.pos = Vector2.INVALID;
+    public void setPosAbsolute(int playerId, Vector2 pos, double time) {
+        if (playerId == Constants.PLAYER_INDEX) {
+            model.pos = Vector2.MINUS_ONE;
+        } else if (playerId == Constants.OPPONENT_INDEX){
+            model.pos = Vector2.MINUS_TWO;
+        }
         view.setPosAbsolute(pos, time);
     }
 

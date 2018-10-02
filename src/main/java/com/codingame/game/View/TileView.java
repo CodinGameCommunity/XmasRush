@@ -77,7 +77,7 @@ public class TileView {
 
     public void addItem(Item item) {
         String itemsPath = "items" + System.getProperty("file.separator") + "item_%s_%d.png";
-        String spritePath = String.format(itemsPath, item.getLowerCaseIdentifier(), item.getPlayerId());
+        String spritePath = String.format(itemsPath, item.getName(), item.getPlayerId());
         this.item = graphicEntityModule.createSprite()
                 .setImage(spritePath)
                 .setAnchor(0.5)

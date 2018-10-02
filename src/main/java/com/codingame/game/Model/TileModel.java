@@ -73,10 +73,6 @@ public class TileModel {
     }
 
     public String toInputString() {
-        if (item != null) {
-            return String.format("%s%s%d", pattern, item.getIdentifier(), item.getPlayerId());
-        } else {
-            return String.format("%s--", pattern);
-        }
+        return pattern;
     }
 }
