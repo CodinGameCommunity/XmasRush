@@ -56,6 +56,9 @@ public class Constants {
             "ARROW", "BOOK", "CANE", "CANDY", "DIAMOND", "FISH", "MASK", "KEY", "POTION", "SCROLL", "SHIELD", "SWORD"
     );
 
+    public static final int PLAYER_INDEX = 0;
+    public static final int OPPONENT_INDEX = 1;
+
     public static final List<Vector2> PLAYER_POSITIONS = Arrays.asList(
             Vector2.ZERO,
             new Vector2(Constants.MAP_WIDTH - 1, Constants.MAP_HEIGHT - 1)

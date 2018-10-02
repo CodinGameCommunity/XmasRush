@@ -10,12 +10,14 @@ import com.codingame.game.View.PlayerView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 public class PlayerController {
     private Player model;
     private PlayerView view;
     private TileController tile;
-    private List<CardController> cards = new ArrayList<>();
+    private Stack<CardController> hiddenCards = new Stack<>();
+    private List<CardController> visibleCards = new ArrayList<>();
 
     public PlayerController(Player model, PlayerView view) {
         this.model = model;
@@ -69,43 +71,46 @@ public class PlayerController {
         CardView view = new CardView(this.model.getIndex(), item.getName());
         view.setPosAbsolute(pos.x, pos.y);
         CardController card = new CardController(item, view);
-        this.cards.add(card);
+        this.hiddenCards.add(card);
     }
 
-    public void removeTopCard() {
-        CardController card = getTopCard();
-        card.remove();
-        this.cards.remove(card);
+    public void removeCard(CardController card) {
+        if (card != null) {
+            card.remove();
+            this.visibleCards.remove(card);
+        }
     }
 
     public CardController getTopCard() {
-        return this.cards.get(this.cards.size() - 1);
-    }
-
-    public List<CardController> getTopCards(int numCards) {
-        int cardsSize = cards.size();
-        int maxNumCards = Math.min(numCards, cardsSize);
-        List<CardController> topCards = new ArrayList<>(maxNumCards);
-        for (int i = cardsSize - 1; i > cardsSize - maxNumCards - 1; i--) {
-            topCards.add(cards.get(i));
+        if (hasCards()) {
+            return this.visibleCards.get(this.visibleCards.size() - 1);
+        } else {
+            return null;
         }
-        return topCards;
     }
 
-    public void flipTopCard() {
-        getTopCard().flip();
+    public List<CardController> getTopCards() {
+        return visibleCards;
+    }
+
+    public void flipNewCard() {
+        if (!hiddenCards.empty()) {
+            CardController card = this.hiddenCards.pop();
+            card.flip();
+            this.visibleCards.add(card);
+        }
     }
 
     public boolean hasCards() {
-        return !this.cards.isEmpty();
+        return !this.visibleCards.isEmpty();
     }
 
     public int getNumCards() {
-        return this.cards.size();
+        return this.hiddenCards.size() + this.visibleCards.size();
     }
 
     public int getNumQuestCards() {
-        return Math.min(this.cards.size(), Constants.NUM_QUEST_CARDS);
+        return this.visibleCards.size();
     }
 
     public int getId() {

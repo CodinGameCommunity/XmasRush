@@ -94,8 +94,10 @@ public class Referee extends AbstractReferee {
             }
         }
 
-        playerControllers.get(0).flipTopCard();
-        playerControllers.get(1).flipTopCard();
+        for (int i = 0; i < Constants.NUM_QUEST_CARDS; i++) {
+            playerControllers.get(Constants.PLAYER_INDEX).flipNewCard();
+            playerControllers.get(Constants.OPPONENT_INDEX).flipNewCard();
+        }
     }
 
     private void createTexts() {
@@ -152,11 +154,11 @@ public class Referee extends AbstractReferee {
         playerTile.initView();
         opponentTile.initView();
 
-        playerTile.setPosAbsolute(new Vector2(Constants.PLAYER_TILE_POS_X, Constants.PLAYER_TILE_POS_Y), 0);
-        opponentTile.setPosAbsolute(new Vector2(Constants.OPPONENT_TILE_POS_X, Constants.OPPONENT_TILE_POS_Y), 1);
+        playerTile.setPosAbsolute(Constants.PLAYER_INDEX, new Vector2(Constants.PLAYER_TILE_POS_X, Constants.PLAYER_TILE_POS_Y));
+        opponentTile.setPosAbsolute(Constants.OPPONENT_INDEX, new Vector2(Constants.OPPONENT_TILE_POS_X, Constants.OPPONENT_TILE_POS_Y));
 
-        playerControllers.get(0).setTile(playerTile);
-        playerControllers.get(1).setTile(opponentTile);
+        playerControllers.get(Constants.PLAYER_INDEX).setTile(playerTile);
+        playerControllers.get(Constants.OPPONENT_INDEX).setTile(opponentTile);
     }
 
     private void createBackground() {
@@ -202,12 +204,30 @@ public class Referee extends AbstractReferee {
             }
 
             // Items
-            int numItems = map.getItems().size();
+            List<TileController> tilesWithItems = new ArrayList<>();
+            TileController playerTile = playerControllers.get(Constants.PLAYER_INDEX).getTile();
+            if (playerTile.hasItem()) {
+                tilesWithItems.add(playerTile);
+            }
+            TileController opponentTile = playerControllers.get(Constants.OPPONENT_INDEX).getTile();
+            if (opponentTile.hasItem()) {
+                tilesWithItems.add(opponentTile);
+            }
+            for (int i = 0; i < Constants.MAP_HEIGHT; i++) {
+                for (int j = 0; j < Constants.MAP_WIDTH; j++) {
+                    TileController tile = map.getTile(i, j);
+                    if (tile.hasItem()) {
+                        tilesWithItems.add(tile);
+                    }
+                }
+            }
+            int numItems = tilesWithItems.size();
             player.sendInputLine(Integer.toString(numItems));
-            for (Item item : map.getItems()) {
+            for (TileController tile : tilesWithItems) {
+                Item item = tile.getItem();
                 player.sendInputLine(item.getName());
-                player.sendInputLine(Integer.toString(item.getPos().x));
-                player.sendInputLine(Integer.toString(item.getPos().y));
+                player.sendInputLine(Integer.toString(tile.getPos().x));
+                player.sendInputLine(Integer.toString(tile.getPos().y));
                 player.sendInputLine(Integer.toString(item.getPlayerId()));
             }
 
@@ -228,15 +248,15 @@ public class Referee extends AbstractReferee {
                 player.sendInputLine(playerController.getTile().toInputString());
             }
 
-            PlayerController playerController = playerControllers.get(0);
-            PlayerController opponentController = playerControllers.get(1);
+            PlayerController playerController = playerControllers.get(Constants.PLAYER_INDEX);
+            PlayerController opponentController = playerControllers.get(Constants.OPPONENT_INDEX);
             int numQuests = playerController.getNumQuestCards() + opponentController.getNumQuestCards();
             player.sendInputLine(Integer.toString(numQuests));
-            for (CardController card : playerController.getTopCards(Constants.NUM_QUEST_CARDS)) {
+            for (CardController card : playerController.getTopCards()) {
                 player.sendInputLine(card.getItem().getName());
                 player.sendInputLine(Integer.toString(card.getItem().getPlayerId()));
             }
-            for (CardController card : opponentController.getTopCards(Constants.NUM_QUEST_CARDS)) {
+            for (CardController card : opponentController.getTopCards()) {
                 player.sendInputLine(card.getItem().getName());
                 player.sendInputLine(Integer.toString(card.getItem().getPlayerId()));
             }
@@ -300,7 +320,7 @@ public class Referee extends AbstractReferee {
             PushAction action = (PushAction)playerAction.action;
             pushedRows.add(action.lineId);
             TileController poppedTile = map.pushRow(playerAction.player.getTile(), action.lineId, action.direction);
-            poppedTile.setPosAbsolute(playerAction.player.getTilePosition(), playerAction.player.getId(), 0.5);
+            poppedTile.setPosAbsolute(playerAction.player.getId(), playerAction.player.getTilePosition(), 0.5);
             playerAction.player.setTile(poppedTile);
 
             // if there's a player on the pushed row move them too
@@ -318,7 +338,7 @@ public class Referee extends AbstractReferee {
         playerPushColumnActions.forEach(playerAction -> {
             PushAction action = (PushAction)playerAction.action;
             TileController poppedTile = map.pushColumn(playerAction.player.getTile(), action.lineId, action.direction, rowsToSkip);
-            poppedTile.setPosAbsolute(playerAction.player.getTilePosition(), playerAction.player.getId(), 1);
+            poppedTile.setPosAbsolute(playerAction.player.getId(), playerAction.player.getTilePosition(), 1);
             playerAction.player.setTile(poppedTile);
 
             // if there's a player on the pushed column move them too
@@ -343,13 +363,17 @@ public class Referee extends AbstractReferee {
             TileController tile = map.getTile(pos.x, pos.y);
             if (!tile.hasItem()) return;
 
-            CardController topCard = playerController.getTopCard();
-            if (tile.getItem().getName().equals(topCard.getItem().getName())
-                    && tile.getItem().getPlayerId() == player.getIndex()) {
-                playerController.removeTopCard();
-                playerController.flipTopCard();
-                tile.removeItem();
-                gameManager.addToGameSummary(String.format("%s: completed a quest card", player.getNicknameToken()));
+            Item item = tile.getItem();
+            List<CardController> topCards = playerController.getTopCards();
+            for (CardController card : topCards) {
+                if (item.getName().equals(card.getItem().getName())
+                        && item.getPlayerId() == player.getIndex()) {
+                    playerController.removeCard(card);
+                    playerController.flipNewCard();
+                    tile.removeItem();
+                    gameManager.addToGameSummary(String.format("%s: completed a quest card", player.getNicknameToken()));
+                    break;
+                }
             }
         });
     }
