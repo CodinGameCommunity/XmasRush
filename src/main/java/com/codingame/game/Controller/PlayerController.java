@@ -81,14 +81,6 @@ public class PlayerController {
         }
     }
 
-    public CardController getTopCard() {
-        if (hasCards()) {
-            return this.visibleCards.get(this.visibleCards.size() - 1);
-        } else {
-            return null;
-        }
-    }
-
     public List<CardController> getTopCards() {
         return visibleCards;
     }
@@ -98,6 +90,16 @@ public class PlayerController {
             CardController card = this.hiddenCards.pop();
             card.flip();
             this.visibleCards.add(card);
+        }
+    }
+
+    public void flipVisibleCards(int numCards) {
+        if (hiddenCards.size() >= numCards) {
+            for (int i = 0; i < numCards; i++) {
+                CardController card = this.hiddenCards.pop();
+                card.flip();
+                this.visibleCards.add(card);
+            }
         }
     }
 

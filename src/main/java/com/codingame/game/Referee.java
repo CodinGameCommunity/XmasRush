@@ -94,9 +94,8 @@ public class Referee extends AbstractReferee {
             }
         }
 
-        for (int i = 0; i < Constants.NUM_QUEST_CARDS; i++) {
-            playerControllers.get(Constants.PLAYER_INDEX).flipNewCard();
-            playerControllers.get(Constants.OPPONENT_INDEX).flipNewCard();
+        for (PlayerController player : playerControllers) {
+            player.flipVisibleCards(Constants.NUM_QUEST_CARDS);
         }
     }
 
