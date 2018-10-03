@@ -188,8 +188,9 @@ public class Referee extends AbstractReferee {
 
     private void sendInitialInputs() {
         for (Player player : gameManager.getActivePlayers()) {
-            player.sendInputLine(Integer.toString(Constants.MAP_WIDTH));
-            player.sendInputLine(Integer.toString(Constants.MAP_HEIGHT));
+            player.sendInputLine(String.format("%d %d",
+                    Constants.MAP_WIDTH,
+                    Constants.MAP_HEIGHT));
         }
     }
 
@@ -197,9 +198,12 @@ public class Referee extends AbstractReferee {
         for (Player player : gameManager.getActivePlayers()) {
             // Game map
             for (int i = 0; i < Constants.MAP_HEIGHT; i++) {
-                for (int j = 0; j < Constants.MAP_WIDTH; j++) {
-                    player.sendInputLine(map.getTile(i, j).toInputString());
+                StringBuilder sb = new StringBuilder();
+                sb.append(map.getTile(i, 0).toInputString());
+                for (int j = 1; j < Constants.MAP_WIDTH; j++) {
+                    sb.append(" " + map.getTile(i, j).toInputString());
                 }
+                player.sendInputLine(sb.toString());
             }
 
             // Items
@@ -224,10 +228,11 @@ public class Referee extends AbstractReferee {
             player.sendInputLine(Integer.toString(numItems));
             for (TileController tile : tilesWithItems) {
                 Item item = tile.getItem();
-                player.sendInputLine(item.getName());
-                player.sendInputLine(Integer.toString(tile.getPos().x));
-                player.sendInputLine(Integer.toString(tile.getPos().y));
-                player.sendInputLine(Integer.toString(item.getPlayerId()));
+                player.sendInputLine(String.format("%s %d %d %d",
+                        item.getName(),
+                        tile.getPos().x,
+                        tile.getPos().y,
+                        item.getPlayerId()));
             }
 
             // Turn type
@@ -235,29 +240,24 @@ public class Referee extends AbstractReferee {
 
             // Player information
             for (int i = 0; i < 2; i++) {
-                // Cards
                 PlayerController playerController = playerControllers.get(i);
-                player.sendInputLine(Integer.toString(playerController.getNumCards()));
-
-                // Agent position
-                player.sendInputLine(Integer.toString(playerController.getPos().x));
-                player.sendInputLine(Integer.toString(playerController.getPos().y));
-
-                // Push tile
-                player.sendInputLine(playerController.getTile().toInputString());
+                player.sendInputLine(String.format("%d %d %d %s",
+                        playerController.getNumCards(),
+                        playerController.getPos().x,
+                        playerController.getPos().y,
+                        playerController.getTile().toInputString()));
             }
 
-            PlayerController playerController = playerControllers.get(Constants.PLAYER_INDEX);
-            PlayerController opponentController = playerControllers.get(Constants.OPPONENT_INDEX);
-            int numQuests = playerController.getNumQuestCards() + opponentController.getNumQuestCards();
+            int numQuests = playerControllers.get(Constants.PLAYER_INDEX).getNumQuestCards()
+                    + playerControllers.get(Constants.OPPONENT_INDEX).getNumQuestCards();
             player.sendInputLine(Integer.toString(numQuests));
-            for (CardController card : playerController.getTopCards()) {
-                player.sendInputLine(card.getItem().getName());
-                player.sendInputLine(Integer.toString(card.getItem().getPlayerId()));
-            }
-            for (CardController card : opponentController.getTopCards()) {
-                player.sendInputLine(card.getItem().getName());
-                player.sendInputLine(Integer.toString(card.getItem().getPlayerId()));
+            for (int i = 0; i < 2; i++) {
+                PlayerController playerController = playerControllers.get(i);
+                for (CardController card : playerController.getTopCards()) {
+                    player.sendInputLine(String.format("%s %d",
+                            card.getItem().getName(),
+                            card.getItem().getPlayerId()));
+                }
             }
 
             player.execute();
