@@ -102,7 +102,7 @@ public class TileView {
     }
 
     public void setPosAbsolute(Vector2 pos, double time) {
-        group.setX(pos.x).setY(pos.y);
+        group.setX(pos.getX()).setY(pos.getY());
 
         graphicEntityModule.commitEntityState(time, group);
     }

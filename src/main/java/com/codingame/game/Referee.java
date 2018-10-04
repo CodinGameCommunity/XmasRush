@@ -230,8 +230,8 @@ public class Referee extends AbstractReferee {
                 Item item = tile.getItem();
                 player.sendInputLine(String.format("%s %d %d %d",
                         item.getName(),
-                        tile.getPos().x,
-                        tile.getPos().y,
+                        tile.getPos().getX(),
+                        tile.getPos().getY(),
                         item.getPlayerId()));
             }
 
@@ -243,8 +243,8 @@ public class Referee extends AbstractReferee {
                 PlayerController playerController = playerControllers.get(i);
                 player.sendInputLine(String.format("%d %d %d %s",
                         playerController.getNumCards(),
-                        playerController.getPos().x,
-                        playerController.getPos().y,
+                        playerController.getPos().getX(),
+                        playerController.getPos().getY(),
                         playerController.getTile().toInputString()));
             }
 
@@ -324,10 +324,10 @@ public class Referee extends AbstractReferee {
 
             // if there's a player on the pushed row move them too
             for (Player player : gameManager.getActivePlayers()) {
-                if (player.getAgentPosition().x == action.lineId) {
+                if (player.getAgentPosition().getX() == action.lineId) {
                     Vector2 pos = new Vector2(playerControllers.get(player.getIndex()).getPos());
                     pos.add(action.direction.asValue());
-                    pos.y = Utils.wrap(pos.y, 0, Constants.MAP_HEIGHT - 1);
+                    pos.setY(Utils.wrap(pos.getY(), 0, Constants.MAP_HEIGHT - 1));
                     playerControllers.get(player.getIndex()).setPosInMap(pos, 0.5);
                 }
             }
@@ -342,10 +342,10 @@ public class Referee extends AbstractReferee {
 
             // if there's a player on the pushed column move them too
             for (Player player : gameManager.getActivePlayers()) {
-                if (player.getAgentPosition().y == action.lineId) {
+                if (player.getAgentPosition().getY() == action.lineId) {
                     Vector2 pos = new Vector2(playerControllers.get(player.getIndex()).getPos());
                     pos.add(action.direction.asValue());
-                    pos.x = Utils.wrap(pos.x, 0, Constants.MAP_WIDTH - 1);
+                    pos.setX(Utils.wrap(pos.getX(), 0, Constants.MAP_WIDTH - 1));
                     if (!rowsToSkip.isEmpty()) {
                         playerControllers.get(player.getIndex()).setSamePosInMap(0.5);
                     }
@@ -359,7 +359,7 @@ public class Referee extends AbstractReferee {
         gameManager.getActivePlayers().forEach(player -> {
             PlayerController playerController = playerControllers.get(player.getIndex());
             Vector2 pos = player.getAgentPosition();
-            TileController tile = map.getTile(pos.x, pos.y);
+            TileController tile = map.getTile(pos.getX(), pos.getY());
             if (!tile.hasItem()) return;
 
             Item item = tile.getItem();
