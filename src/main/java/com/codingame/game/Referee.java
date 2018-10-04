@@ -197,11 +197,11 @@ public class Referee extends AbstractReferee {
     private void sendPlayerInputs() {
         for (Player player : gameManager.getActivePlayers()) {
             // Game map
-            for (int i = 0; i < Constants.MAP_HEIGHT; i++) {
+            for (int y = 0; y < Constants.MAP_HEIGHT; y++) {
                 StringBuilder sb = new StringBuilder();
-                sb.append(map.getTile(i, 0).toInputString());
-                for (int j = 1; j < Constants.MAP_WIDTH; j++) {
-                    sb.append(" " + map.getTile(i, j).toInputString());
+                sb.append(map.getTile(y, 0).toInputString());
+                for (int x = 1; x < Constants.MAP_WIDTH; x++) {
+                    sb.append(" " + map.getTile(x, y).toInputString());
                 }
                 player.sendInputLine(sb.toString());
             }
@@ -216,9 +216,9 @@ public class Referee extends AbstractReferee {
             if (opponentTile.hasItem()) {
                 tilesWithItems.add(opponentTile);
             }
-            for (int i = 0; i < Constants.MAP_HEIGHT; i++) {
-                for (int j = 0; j < Constants.MAP_WIDTH; j++) {
-                    TileController tile = map.getTile(i, j);
+            for (int y = 0; y < Constants.MAP_HEIGHT; y++) {
+                for (int x = 0; x < Constants.MAP_WIDTH; x++) {
+                    TileController tile = map.getTile(x, y);
                     if (tile.hasItem()) {
                         tilesWithItems.add(tile);
                     }

@@ -95,8 +95,8 @@ public class GameMap {
         tileControllers[tilePos.x][tilePos.y].addItem(item);
     }
 
-    public TileController getTile(int i, int j) {
-        return tileControllers[i][j];
+    public TileController getTile(int x, int y) {
+        return tileControllers[x][y];
     }
 
     private String takeRandomAvailableTilePattern() {
