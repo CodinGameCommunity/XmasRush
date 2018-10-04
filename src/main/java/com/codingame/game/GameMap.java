@@ -91,7 +91,7 @@ public class GameMap {
 
     private void addItem(TileController tileController, String name, int playerId) {
         Vector2 tilePos = tileController.getPos();
-        Item item = new Item(name, playerId, new Vector2(tilePos));
+        Item item = new Item(name, playerId);
         tileControllers[tilePos.x][tilePos.y].addItem(item);
     }
 
