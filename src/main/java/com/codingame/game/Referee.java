@@ -206,6 +206,16 @@ public class Referee extends AbstractReferee {
                 player.sendInputLine(sb.toString());
             }
 
+            // Player information
+            for (int i = 0; i < 2; i++) {
+                PlayerController playerController = playerControllers.get(i);
+                player.sendInputLine(String.format("%d %d %d %s",
+                        playerController.getNumCards(),
+                        playerController.getPos().getX(),
+                        playerController.getPos().getY(),
+                        playerController.getTile().toInputString()));
+            }
+
             // Items
             List<TileController> tilesWithItems = new ArrayList<>();
             TileController playerTile = playerControllers.get(Constants.PLAYER_INDEX).getTile();
@@ -238,16 +248,8 @@ public class Referee extends AbstractReferee {
             // Turn type
             player.sendInputLine(Integer.toString(turnType.getValue()));
 
-            // Player information
-            for (int i = 0; i < 2; i++) {
-                PlayerController playerController = playerControllers.get(i);
-                player.sendInputLine(String.format("%d %d %d %s",
-                        playerController.getNumCards(),
-                        playerController.getPos().getX(),
-                        playerController.getPos().getY(),
-                        playerController.getTile().toInputString()));
-            }
 
+            // Cards
             int numQuests = playerControllers.get(Constants.PLAYER_INDEX).getNumQuestCards()
                     + playerControllers.get(Constants.OPPONENT_INDEX).getNumQuestCards();
             player.sendInputLine(Integer.toString(numQuests));
