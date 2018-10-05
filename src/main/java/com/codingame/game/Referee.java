@@ -111,25 +111,25 @@ public class Referee extends AbstractReferee {
 
     private void drawArrows() {
         int x = Constants.MAP_POS_X, y = Constants.MAP_POS_Y;
-        for (int i = 0; i < Constants.MAP_WIDTH; i++) {
-            for (int j = 0; j < Constants.MAP_HEIGHT; j++) {
+        for (int j = 0; j < Constants.MAP_HEIGHT; j++) {
+            for (int i = 0; i < Constants.MAP_WIDTH; i++) {
                 int arrowPosX = x, arrowPosY = y, arrowRot = 0, arrowOffset = 85;
-                if (j % 2 != 0) {
-                    if (i == 0) {
+                if (i % 2 != 0) {
+                    if (j == 0) {
                         arrowPosY -= arrowOffset;
                         arrowRot = 180;
                         createSprite("arrow.png", arrowPosX, arrowPosY, Math.toRadians(arrowRot), Constants.MapLayers.BACKGROUND.asValue());
-                    } else if (i == Constants.MAP_WIDTH - 1) {
+                    } else if (j == Constants.MAP_HEIGHT - 1) {
                         arrowPosY += arrowOffset;
                         arrowRot = 0;
                         createSprite("arrow.png", arrowPosX, arrowPosY, Math.toRadians(arrowRot), Constants.MapLayers.BACKGROUND.asValue());
                     }
-                } else if (i % 2 != 0) {
-                    if (j == 0) {
+                } else if (j % 2 != 0) {
+                    if (i == 0) {
                         arrowPosX -= arrowOffset;
                         arrowRot = 90;
                         createSprite("arrow.png", arrowPosX, arrowPosY, Math.toRadians(arrowRot), Constants.MapLayers.BACKGROUND.asValue());
-                    } else if (j == Constants.MAP_HEIGHT - 1) {
+                    } else if (i == Constants.MAP_WIDTH - 1) {
                         arrowPosX += arrowOffset;
                         arrowRot = 270;
                         createSprite("arrow.png", arrowPosX, arrowPosY, Math.toRadians(arrowRot), Constants.MapLayers.BACKGROUND.asValue());
@@ -197,11 +197,11 @@ public class Referee extends AbstractReferee {
     private void sendPlayerInputs() {
         for (Player player : gameManager.getActivePlayers()) {
             // Game map
-            for (int i = 0; i < Constants.MAP_HEIGHT; i++) {
+            for (int y = 0; y < Constants.MAP_HEIGHT; y++) {
                 StringBuilder sb = new StringBuilder();
-                sb.append(map.getTile(i, 0).toInputString());
-                for (int j = 1; j < Constants.MAP_WIDTH; j++) {
-                    sb.append(" " + map.getTile(i, j).toInputString());
+                sb.append(map.getTile(y, 0).toInputString());
+                for (int x = 1; x < Constants.MAP_WIDTH; x++) {
+                    sb.append(" " + map.getTile(x, y).toInputString());
                 }
                 player.sendInputLine(sb.toString());
             }
@@ -226,9 +226,9 @@ public class Referee extends AbstractReferee {
             if (opponentTile.hasItem()) {
                 tilesWithItems.add(opponentTile);
             }
-            for (int i = 0; i < Constants.MAP_HEIGHT; i++) {
-                for (int j = 0; j < Constants.MAP_WIDTH; j++) {
-                    TileController tile = map.getTile(i, j);
+            for (int y = 0; y < Constants.MAP_HEIGHT; y++) {
+                for (int x = 0; x < Constants.MAP_WIDTH; x++) {
+                    TileController tile = map.getTile(x, y);
                     if (tile.hasItem()) {
                         tilesWithItems.add(tile);
                     }
@@ -284,8 +284,14 @@ public class Referee extends AbstractReferee {
                         playerPushRowActions.clear();
                         playerPushColumnActions.clear();
                     } else if (pushAction.direction == Constants.Direction.RIGHT || pushAction.direction == Constants.Direction.LEFT) {
+                        if (pushAction.lineId >= Constants.MAP_HEIGHT) {
+                            throw new InvalidAction("out of bounds line index");
+                        }
                         playerPushRowActions.add(new PlayerAction(playerController, pushAction));
                     } else {
+                        if (pushAction.lineId >= Constants.MAP_WIDTH) {
+                            throw new InvalidAction("out of bounds line index");
+                        }
                         playerPushColumnActions.add(new PlayerAction(playerController, pushAction));
                     }
                     prevPushAction = pushAction;
@@ -326,10 +332,10 @@ public class Referee extends AbstractReferee {
 
             // if there's a player on the pushed row move them too
             for (Player player : gameManager.getActivePlayers()) {
-                if (player.getAgentPosition().getX() == action.lineId) {
+                if (player.getAgentPosition().getY() == action.lineId) {
                     Vector2 pos = new Vector2(playerControllers.get(player.getIndex()).getPos());
                     pos.add(action.direction.asValue());
-                    pos.setY(Utils.wrap(pos.getY(), 0, Constants.MAP_HEIGHT - 1));
+                    pos.setX(Utils.wrap(pos.getX(), 0, Constants.MAP_WIDTH - 1));
                     playerControllers.get(player.getIndex()).setPosInMap(pos, 0.5);
                 }
             }
@@ -344,10 +350,10 @@ public class Referee extends AbstractReferee {
 
             // if there's a player on the pushed column move them too
             for (Player player : gameManager.getActivePlayers()) {
-                if (player.getAgentPosition().getY() == action.lineId) {
+                if (player.getAgentPosition().getX() == action.lineId) {
                     Vector2 pos = new Vector2(playerControllers.get(player.getIndex()).getPos());
                     pos.add(action.direction.asValue());
-                    pos.setX(Utils.wrap(pos.getX(), 0, Constants.MAP_WIDTH - 1));
+                    pos.setY(Utils.wrap(pos.getY(), 0, Constants.MAP_HEIGHT - 1));
                     if (!rowsToSkip.isEmpty()) {
                         playerControllers.get(player.getIndex()).setSamePosInMap(0.5);
                     }

@@ -19,8 +19,8 @@ public class Utils {
     }
 
     public static void setPosInMap(Entity entity, Vector2 pos, double time) {
-        int x = Constants.MAP_POS_X + pos.getY() * (Constants.TILE_SIZE + Constants.TILES_OFFSET);
-        int y = Constants.MAP_POS_Y + pos.getX() * (Constants.TILE_SIZE + Constants.TILES_OFFSET);
+        int x = Constants.MAP_POS_X + pos.getX() * (Constants.TILE_SIZE + Constants.TILES_OFFSET);
+        int y = Constants.MAP_POS_Y + pos.getY() * (Constants.TILE_SIZE + Constants.TILES_OFFSET);
         entity.setX(x).setY(y);
 
         graphicEntityModule.commitEntityState(time, entity);
@@ -35,8 +35,8 @@ public class Utils {
     }
 
     public static boolean isCenterTile(Vector2 pos) {
-        int centerX = Constants.MAP_HEIGHT / 2;
-        int centerY = Constants.MAP_WIDTH / 2;
+        int centerX = Constants.MAP_WIDTH / 2;
+        int centerY = Constants.MAP_HEIGHT / 2;
         return pos.getX() == centerX && pos.getY() == centerY;
     }
 }
