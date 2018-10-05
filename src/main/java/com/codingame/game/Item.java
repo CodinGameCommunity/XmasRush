@@ -39,4 +39,32 @@ public class Item {
     public int getPlayerId() {
         return this.playerId;
     }
+
+    /**
+     * Checks for equality between 2 Item objects.
+     * @param obj The other Item object to compare to.
+     * @return true if all components are equal.
+     *         false otherwise.
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Item)) {
+            return false;
+        }
+        Item other = (Item)obj;
+        return this.name.equals(other.name) &&
+                this.playerId == other.playerId;
+    }
+
+    /**
+     * Computes the hash value.
+     * @return a hash code value for the Item object.
+     */
+    @Override
+    public int hashCode() {
+        int result = 17;
+        result = 37 * result + playerId;
+        result = 37 * result + name.hashCode();
+        return result;
+    }
 }

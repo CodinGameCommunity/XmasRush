@@ -84,7 +84,7 @@ public class GameMap {
 
             // add the mirrored item
             Vector2 tilePos = tileController.getPos();
-            tileController = getOppositeTile(tilePos.x, tilePos.y);
+            tileController = getOppositeTile(tilePos.getX(), tilePos.getY());
             addItem(tileController, name, 1);
         }
     }
@@ -92,7 +92,7 @@ public class GameMap {
     private void addItem(TileController tileController, String name, int playerId) {
         Vector2 tilePos = tileController.getPos();
         Item item = new Item(name, playerId);
-        tileControllers[tilePos.x][tilePos.y].addItem(item);
+        tileControllers[tilePos.getX()][tilePos.getY()].addItem(item);
     }
 
     public TileController getTile(int x, int y) {
@@ -195,19 +195,19 @@ public class GameMap {
     }
 
     private boolean isInBounds(Vector2 pos) {
-        return (pos.x >= 0 && pos.y >= 0 && pos.x < Constants.MAP_WIDTH && pos.y < Constants.MAP_HEIGHT);
+        return (pos.getX() >= 0 && pos.getY() >= 0 && pos.getX() < Constants.MAP_WIDTH && pos.getY() < Constants.MAP_HEIGHT);
     }
 
     private boolean canMove(PlayerController playerController, MoveAction.Step step) {
         Vector2 pos = new Vector2(playerController.getPos());
         // check if the current tile has a path to the next tile
-        if (!getTile(pos.x, pos.y).hasDir(step.direction)) {
+        if (!getTile(pos.getX(), pos.getY()).hasDir(step.direction)) {
             return false;
         }
         // move to the next tile
         pos.add(step.direction.asValue());
         if (!isInBounds(pos)
-                || !getTile(pos.x, pos.y).hasOppDir(step.direction)) { // check if the current tile we moved to has a path to the previous tile
+                || !getTile(pos.getX(), pos.getY()).hasOppDir(step.direction)) { // check if the current tile we moved to has a path to the previous tile
             return false;
         }
         return true;
