@@ -16,10 +16,10 @@ public class Constants {
 
     public static final int MAP_HEIGHT = 7;
     public static final int MAP_WIDTH = 7;
-    public static final int MAP_POS_X = SCREEN_WIDTH / 2 - (Constants.MAP_WIDTH * Constants.TILE_SIZE) / 2
-            + Constants.TILE_SIZE / 2 - TILES_OFFSET / 2 * Constants.MAP_WIDTH;
-    public static final int MAP_POS_Y = SCREEN_HEIGHT / 2 - (Constants.MAP_HEIGHT * Constants.TILE_SIZE) / 2
+    public static final int MAP_POS_X = SCREEN_WIDTH / 2 - (Constants.MAP_HEIGHT * Constants.TILE_SIZE) / 2
             + Constants.TILE_SIZE / 2 - TILES_OFFSET / 2 * Constants.MAP_HEIGHT;
+    public static final int MAP_POS_Y = SCREEN_HEIGHT / 2 - (Constants.MAP_WIDTH * Constants.TILE_SIZE) / 2
+            + Constants.TILE_SIZE / 2 - TILES_OFFSET / 2 * Constants.MAP_WIDTH;
 
     public static final int PLAYER_TILE_POS_X = 164;
     public static final int PLAYER_TILE_POS_Y = Constants.SCREEN_HEIGHT / 2;
@@ -87,10 +87,10 @@ public class Constants {
                     Pattern.CASE_INSENSITIVE);
 
     public enum Direction {
-        UP(Vector2.LEFT),
-        RIGHT(Vector2.DOWN),
-        DOWN(Vector2.RIGHT),
-        LEFT(Vector2.UP);
+        UP(Vector2.UP),
+        RIGHT(Vector2.RIGHT),
+        DOWN(Vector2.DOWN),
+        LEFT(Vector2.LEFT);
 
         private final Vector2 value;
         Direction(Vector2 value) {
