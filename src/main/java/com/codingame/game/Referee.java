@@ -199,7 +199,7 @@ public class Referee extends AbstractReferee {
             // Game map
             for (int y = 0; y < Constants.MAP_HEIGHT; y++) {
                 StringBuilder sb = new StringBuilder();
-                sb.append(map.getTile(y, 0).toInputString());
+                sb.append(map.getTile(0, y).toInputString());
                 for (int x = 1; x < Constants.MAP_WIDTH; x++) {
                     sb.append(" " + map.getTile(x, y).toInputString());
                 }
