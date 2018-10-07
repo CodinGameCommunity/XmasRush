@@ -41,7 +41,7 @@ public class GameMap {
                 TileModel tileModel = new TileModel(tilePatterns[y][x], new Vector2(x, y));
                 TileController tileController = new TileController(tileModel, new TileView());
                 tileController.initView();
-                tileController.setPosInMap(tileModel.pos);
+                tileController.setPosInMap(tileModel.getPos());
                 tileControllers[x][y] = tileController;
             }
         }
@@ -56,7 +56,8 @@ public class GameMap {
 
                 // only set up empty tiles
                 TileController tileController = tileControllers[x][y];
-                if (!tileController.isEmpty()) continue;
+                if (!tileController.isEmpty())
+                    continue;
 
                 String availableTilePattern = takeRandomAvailableTilePattern();
                 tileController.setPattern(availableTilePattern);
@@ -201,13 +202,13 @@ public class GameMap {
     private boolean canMove(PlayerController playerController, MoveAction.Step step) {
         Vector2 pos = new Vector2(playerController.getPos());
         // check if the current tile has a path to the next tile
-        if (!getTile(pos.getX(), pos.getY()).hasDir(step.direction)) {
+        if (!getTile(pos.getX(), pos.getY()).hasDir(step.getDirection())) {
             return false;
         }
         // move to the next tile
-        pos.add(step.direction.asValue());
+        pos.add(step.getDirection().asValue());
         if (!isInBounds(pos)
-                || !getTile(pos.getX(), pos.getY()).hasOppDir(step.direction)) { // check if the current tile we moved to has a path to the previous tile
+                || !getTile(pos.getX(), pos.getY()).hasOppDir(step.getDirection())) { // check if the current tile we moved to has a path to the previous tile
             return false;
         }
         return true;
@@ -220,7 +221,7 @@ public class GameMap {
                 throw new InvalidAction(step.toString(), false);
             }
             time += 1.0 / steps.size();
-            Vector2 offset = new Vector2(step.direction.asValue());
+            Vector2 offset = new Vector2(step.getDirection().asValue());
             Vector2 pos = new Vector2(playerController.getPos());
             pos.add(offset);
             playerController.setPosInMap(pos, time);

@@ -277,19 +277,21 @@ public class Referee extends AbstractReferee {
                 if (turnType == Action.Type.PUSH && action instanceof PushAction) {
                     PushAction pushAction = (PushAction)action;
                     // check if both players tried to push against opposite directions on the same line
-                    if (prevPushAction != null && pushAction.lineId == prevPushAction.lineId
-                            && (pushAction.direction == prevPushAction.direction.getOpposite() || pushAction.direction == prevPushAction.direction)) {
+                    if (prevPushAction != null && pushAction.getLineId() == prevPushAction.getLineId()
+                            && (pushAction.getDirection() == prevPushAction.getDirection().getOpposite()
+                            || pushAction.getDirection() == prevPushAction.getDirection())) {
                         gameManager.addToGameSummary("[WARNING] Both players tried to push the same line. Nothing happens!");
                         // clear the previous pending commands
                         playerPushRowActions.clear();
                         playerPushColumnActions.clear();
-                    } else if (pushAction.direction == Constants.Direction.RIGHT || pushAction.direction == Constants.Direction.LEFT) {
-                        if (pushAction.lineId >= Constants.MAP_HEIGHT) {
+                    } else if (pushAction.getDirection() == Constants.Direction.RIGHT
+                            || pushAction.getDirection() == Constants.Direction.LEFT) {
+                        if (pushAction.getLineId() >= Constants.MAP_HEIGHT) {
                             throw new InvalidAction("out of bounds line index");
                         }
                         playerPushRowActions.add(new PlayerAction(playerController, pushAction));
                     } else {
-                        if (pushAction.lineId >= Constants.MAP_WIDTH) {
+                        if (pushAction.getLineId() >= Constants.MAP_WIDTH) {
                             throw new InvalidAction("out of bounds line index");
                         }
                         playerPushColumnActions.add(new PlayerAction(playerController, pushAction));
@@ -298,7 +300,7 @@ public class Referee extends AbstractReferee {
                 } else if (turnType == Action.Type.MOVE && (action instanceof MoveAction || action instanceof PassAction)) {
                     if (action instanceof MoveAction) {
                         MoveAction moveAction = (MoveAction) action;
-                        List<MoveAction.Step> steps = moveAction.steps;
+                        List<MoveAction.Step> steps = moveAction.getSteps();
                         map.moveAgentBy(playerController, steps);
                     } else if (action instanceof PassAction) {
                         // do nothing
@@ -325,16 +327,16 @@ public class Referee extends AbstractReferee {
 		List<Integer> pushedRows = new ArrayList<>();
         playerPushRowActions.forEach(playerAction -> {
             PushAction action = (PushAction)playerAction.action;
-            pushedRows.add(action.lineId);
-            TileController poppedTile = map.pushRow(playerAction.player.getTile(), action.lineId, action.direction);
+            pushedRows.add(action.getLineId());
+            TileController poppedTile = map.pushRow(playerAction.player.getTile(), action.getLineId(), action.getDirection());
             poppedTile.setPosAbsolute(playerAction.player.getId(), playerAction.player.getTilePosition(), 0.5);
             playerAction.player.setTile(poppedTile);
 
             // if there's a player on the pushed row move them too
             for (Player player : gameManager.getActivePlayers()) {
-                if (player.getAgentPosition().getY() == action.lineId) {
+                if (player.getAgentPosition().getY() == action.getLineId()) {
                     Vector2 pos = new Vector2(playerControllers.get(player.getIndex()).getPos());
-                    pos.add(action.direction.asValue());
+                    pos.add(action.getDirection().asValue());
                     pos.setX(Utils.wrap(pos.getX(), 0, Constants.MAP_WIDTH - 1));
                     playerControllers.get(player.getIndex()).setPosInMap(pos, 0.5);
                 }
@@ -344,15 +346,15 @@ public class Referee extends AbstractReferee {
         final List<Integer> rowsToSkip = pushedRows;
         playerPushColumnActions.forEach(playerAction -> {
             PushAction action = (PushAction)playerAction.action;
-            TileController poppedTile = map.pushColumn(playerAction.player.getTile(), action.lineId, action.direction, rowsToSkip);
+            TileController poppedTile = map.pushColumn(playerAction.player.getTile(), action.getLineId(), action.getDirection(), rowsToSkip);
             poppedTile.setPosAbsolute(playerAction.player.getId(), playerAction.player.getTilePosition(), 1);
             playerAction.player.setTile(poppedTile);
 
             // if there's a player on the pushed column move them too
             for (Player player : gameManager.getActivePlayers()) {
-                if (player.getAgentPosition().getX() == action.lineId) {
+                if (player.getAgentPosition().getX() == action.getLineId()) {
                     Vector2 pos = new Vector2(playerControllers.get(player.getIndex()).getPos());
-                    pos.add(action.direction.asValue());
+                    pos.add(action.getDirection().asValue());
                     pos.setY(Utils.wrap(pos.getY(), 0, Constants.MAP_HEIGHT - 1));
                     if (!rowsToSkip.isEmpty()) {
                         playerControllers.get(player.getIndex()).setSamePosInMap(0.5);

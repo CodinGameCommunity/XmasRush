@@ -11,6 +11,9 @@ import com.codingame.gameengine.module.entities.Sprite;
 import static com.codingame.game.Utils.Utils.graphicEntityModule;
 
 public class TileView {
+    /**
+     * Acts as a parent for all graphic elements.
+     */
     private Group group;
 
     private Sprite background;
@@ -133,7 +136,7 @@ public class TileView {
         if (tile.hasRight()) addRight();
         if (tile.hasDown()) addDown();
         if (tile.hasLeft()) addLeft();
-        if (tile.hasItem()) addItem(tile.item);
+        if (tile.hasItem()) addItem(tile.getItem());
 
         graphicEntityModule.commitEntityState(0, group);
     }

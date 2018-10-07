@@ -46,7 +46,7 @@ public class TileController {
      */
     public void rotate(int numTimes) {
         // shift characters to the right - 1 shift corresponds to a 90 deg rotation
-        numTimes %= model.pattern.length();
+        numTimes %= model.getPattern().length();
         if (numTimes == 0) {
             return;
         }
@@ -72,7 +72,7 @@ public class TileController {
         if (!Utils.isPosValid(pos)) {
             throw new RuntimeException("Tile position out of map bounds!");
         }
-        model.pos = pos;
+        model.setPos(pos);
         view.setPosInMap(pos, time);
     }
 
@@ -104,9 +104,9 @@ public class TileController {
      */
     public void setPosAbsolute(int playerId, Vector2 pos, double time) {
         if (playerId == Constants.PLAYER_INDEX) {
-            model.pos = Vector2.MINUS_ONE;
+            model.setPos(Vector2.MINUS_ONE);
         } else if (playerId == Constants.OPPONENT_INDEX){
-            model.pos = Vector2.MINUS_TWO;
+            model.setPos(Vector2.MINUS_TWO);
         }
         view.setPosAbsolute(pos, time);
     }
@@ -133,7 +133,7 @@ public class TileController {
      * @param item The item model.
      */
     public void addItem(Item item) {
-        model.putItem(item);
+        model.setItem(item);
         view.addItem(item);
     }
 
@@ -160,14 +160,14 @@ public class TileController {
      * @return the tile's item.
      */
     public Item getItem() {
-        return model.item;
+        return model.getItem();
     }
 
     /**
      * Removes the item from a tile. Sets the item model to null and hides the item from view.
      */
     public void removeItem() {
-        model.item = null;
+        model.setItem(null);
         view.removeItem();
     }
 
@@ -176,7 +176,7 @@ public class TileController {
      * @return the tile's position.
      */
     public Vector2 getPos() {
-        return model.pos;
+        return model.getPos();
     }
 
     /**
@@ -213,7 +213,7 @@ public class TileController {
      */
     @Override
     public String toString() {
-        return this.model.pattern;
+        return this.model.getPattern();
     }
 
     /**

@@ -3,13 +3,22 @@ package com.codingame.game.InputActions;
 import com.codingame.game.Utils.Constants;
 
 public class PushAction extends Action {
-    public int lineId;
-    public Constants.Direction direction;
+    private int lineId;
+
+    private Constants.Direction direction;
 
     public PushAction(int lineId, Constants.Direction direction)
     {
         this.lineId = lineId;
         this.direction = direction;
+    }
+
+    public int getLineId() {
+        return lineId;
+    }
+
+    public Constants.Direction getDirection() {
+        return direction;
     }
 
     @Override

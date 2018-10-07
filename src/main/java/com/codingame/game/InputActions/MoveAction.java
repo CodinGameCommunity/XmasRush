@@ -7,19 +7,30 @@ import java.util.List;
 
 public class MoveAction extends Action {
     public class Step {
-        public Constants.Direction direction;
+        private Constants.Direction direction;
+
         public Step(Constants.Direction direction) {
             this.direction = direction;
         }
+
+        public Constants.Direction getDirection() {
+            return direction;
+        }
+
         @Override
         public String toString() {
             return String.format("MOVE %s", direction);
         }
     }
-    public List<Step> steps;
+
+    private List<Step> steps;
 
     public MoveAction() {
         this.steps = new ArrayList<>();
+    }
+
+    public List<Step> getSteps() {
+        return steps;
     }
 
     public void addAction(Constants.Direction direction) {
