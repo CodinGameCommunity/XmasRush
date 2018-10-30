@@ -214,17 +214,13 @@ public class GameMap {
         return true;
     }
 
-    public void moveAgentBy(PlayerController playerController, List<MoveAction.Step> steps) throws InvalidAction {
-        double time = 0;
-        for (MoveAction.Step step : steps) {
-            if (!canMove(playerController, step)) {
-                throw new InvalidAction(step.toString(), false);
-            }
-            time += 1.0 / steps.size();
-            Vector2 offset = new Vector2(step.getDirection().asValue());
-            Vector2 pos = new Vector2(playerController.getPos());
-            pos.add(offset);
-            playerController.setPosInMap(pos, time);
+    public void moveAgentBy(PlayerController playerController, MoveAction.Step step) throws InvalidAction {
+        if (!canMove(playerController, step)) {
+        	throw new InvalidAction(step.toString(), false);
         }
+        Vector2 offset = new Vector2(step.getDirection().asValue());
+        Vector2 pos = new Vector2(playerController.getPos());
+        pos.add(offset);
+        playerController.setPosInMap(pos, 1);
     }
 }

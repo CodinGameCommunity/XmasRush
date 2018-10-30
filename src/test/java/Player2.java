@@ -40,11 +40,11 @@ public class Player2 {
             }
 
             if (turn == 0) System.out.println("PUSH 1 UP");
-            if (turn == 1) System.out.println("MOVE LEFT");
+            if (turn == 1) System.out.println("MOVE UP UP");
             if (turn == 2) System.out.println("PUSH 5 UP");
-            if (turn == 3) System.out.println("MOVE RIGHT");
+            if (turn == 3) System.out.println("MOVE LEFT");
             if (turn == 4) System.out.println("PUSH 5 UP");
-            if (turn == 5) System.out.println("MOVE DOWN");
+            if (turn == 5) System.out.println("MOVE LEFT LEFT DOWN DOWN DOWN LEFT LEFT LEFT UP");
             if (turn == 6) System.out.println("PUSH 5 UP");
             turn++;
         }

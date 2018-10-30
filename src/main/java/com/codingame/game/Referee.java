@@ -32,6 +32,8 @@ public class Referee extends AbstractReferee {
 
     private Action.Type turnType;
 
+    private List<Queue<Action>> actionQueue = new ArrayList<>(Arrays.asList(new ArrayDeque<>(), new ArrayDeque<>()));
+
     @Override
     public void init() {
         Utils.graphicEntityModule = graphicEntityModule;
@@ -266,14 +268,50 @@ public class Referee extends AbstractReferee {
         }
     }
 
+    private void getPlayerActions() {
+        for (Player player : gameManager.getActivePlayers()) {
+            try {
+                Queue<Action> playerQueue = actionQueue.get(player.getIndex());
+                List<String> outputs = player.getOutputs();
+                Action action = player.getAction(outputs.get(0));
+                if (action instanceof MoveAction) {
+                    MoveAction moveAction = (MoveAction)action;
+                    for (MoveAction.Step step : moveAction.getSteps()) {
+                        MoveAction stepAction = new MoveAction();
+                        stepAction.addAction(step.getDirection());
+                        playerQueue.add(stepAction);
+                    }
+                } else {
+                    playerQueue.add(action);
+                }
+            } catch (AbstractPlayer.TimeoutException e) {
+                player.deactivate(String.format("%s: timeout", player.getNicknameToken()));
+                gameManager.addToGameSummary(String.format("%s: timeout - no input provided", player.getNicknameToken()));
+            } catch (InvalidAction e) {
+                if (e.isFatal()) {
+                    player.deactivate(String.format("%s: invalid input", player.getNicknameToken()));
+                    gameManager.addToGameSummary(String.format("%s: invalid input - %s", player.getNicknameToken(), e.getMessage()));
+                } else {
+                    gameManager.addToGameSummary(String.format("[WARNING] %s: invalid input - %s", player.getNicknameToken(), e.getMessage()));
+                }
+            } catch (IndexOutOfBoundsException e) {
+                player.deactivate(String.format("%s: timeout", player.getNicknameToken()));
+                gameManager.addToGameSummary(String.format("%s: timeout - player provided an empty input", player.getNicknameToken()));
+            }
+        }
+    }
+
     private void doPlayerActions() {
         List<PlayerAction> playerPushRowActions = new ArrayList<>();
         List<PlayerAction> playerPushColumnActions = new ArrayList<>();
         PushAction prevPushAction = null;
         for (Player player : gameManager.getActivePlayers()) {
             try {
+                Action action = actionQueue.get(player.getIndex()).poll();
+                if (action == null) {
+                    continue;
+                }
                 PlayerController playerController = playerControllers.get(player.getIndex());
-                Action action = player.getAction();
                 if (turnType == Action.Type.PUSH && action instanceof PushAction) {
                     PushAction pushAction = (PushAction)action;
                     // check if both players tried to push against opposite directions on the same line
@@ -301,16 +339,15 @@ public class Referee extends AbstractReferee {
                     if (action instanceof MoveAction) {
                         MoveAction moveAction = (MoveAction) action;
                         List<MoveAction.Step> steps = moveAction.getSteps();
-                        map.moveAgentBy(playerController, steps);
+                        for (MoveAction.Step step : steps) {
+                            map.moveAgentBy(playerController, step);
+                        }
                     } else if (action instanceof PassAction) {
                         // do nothing
                     }
                 } else {
                     throw new InvalidAction(String.format("can't \"%s\" while expecting a %s action", action, turnType));
                 }
-            } catch (AbstractPlayer.TimeoutException e) {
-                player.deactivate(String.format("%s: timeout", player.getNicknameToken()));
-                gameManager.addToGameSummary(String.format("%s: timeout - no input provided", player.getNicknameToken()));
             } catch (InvalidAction e) {
                 if (e.isFatal()) {
                     player.deactivate(String.format("%s: invalid input", player.getNicknameToken()));
@@ -318,9 +355,6 @@ public class Referee extends AbstractReferee {
                 } else {
                     gameManager.addToGameSummary(String.format("[WARNING] %s: invalid input - %s", player.getNicknameToken(), e.getMessage()));
                 }
-            } catch (IndexOutOfBoundsException e) {
-                player.deactivate(String.format("%s: timeout", player.getNicknameToken()));
-                gameManager.addToGameSummary(String.format("%s: timeout - player provided an empty input", player.getNicknameToken()));
             }
         }
 		
@@ -405,11 +439,37 @@ public class Referee extends AbstractReferee {
         graphicEntityModule.commitEntityState(0, turnText);
     }
 
+    public void forceAnimationFrame() {
+        for (Player player : gameManager.getActivePlayers()) {
+            player.setExpectedOutputLines(0);
+            player.execute();
+            try {
+                player.getOutputs();
+            } catch (Exception e) {
+
+            }
+        }
+        gameManager.setTurnMaxTime(1);
+    }
+
+    public void forceGameFrame() {
+        for (Player player : gameManager.getActivePlayers()) {
+            player.setExpectedOutputLines(1);
+        }
+        gameManager.setTurnMaxTime(50);
+    }
+
     @Override
     public void gameTurn(int turn) {
-        turnType = Action.Type.fromInt(turn % 2);
+        if (!actionQueue.get(0).isEmpty() || !actionQueue.get(1).isEmpty()) {
+            forceAnimationFrame();
+        } else {
+            turnType = turnType == Action.Type.PUSH ? Action.Type.MOVE : Action.Type.PUSH;
+            forceGameFrame();
+            sendPlayerInputs();
+            getPlayerActions();
+        }
         updateTexts(turnType);
-        sendPlayerInputs();
         doPlayerActions();
         checkForFinishedItems();
         checkForWinner();
