@@ -353,6 +353,7 @@ public class Referee extends AbstractReferee {
                     player.deactivate(String.format("%s: invalid input", player.getNicknameToken()));
                     gameManager.addToGameSummary(String.format("%s: invalid input - %s", player.getNicknameToken(), e.getMessage()));
                 } else {
+                    actionQueue.get(player.getIndex()).clear();
                     gameManager.addToGameSummary(String.format("[WARNING] %s: invalid input - %s", player.getNicknameToken(), e.getMessage()));
                 }
             }

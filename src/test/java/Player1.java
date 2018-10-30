@@ -40,7 +40,7 @@ public class Player1 {
             }
 
             if (turn == 0) System.out.println("PUSH 3 RIGHT");
-            if (turn == 1) System.out.println("MOVE RIGHT RIGHT DOWN");
+            if (turn == 1) System.out.println("MOVE RIGHT RIGHT DOWN DOWN DOWN DOWN DOWN DOWN");
             if (turn == 2) System.out.println("PUSH 1 RIGHT");
             if (turn == 3) System.out.println("MOVE LEFT");
             if (turn == 4) System.out.println("PUSH 1 UP");
