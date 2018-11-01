@@ -17,13 +17,7 @@ public class PlayerView {
                 .setZIndex(Constants.MapLayers.AGENTS.asValue());
     }
 
-    public void setPosInMap(Vector2 pos, double time) {
-        Utils.setPosInMap(sprite, pos, time);
-    }
-
-    public void setSamePosInMap(double time) {
-        sprite.setX(sprite.getX() + 1);
-
-        graphicEntityModule.commitEntityState(time, sprite);
+    public void setPosInMap(Vector2 pos) {
+        Utils.setPosInMap(sprite, pos);
     }
 }

@@ -94,26 +94,12 @@ public class TileView {
         group.remove(this.item);
     }
 
-    public void setPosInMap(Vector2 pos, double time) {
-        Utils.setPosInMap(group, pos, time);
+    public void setPosInMap(Vector2 pos) {
+        Utils.setPosInMap(group, pos);
     }
 
-    public void setSamePosInMap(double time) {
-        group.setX(group.getX() + 1);
-
-        graphicEntityModule.commitEntityState(time, group);
-    }
-
-    public void setPosAbsolute(Vector2 pos, double time) {
+    public void setPosAbsolute(Vector2 pos) {
         group.setX(pos.getX()).setY(pos.getY());
-
-        graphicEntityModule.commitEntityState(time, group);
-    }
-
-    public void setSamePosAbsolute(double time) {
-        group.setX(group.getX() + 1);
-
-        graphicEntityModule.commitEntityState(time, group);
     }
 
     public void rotate(int numTimes) {

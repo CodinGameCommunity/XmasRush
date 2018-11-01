@@ -269,9 +269,11 @@ public class Referee extends AbstractReferee {
     }
 
     private void getPlayerActions() {
+        PushAction prevPushAction = null;
         for (Player player : gameManager.getActivePlayers()) {
             try {
-                Queue<Action> playerQueue = actionQueue.get(player.getIndex());
+                int playerIndex = player.getIndex();
+                Queue<Action> playerQueue = actionQueue.get(playerIndex);
                 List<String> outputs = player.getOutputs();
                 Action action = player.getAction(outputs.get(0));
                 if (action instanceof MoveAction) {
@@ -282,7 +284,20 @@ public class Referee extends AbstractReferee {
                         playerQueue.add(stepAction);
                     }
                 } else {
-                    playerQueue.add(action);
+                    PushAction pushAction = (PushAction)action;
+                    // check if both players tried to push against opposite directions on the same line
+                    if (prevPushAction != null && pushAction.getLineId() == prevPushAction.getLineId()
+                            && (pushAction.getDirection() == prevPushAction.getDirection().getOpposite()
+                            || pushAction.getDirection() == prevPushAction.getDirection())) {
+                        gameManager.addToGameSummary("[WARNING] Both players tried to push the same line. Nothing happens!");
+                        // remove the previous push action from the first player's queue
+                        if (playerIndex > 0) {
+                            actionQueue.get(playerIndex - 1).remove(prevPushAction);
+                        }
+                    } else {
+                        playerQueue.add(action);
+                        prevPushAction = pushAction;
+                    }
                 }
             } catch (AbstractPlayer.TimeoutException e) {
                 player.deactivate(String.format("%s: timeout", player.getNicknameToken()));
@@ -302,9 +317,6 @@ public class Referee extends AbstractReferee {
     }
 
     private void doPlayerActions() {
-        List<PlayerAction> playerPushRowActions = new ArrayList<>();
-        List<PlayerAction> playerPushColumnActions = new ArrayList<>();
-        PushAction prevPushAction = null;
         for (Player player : gameManager.getActivePlayers()) {
             try {
                 Action action = actionQueue.get(player.getIndex()).poll();
@@ -314,27 +326,20 @@ public class Referee extends AbstractReferee {
                 PlayerController playerController = playerControllers.get(player.getIndex());
                 if (turnType == Action.Type.PUSH && action instanceof PushAction) {
                     PushAction pushAction = (PushAction)action;
-                    // check if both players tried to push against opposite directions on the same line
-                    if (prevPushAction != null && pushAction.getLineId() == prevPushAction.getLineId()
-                            && (pushAction.getDirection() == prevPushAction.getDirection().getOpposite()
-                            || pushAction.getDirection() == prevPushAction.getDirection())) {
-                        gameManager.addToGameSummary("[WARNING] Both players tried to push the same line. Nothing happens!");
-                        // clear the previous pending commands
-                        playerPushRowActions.clear();
-                        playerPushColumnActions.clear();
-                    } else if (pushAction.getDirection() == Constants.Direction.RIGHT
+                    if (pushAction.getDirection() == Constants.Direction.RIGHT
                             || pushAction.getDirection() == Constants.Direction.LEFT) {
                         if (pushAction.getLineId() >= Constants.MAP_HEIGHT) {
                             throw new InvalidAction("out of bounds line index");
                         }
-                        playerPushRowActions.add(new PlayerAction(playerController, pushAction));
+                        doPushAction(new PlayerAction(playerController, pushAction), true);
+                        return;
                     } else {
                         if (pushAction.getLineId() >= Constants.MAP_WIDTH) {
                             throw new InvalidAction("out of bounds line index");
                         }
-                        playerPushColumnActions.add(new PlayerAction(playerController, pushAction));
+                        doPushAction(new PlayerAction(playerController, pushAction), false);
+                        return;
                     }
-                    prevPushAction = pushAction;
                 } else if (turnType == Action.Type.MOVE && (action instanceof MoveAction || action instanceof PassAction)) {
                     if (action instanceof MoveAction) {
                         MoveAction moveAction = (MoveAction) action;
@@ -358,46 +363,33 @@ public class Referee extends AbstractReferee {
                 }
             }
         }
-		
-		List<Integer> pushedRows = new ArrayList<>();
-        playerPushRowActions.forEach(playerAction -> {
-            PushAction action = (PushAction)playerAction.action;
-            pushedRows.add(action.getLineId());
-            TileController poppedTile = map.pushRow(playerAction.player.getTile(), action.getLineId(), action.getDirection());
-            poppedTile.setPosAbsolute(playerAction.player.getId(), playerAction.player.getTilePosition(), 0.5);
-            playerAction.player.setTile(poppedTile);
+    }
 
-            // if there's a player on the pushed row move them too
-            for (Player player : gameManager.getActivePlayers()) {
-                if (player.getAgentPosition().getY() == action.getLineId()) {
-                    Vector2 pos = new Vector2(playerControllers.get(player.getIndex()).getPos());
-                    pos.add(action.getDirection().asValue());
+    private void doPushAction(PlayerAction playerAction, boolean isRowPush) {
+        PushAction action = (PushAction)playerAction.action;
+        TileController poppedTile;
+        if (isRowPush) {
+            poppedTile = map.pushRow(playerAction.player.getTile(), action.getLineId(), action.getDirection());
+        } else {
+            poppedTile = map.pushColumn(playerAction.player.getTile(), action.getLineId(), action.getDirection());
+        }
+        poppedTile.setPosAbsolute(playerAction.player.getId(), playerAction.player.getTilePosition());
+        playerAction.player.setTile(poppedTile);
+
+        // if there's a player on the pushed line move them too
+        for (Player player : gameManager.getActivePlayers()) {
+            int playerLineId = isRowPush ? player.getAgentPosition().getY() : player.getAgentPosition().getX();
+            if (playerLineId == action.getLineId()) {
+                Vector2 pos = new Vector2(playerControllers.get(player.getIndex()).getPos());
+                pos.add(action.getDirection().asValue());
+                if (isRowPush) {
                     pos.setX(Utils.wrap(pos.getX(), 0, Constants.MAP_WIDTH - 1));
-                    playerControllers.get(player.getIndex()).setPosInMap(pos, 0.5);
-                }
-            }
-        });
-
-        final List<Integer> rowsToSkip = pushedRows;
-        playerPushColumnActions.forEach(playerAction -> {
-            PushAction action = (PushAction)playerAction.action;
-            TileController poppedTile = map.pushColumn(playerAction.player.getTile(), action.getLineId(), action.getDirection(), rowsToSkip);
-            poppedTile.setPosAbsolute(playerAction.player.getId(), playerAction.player.getTilePosition(), 1);
-            playerAction.player.setTile(poppedTile);
-
-            // if there's a player on the pushed column move them too
-            for (Player player : gameManager.getActivePlayers()) {
-                if (player.getAgentPosition().getX() == action.getLineId()) {
-                    Vector2 pos = new Vector2(playerControllers.get(player.getIndex()).getPos());
-                    pos.add(action.getDirection().asValue());
+                } else {
                     pos.setY(Utils.wrap(pos.getY(), 0, Constants.MAP_HEIGHT - 1));
-                    if (!rowsToSkip.isEmpty()) {
-                        playerControllers.get(player.getIndex()).setSamePosInMap(0.5);
-                    }
-                    playerControllers.get(player.getIndex()).setPosInMap(pos, 1);
                 }
+                playerControllers.get(player.getIndex()).setPosInMap(pos);
             }
-        });
+        }
     }
 
     private void checkForFinishedItems() {
@@ -450,14 +442,12 @@ public class Referee extends AbstractReferee {
 
             }
         }
-        gameManager.setTurnMaxTime(1);
     }
 
     public void forceGameFrame() {
         for (Player player : gameManager.getActivePlayers()) {
             player.setExpectedOutputLines(1);
         }
-        gameManager.setTurnMaxTime(50);
     }
 
     @Override
