@@ -55,70 +55,31 @@ public class TileController {
     }
 
     /**
-     * Sets a tile position on the map at frame time 0.
+     * Sets a tile position on the map.
      * @param pos A Vector2 object representing the position on the map. Must be within map bounds.
-     */
-    public void setPosInMap(Vector2 pos) {
-        setPosInMap(pos, 0);
-    }
-
-    /**
-     * Sets a tile position on the map at a given frame time.
-     * @param pos A Vector2 object representing the position on the map. Must be within map bounds.
-     * @param time The engine's frame time used to set the tile's position. Must be between 0 and 1.
      * @throws RuntimeException if the position is out of map bounds.
      */
-    public void setPosInMap(Vector2 pos, double time) {
+    public void setPosInMap(Vector2 pos) {
         if (!Utils.isPosValid(pos)) {
             throw new RuntimeException("Tile position out of map bounds!");
         }
         model.setPos(pos);
-        view.setPosInMap(pos, time);
+        view.setPosInMap(pos);
     }
 
     /**
-     * Forces setting the same tile position at a given time in the frame. It's used to simulate waiting
-     * in a frame if a different position is set afterwards in the same frame. Only updates the view by
-     * 1 pixel offset on the x axis to force the engine to update the tile's position.
-     * @param time The engine's frame time used to set the tile's position. Must be between 0 and 1.
-     */
-    public void setSamePosInMap(double time) {
-        view.setSamePosInMap(time);
-    }
-
-    /**
-     * Sets a player's tile position anywhere on the screen at frame time 0.
-     * @param playerId The player's identifier (0 for the first player, 1 for the opponent).
-     * @param pos A Vector2 object representing the position on the screen.
-     */
-    public void setPosAbsolute(int playerId, Vector2 pos) {
-        setPosAbsolute(playerId, pos, 0);
-    }
-
-    /**
-     * Sets a player's tile position anywhere on the screen at a given frame time.
+     * Sets a player's tile position anywhere on the screen.
      * The model's position will be (-1,-1) for the player's tile and (-2,-2) for the opponent's tile.
      * @param playerId The player's identifier (0 for the player, 1 for the opponent).
      * @param pos A Vector2 object representing the position on the screen.
-     * @param time The engine's frame time used to set the tile's position. Must be between 0 and 1.
      */
-    public void setPosAbsolute(int playerId, Vector2 pos, double time) {
+    public void setPosAbsolute(int playerId, Vector2 pos) {
         if (playerId == Constants.PLAYER_INDEX) {
             model.setPos(Vector2.MINUS_ONE);
         } else if (playerId == Constants.OPPONENT_INDEX){
             model.setPos(Vector2.MINUS_TWO);
         }
-        view.setPosAbsolute(pos, time);
-    }
-
-    /**
-     * Forces setting the same tile position at a given time in the frame. It's used to simulate waiting
-     * in a frame if a different position is set afterwards in the same frame. Only updates the view by
-     * 1 pixel offset on the x axis to force the engine to update the tile's position.
-     * @param time The engine's frame time used to set the tile's position. Must be between 0 and 1.
-     */
-    public void setSamePosAbsolute(double time) {
-        view.setSamePosAbsolute(time);
+        view.setPosAbsolute(pos);
     }
 
     /**

@@ -32,6 +32,8 @@ public class Referee extends AbstractReferee {
 
     private Action.Type turnType;
 
+    private List<Queue<Action>> actionsQueue = new ArrayList<>(Arrays.asList(new ArrayDeque<>(), new ArrayDeque<>()));
+
     @Override
     public void init() {
         Utils.graphicEntityModule = graphicEntityModule;
@@ -231,47 +233,36 @@ public class Referee extends AbstractReferee {
         }
     }
 
-    private void doPlayerActions() {
-        List<PlayerAction> playerPushRowActions = new ArrayList<>();
-        List<PlayerAction> playerPushColumnActions = new ArrayList<>();
+    private void getPlayerActions() {
         PushAction prevPushAction = null;
         for (Player player : gameManager.getActivePlayers()) {
             try {
-                PlayerController playerController = playerControllers.get(player.getIndex());
-                Action action = player.getAction();
-                if (turnType == Action.Type.PUSH && action instanceof PushAction) {
+                int playerIndex = player.getIndex();
+                Queue<Action> playerQueue = actionsQueue.get(playerIndex);
+                List<String> outputs = player.getOutputs();
+                Action action = player.getAction(outputs.get(0));
+                if (action instanceof MoveAction) {
+                    MoveAction moveAction = (MoveAction)action;
+                    for (MoveAction.Step step : moveAction.getSteps()) {
+                        MoveAction stepAction = new MoveAction();
+                        stepAction.addAction(step.getDirection());
+                        playerQueue.add(stepAction);
+                    }
+                } else {
                     PushAction pushAction = (PushAction)action;
                     // check if both players tried to push against opposite directions on the same line
                     if (prevPushAction != null && pushAction.getLineId() == prevPushAction.getLineId()
                             && (pushAction.getDirection() == prevPushAction.getDirection().getOpposite()
                             || pushAction.getDirection() == prevPushAction.getDirection())) {
                         gameManager.addToGameSummary("[WARNING] Both players tried to push the same line. Nothing happens!");
-                        // clear the previous pending commands
-                        playerPushRowActions.clear();
-                        playerPushColumnActions.clear();
-                    } else if (pushAction.getDirection() == Constants.Direction.RIGHT
-                            || pushAction.getDirection() == Constants.Direction.LEFT) {
-                        if (pushAction.getLineId() >= Constants.MAP_HEIGHT) {
-                            throw new InvalidAction("out of bounds line index");
+                        // remove the previous push action from the first player's queue
+                        if (playerIndex > 0) {
+                            actionsQueue.get(playerIndex - 1).remove(prevPushAction);
                         }
-                        playerPushRowActions.add(new PlayerAction(playerController, pushAction));
                     } else {
-                        if (pushAction.getLineId() >= Constants.MAP_WIDTH) {
-                            throw new InvalidAction("out of bounds line index");
-                        }
-                        playerPushColumnActions.add(new PlayerAction(playerController, pushAction));
+                        playerQueue.add(action);
+                        prevPushAction = pushAction;
                     }
-                    prevPushAction = pushAction;
-                } else if (turnType == Action.Type.MOVE && (action instanceof MoveAction || action instanceof PassAction)) {
-                    if (action instanceof MoveAction) {
-                        MoveAction moveAction = (MoveAction) action;
-                        List<MoveAction.Step> steps = moveAction.getSteps();
-                        map.moveAgentBy(playerController, steps);
-                    } else if (action instanceof PassAction) {
-                        // do nothing
-                    }
-                } else {
-                    throw new InvalidAction(String.format("can't \"%s\" while expecting a %s action", action, turnType));
                 }
             } catch (AbstractPlayer.TimeoutException e) {
                 player.deactivate(String.format("%s: timeout", player.getNicknameToken()));
@@ -288,46 +279,91 @@ public class Referee extends AbstractReferee {
                 gameManager.addToGameSummary(String.format("%s: timeout - player provided an empty input", player.getNicknameToken()));
             }
         }
-		
-		List<Integer> pushedRows = new ArrayList<>();
-        playerPushRowActions.forEach(playerAction -> {
-            PushAction action = (PushAction)playerAction.action;
-            pushedRows.add(action.getLineId());
-            TileController poppedTile = map.pushRow(playerAction.player.getTile(), action.getLineId(), action.getDirection());
-            poppedTile.setPosAbsolute(playerAction.player.getId(), playerAction.player.getTilePosition(), 0.5);
-            playerAction.player.setTile(poppedTile);
+    }
 
-            // if there's a player on the pushed row move them too
-            for (Player player : gameManager.getActivePlayers()) {
-                if (player.getAgentPosition().getY() == action.getLineId()) {
-                    Vector2 pos = new Vector2(playerControllers.get(player.getIndex()).getPos());
-                    pos.add(action.getDirection().asValue());
-                    pos.setX(Utils.wrap(pos.getX(), 0, Constants.MAP_WIDTH - 1));
-                    playerControllers.get(player.getIndex()).setPosInMap(pos, 0.5);
+    private void doPlayerActions() {
+        PushAction prevPushAction = null;
+        for (Player player : gameManager.getActivePlayers()) {
+            try {
+                Action action = actionsQueue.get(player.getIndex()).poll();
+                if (action == null) {
+                    continue;
                 }
-            }
-        });
-
-        final List<Integer> rowsToSkip = pushedRows;
-        playerPushColumnActions.forEach(playerAction -> {
-            PushAction action = (PushAction)playerAction.action;
-            TileController poppedTile = map.pushColumn(playerAction.player.getTile(), action.getLineId(), action.getDirection(), rowsToSkip);
-            poppedTile.setPosAbsolute(playerAction.player.getId(), playerAction.player.getTilePosition(), 1);
-            playerAction.player.setTile(poppedTile);
-
-            // if there's a player on the pushed column move them too
-            for (Player player : gameManager.getActivePlayers()) {
-                if (player.getAgentPosition().getX() == action.getLineId()) {
-                    Vector2 pos = new Vector2(playerControllers.get(player.getIndex()).getPos());
-                    pos.add(action.getDirection().asValue());
-                    pos.setY(Utils.wrap(pos.getY(), 0, Constants.MAP_HEIGHT - 1));
-                    if (!rowsToSkip.isEmpty()) {
-                        playerControllers.get(player.getIndex()).setSamePosInMap(0.5);
+                PlayerController playerController = playerControllers.get(player.getIndex());
+                if (turnType == Action.Type.PUSH && action instanceof PushAction) {
+                    PushAction pushAction = (PushAction)action;
+                    // check if the previous push action was of the same type as the current one (horizontal or vertical)
+                    // similar push actions get processed in the same frame, otherwise they remain in the queue till the next frame
+                    if (prevPushAction != null
+                            && (prevPushAction.getDirection() != pushAction.getDirection()
+                            && prevPushAction.getDirection() != pushAction.getDirection().getOpposite())) {
+                        // put the action back in the queue to be processed in the next frame
+                        actionsQueue.get(player.getIndex()).add(pushAction);
+                        return;
                     }
-                    playerControllers.get(player.getIndex()).setPosInMap(pos, 1);
+                    if (pushAction.getDirection() == Constants.Direction.RIGHT
+                            || pushAction.getDirection() == Constants.Direction.LEFT) {
+                        if (pushAction.getLineId() >= Constants.MAP_HEIGHT) {
+                            throw new InvalidAction("out of bounds line index");
+                        }
+                        doPushAction(new PlayerAction(playerController, pushAction), true);
+                    } else {
+                        if (pushAction.getLineId() >= Constants.MAP_WIDTH) {
+                            throw new InvalidAction("out of bounds line index");
+                        }
+                        doPushAction(new PlayerAction(playerController, pushAction), false);
+                    }
+                    prevPushAction = pushAction;
+                } else if (turnType == Action.Type.MOVE && (action instanceof MoveAction || action instanceof PassAction)) {
+                    if (action instanceof MoveAction) {
+                        MoveAction moveAction = (MoveAction)action;
+                        List<MoveAction.Step> steps = moveAction.getSteps();
+                        for (MoveAction.Step step : steps) {
+                            map.moveAgentBy(playerController, step);
+                        }
+                    } else if (action instanceof PassAction) {
+                        // do nothing
+                    }
+                } else {
+                    throw new InvalidAction(String.format("can't \"%s\" while expecting a %s action", action, turnType));
+                }
+            } catch (InvalidAction e) {
+                if (e.isFatal()) {
+                    player.deactivate(String.format("%s: invalid input", player.getNicknameToken()));
+                    gameManager.addToGameSummary(String.format("%s: invalid input - %s", player.getNicknameToken(), e.getMessage()));
+                } else {
+                    actionsQueue.get(player.getIndex()).clear();
+                    gameManager.addToGameSummary(String.format("[WARNING] %s: invalid input - %s", player.getNicknameToken(), e.getMessage()));
                 }
             }
-        });
+        }
+    }
+
+    private void doPushAction(PlayerAction playerAction, boolean isRowPush) {
+        PushAction action = (PushAction)playerAction.action;
+        TileController poppedTile;
+        if (isRowPush) {
+            poppedTile = map.pushRow(playerAction.player.getTile(), action.getLineId(), action.getDirection());
+        } else {
+            poppedTile = map.pushColumn(playerAction.player.getTile(), action.getLineId(), action.getDirection());
+        }
+        poppedTile.setPosAbsolute(playerAction.player.getId(), playerAction.player.getTilePosition());
+        playerAction.player.setTile(poppedTile);
+
+        // if there's a player on the pushed line move them too
+        for (Player player : gameManager.getActivePlayers()) {
+            int playerLineId = isRowPush ? player.getAgentPosition().getY() : player.getAgentPosition().getX();
+            if (playerLineId == action.getLineId()) {
+                Vector2 pos = new Vector2(playerControllers.get(player.getIndex()).getPos());
+                pos.add(action.getDirection().asValue());
+                if (isRowPush) {
+                    pos.setX(Utils.wrap(pos.getX(), 0, Constants.MAP_WIDTH - 1));
+                } else {
+                    pos.setY(Utils.wrap(pos.getY(), 0, Constants.MAP_HEIGHT - 1));
+                }
+                playerControllers.get(player.getIndex()).setPosInMap(pos);
+            }
+        }
     }
 
     private void checkForFinishedItems() {
@@ -370,11 +406,35 @@ public class Referee extends AbstractReferee {
         graphicEntityModule.commitEntityState(0, turnText);
     }
 
+    public void forceAnimationFrame() {
+        for (Player player : gameManager.getActivePlayers()) {
+            player.setExpectedOutputLines(0);
+            player.execute();
+            try {
+                player.getOutputs();
+            } catch (Exception e) {
+
+            }
+        }
+    }
+
+    public void forceGameFrame() {
+        for (Player player : gameManager.getActivePlayers()) {
+            player.setExpectedOutputLines(1);
+        }
+    }
+
     @Override
     public void gameTurn(int turn) {
-        turnType = Action.Type.fromInt(turn % 2);
+        if (!actionsQueue.get(0).isEmpty() || !actionsQueue.get(1).isEmpty()) {
+            forceAnimationFrame();
+        } else {
+            turnType = turnType == Action.Type.PUSH ? Action.Type.MOVE : Action.Type.PUSH;
+            forceGameFrame();
+            sendPlayerInputs();
+            getPlayerActions();
+        }
         updateTexts(turnType);
-        sendPlayerInputs();
         doPlayerActions();
         checkForFinishedItems();
         checkForWinner();

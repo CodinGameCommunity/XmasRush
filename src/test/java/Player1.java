@@ -40,15 +40,15 @@ public class Player1 {
             }
 
             if (turn == 0) System.out.println("PUSH 3 RIGHT");
-            if (turn == 1) System.out.println("MOVE RIGHT");
+            if (turn == 1) System.out.println("MOVE RIGHT RIGHT DOWN DOWN DOWN DOWN DOWN DOWN");
             if (turn == 2) System.out.println("PUSH 1 RIGHT");
-            if (turn == 3) System.out.println("PASS");
+            if (turn == 3) System.out.println("MOVE LEFT");
             if (turn == 4) System.out.println("PUSH 1 UP");
-            if (turn == 5) System.out.println("MOVE LEFT");
+            if (turn == 5) System.out.println("MOVE LEFT DOWN LEFT");
             if (turn == 6) System.out.println("PUSH 1 UP");
             if (turn == 7) System.out.println("MOVE RIGHT");
             if (turn == 8) System.out.println("PUSH 5 LEFT");
-            if (turn == 9) System.out.println("MOVE DOWN");
+            if (turn == 9) System.out.println("MOVE LEFT");
             turn++;
         }
     }

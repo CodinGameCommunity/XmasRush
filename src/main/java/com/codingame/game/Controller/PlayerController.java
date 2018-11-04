@@ -25,19 +25,11 @@ public class PlayerController {
     }
 
     public void setPosInMap(Vector2 pos) {
-        setPosInMap(pos, 0);
-    }
-
-    public void setPosInMap(Vector2 pos, double time) {
         if (!Utils.isPosValid(pos)) {
             throw new RuntimeException("Player position out of map bounds!");
         }
         model.setAgentPosition(pos);
-        view.setPosInMap(pos, time);
-    }
-
-    public void setSamePosInMap(double time) {
-        view.setSamePosInMap(time);
+        view.setPosInMap(pos);
     }
 
     public Vector2 getPos() {

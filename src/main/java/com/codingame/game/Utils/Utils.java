@@ -27,17 +27,14 @@ public class Utils {
     }
 
     /**
-     * Sets an entity's position on the map at a given frame time.
+     * Sets an entity's position on the map.
      * @param entity The object to be placed on the map.
      * @param pos A Vector2 object representing the position on the map. Must be within map bounds.
-     * @param time The engine's frame time used to set the tile's position. Must be between 0 and 1.
      */
-    public static void setPosInMap(Entity entity, Vector2 pos, double time) {
+    public static void setPosInMap(Entity entity, Vector2 pos) {
         int x = Constants.MAP_POS_X + pos.getX() * (Constants.TILE_SIZE + Constants.TILES_OFFSET);
         int y = Constants.MAP_POS_Y + pos.getY() * (Constants.TILE_SIZE + Constants.TILES_OFFSET);
         entity.setX(x).setY(y);
-
-        graphicEntityModule.commitEntityState(time, entity);
     }
 
     /**
