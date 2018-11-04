@@ -17,12 +17,14 @@ import com.codingame.gameengine.module.entities.GraphicEntityModule;
 import com.codingame.gameengine.module.entities.Sprite;
 import com.codingame.gameengine.module.entities.Text;
 import com.google.inject.Inject;
+import com.codingame.game.View.EndScreenModule;
 
 import java.util.*;
 
 public class Referee extends AbstractReferee {
     @Inject private MultiplayerGameManager<Player> gameManager;
     @Inject private GraphicEntityModule graphicEntityModule;
+    @Inject private EndScreenModule endScreenModule;
 
     private GameMap map;
 
@@ -265,18 +267,21 @@ public class Referee extends AbstractReferee {
                     }
                 }
             } catch (AbstractPlayer.TimeoutException e) {
-                player.deactivate(String.format("%s: timeout", player.getNicknameToken()));
                 gameManager.addToGameSummary(String.format("%s: timeout - no input provided", player.getNicknameToken()));
+                player.deactivate(String.format("%s: timeout", player.getNicknameToken()));
+                forceGameEnd();
             } catch (InvalidAction e) {
                 if (e.isFatal()) {
-                    player.deactivate(String.format("%s: invalid input", player.getNicknameToken()));
                     gameManager.addToGameSummary(String.format("%s: invalid input - %s", player.getNicknameToken(), e.getMessage()));
+                    player.deactivate(String.format("%s: invalid input", player.getNicknameToken()));
+                    forceGameEnd();
                 } else {
                     gameManager.addToGameSummary(String.format("[WARNING] %s: invalid input - %s", player.getNicknameToken(), e.getMessage()));
                 }
             } catch (IndexOutOfBoundsException e) {
-                player.deactivate(String.format("%s: timeout", player.getNicknameToken()));
                 gameManager.addToGameSummary(String.format("%s: timeout - player provided an empty input", player.getNicknameToken()));
+                player.deactivate(String.format("%s: timeout", player.getNicknameToken()));
+                forceGameEnd();
             }
         }
     }
@@ -329,8 +334,9 @@ public class Referee extends AbstractReferee {
                 }
             } catch (InvalidAction e) {
                 if (e.isFatal()) {
-                    player.deactivate(String.format("%s: invalid input", player.getNicknameToken()));
                     gameManager.addToGameSummary(String.format("%s: invalid input - %s", player.getNicknameToken(), e.getMessage()));
+                    player.deactivate(String.format("%s: invalid input", player.getNicknameToken()));
+                    forceGameEnd();
                 } else {
                     actionsQueue.get(player.getIndex()).clear();
                     gameManager.addToGameSummary(String.format("[WARNING] %s: invalid input - %s", player.getNicknameToken(), e.getMessage()));
@@ -392,7 +398,7 @@ public class Referee extends AbstractReferee {
         gameManager.getActivePlayers().forEach(player -> {
             if (!playerControllers.get(player.getIndex()).hasCards()) {
                 declareWinner(player);
-                gameManager.endGame();
+                forceGameEnd();
             }
         });
     }
@@ -440,13 +446,20 @@ public class Referee extends AbstractReferee {
         checkForWinner();
     }
 
+    private void forceGameEnd() {
+        for (Player player : gameManager.getPlayers()) {
+            // the player score will be the number of solved cards
+            player.setScore(Constants.ITEM_NAMES.size() - playerControllers.get(player.getIndex()).getNumCards());
+            if (player.isActive()) {
+                player.deactivate();
+            }
+        }
+        gameManager.endGame();
+    }
+
     @Override
     public void onEnd() {
-        gameManager.getActivePlayers().forEach(player -> {
-            // Player score will be the number of solved cards
-            player.setScore(Constants.ITEM_NAMES.size() - playerControllers.get(player.getIndex()).getNumCards());
-            System.out.println(player.getNicknameToken() + " score is " + player.getScore());
-        });
+        endScreenModule.setScores(gameManager.getPlayers().stream().mapToInt(player -> player.getScore()).toArray());
     }
 
     static class PlayerAction {
