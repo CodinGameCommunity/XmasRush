@@ -109,42 +109,8 @@ public class Referee extends AbstractReferee {
                 .setAnchorY(1);
     }
 
-    private void drawArrows() {
-        int x = Constants.MAP_POS_X, y = Constants.MAP_POS_Y;
-        for (int j = 0; j < Constants.MAP_HEIGHT; j++) {
-            for (int i = 0; i < Constants.MAP_WIDTH; i++) {
-                int arrowPosX = x, arrowPosY = y, arrowRot = 0, arrowOffset = 85;
-                if (i % 2 != 0) {
-                    if (j == 0) {
-                        arrowPosY -= arrowOffset;
-                        arrowRot = 180;
-                        createSprite("arrow.png", arrowPosX, arrowPosY, Math.toRadians(arrowRot), Constants.MapLayers.BACKGROUND.asValue());
-                    } else if (j == Constants.MAP_HEIGHT - 1) {
-                        arrowPosY += arrowOffset;
-                        arrowRot = 0;
-                        createSprite("arrow.png", arrowPosX, arrowPosY, Math.toRadians(arrowRot), Constants.MapLayers.BACKGROUND.asValue());
-                    }
-                } else if (j % 2 != 0) {
-                    if (i == 0) {
-                        arrowPosX -= arrowOffset;
-                        arrowRot = 90;
-                        createSprite("arrow.png", arrowPosX, arrowPosY, Math.toRadians(arrowRot), Constants.MapLayers.BACKGROUND.asValue());
-                    } else if (i == Constants.MAP_WIDTH - 1) {
-                        arrowPosX += arrowOffset;
-                        arrowRot = 270;
-                        createSprite("arrow.png", arrowPosX, arrowPosY, Math.toRadians(arrowRot), Constants.MapLayers.BACKGROUND.asValue());
-                    }
-                }
-                x += Constants.TILE_SIZE + Constants.TILES_OFFSET;
-            }
-            x = Constants.MAP_POS_X;
-            y += Constants.TILE_SIZE + Constants.TILES_OFFSET;
-        }
-    }
-
     private void createMap() {
         map = new GameMap();
-        drawArrows();
     }
 
     private void createPlayerTiles() {
@@ -247,7 +213,6 @@ public class Referee extends AbstractReferee {
 
             // Turn type
             player.sendInputLine(Integer.toString(turnType.getValue()));
-
 
             // Cards
             int numQuests = playerControllers.get(Constants.PLAYER_INDEX).getNumQuestCards()

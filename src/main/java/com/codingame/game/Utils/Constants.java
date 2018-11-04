@@ -73,7 +73,7 @@ public class Constants {
     public static final int NUM_QUEST_CARDS = 1;
 
     public static final Pattern PLAYER_INPUT_PUSH_PATTERN = Pattern
-            .compile("(?<pushAction>\\bpush\\b) (?<id>[1,3,5]) (?<direction>(\\bup\\b|\\bright\\b|\\bdown\\b|\\bleft\\b))",
+            .compile("(?<pushAction>\\bpush\\b) (?<id>[0-6]) (?<direction>(\\bup\\b|\\bright\\b|\\bdown\\b|\\bleft\\b))",
                     Pattern.CASE_INSENSITIVE);
     public static final Pattern PLAYER_INPUT_MOVE_PATTERN = Pattern
             .compile("(?:\\bmove\\b)((?: )(?<direction>(\\bup\\b|\\bright\\b|\\bdown\\b|\\bleft\\b))){1,20}",
