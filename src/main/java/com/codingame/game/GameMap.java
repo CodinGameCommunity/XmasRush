@@ -119,9 +119,6 @@ public class GameMap {
     }
 
     public TileController pushColumn(TileController pushedTile, int index, Constants.Direction dir) {
-        if (index % 2 == 0) {
-            throw new RuntimeException("Only odd columns are pushable");
-        }
         int lastRowIndex = Constants.MAP_HEIGHT - 1;
         if (dir == Constants.Direction.UP) {
             TileController poppedTile = tileControllers[index][0];
@@ -147,9 +144,6 @@ public class GameMap {
     }
 	
 	public TileController pushRow(TileController pushedTile, int index, Constants.Direction dir) {
-        if (index % 2 == 0) {
-            throw new RuntimeException("Only odd rows are pushable!");
-        }
         int lastColIndex = Constants.MAP_WIDTH - 1;
         for (int i = 0; i <= lastColIndex; i++) {
             tileControllers[i][index].setPosInMap(new Vector2(i, index));
