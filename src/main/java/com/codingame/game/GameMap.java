@@ -170,10 +170,6 @@ public class GameMap {
         return null;
     }
 
-    private boolean isInBounds(Vector2 pos) {
-        return (pos.getX() >= 0 && pos.getY() >= 0 && pos.getX() < Constants.MAP_WIDTH && pos.getY() < Constants.MAP_HEIGHT);
-    }
-
     private boolean canMove(PlayerController playerController, MoveAction.Step step) {
         Vector2 pos = new Vector2(playerController.getPos());
         // check if the current tile has a path to the next tile
@@ -182,7 +178,7 @@ public class GameMap {
         }
         // move to the next tile
         pos.add(step.getDirection().asValue());
-        if (!isInBounds(pos)
+        if (!Utils.isPosValid(pos)
                 || !getTile(pos.getX(), pos.getY()).hasOppDir(step.getDirection())) { // check if the current tile we moved to has a path to the previous tile
             return false;
         }
