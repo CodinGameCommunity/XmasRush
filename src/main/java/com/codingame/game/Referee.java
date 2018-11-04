@@ -32,7 +32,7 @@ public class Referee extends AbstractReferee {
 
     private Action.Type turnType;
 
-    private List<Queue<Action>> actionQueue = new ArrayList<>(Arrays.asList(new ArrayDeque<>(), new ArrayDeque<>()));
+    private List<Queue<Action>> actionsQueue = new ArrayList<>(Arrays.asList(new ArrayDeque<>(), new ArrayDeque<>()));
 
     @Override
     public void init() {
@@ -273,7 +273,7 @@ public class Referee extends AbstractReferee {
         for (Player player : gameManager.getActivePlayers()) {
             try {
                 int playerIndex = player.getIndex();
-                Queue<Action> playerQueue = actionQueue.get(playerIndex);
+                Queue<Action> playerQueue = actionsQueue.get(playerIndex);
                 List<String> outputs = player.getOutputs();
                 Action action = player.getAction(outputs.get(0));
                 if (action instanceof MoveAction) {
@@ -292,7 +292,7 @@ public class Referee extends AbstractReferee {
                         gameManager.addToGameSummary("[WARNING] Both players tried to push the same line. Nothing happens!");
                         // remove the previous push action from the first player's queue
                         if (playerIndex > 0) {
-                            actionQueue.get(playerIndex - 1).remove(prevPushAction);
+                            actionsQueue.get(playerIndex - 1).remove(prevPushAction);
                         }
                     } else {
                         playerQueue.add(action);
@@ -317,32 +317,41 @@ public class Referee extends AbstractReferee {
     }
 
     private void doPlayerActions() {
+        PushAction prevPushAction = null;
         for (Player player : gameManager.getActivePlayers()) {
             try {
-                Action action = actionQueue.get(player.getIndex()).poll();
+                Action action = actionsQueue.get(player.getIndex()).poll();
                 if (action == null) {
                     continue;
                 }
                 PlayerController playerController = playerControllers.get(player.getIndex());
                 if (turnType == Action.Type.PUSH && action instanceof PushAction) {
                     PushAction pushAction = (PushAction)action;
+                    // check if the previous push action was of the same type as the current one (horizontal or vertical)
+                    // similar push actions get processed in the same frame, otherwise they remain in the queue till the next frame
+                    if (prevPushAction != null
+                            && (prevPushAction.getDirection() != pushAction.getDirection()
+                            && prevPushAction.getDirection() != pushAction.getDirection().getOpposite())) {
+                        // put the action back in the queue to be processed in the next frame
+                        actionsQueue.get(player.getIndex()).add(pushAction);
+                        return;
+                    }
                     if (pushAction.getDirection() == Constants.Direction.RIGHT
                             || pushAction.getDirection() == Constants.Direction.LEFT) {
                         if (pushAction.getLineId() >= Constants.MAP_HEIGHT) {
                             throw new InvalidAction("out of bounds line index");
                         }
                         doPushAction(new PlayerAction(playerController, pushAction), true);
-                        return;
                     } else {
                         if (pushAction.getLineId() >= Constants.MAP_WIDTH) {
                             throw new InvalidAction("out of bounds line index");
                         }
                         doPushAction(new PlayerAction(playerController, pushAction), false);
-                        return;
                     }
+                    prevPushAction = pushAction;
                 } else if (turnType == Action.Type.MOVE && (action instanceof MoveAction || action instanceof PassAction)) {
                     if (action instanceof MoveAction) {
-                        MoveAction moveAction = (MoveAction) action;
+                        MoveAction moveAction = (MoveAction)action;
                         List<MoveAction.Step> steps = moveAction.getSteps();
                         for (MoveAction.Step step : steps) {
                             map.moveAgentBy(playerController, step);
@@ -358,7 +367,7 @@ public class Referee extends AbstractReferee {
                     player.deactivate(String.format("%s: invalid input", player.getNicknameToken()));
                     gameManager.addToGameSummary(String.format("%s: invalid input - %s", player.getNicknameToken(), e.getMessage()));
                 } else {
-                    actionQueue.get(player.getIndex()).clear();
+                    actionsQueue.get(player.getIndex()).clear();
                     gameManager.addToGameSummary(String.format("[WARNING] %s: invalid input - %s", player.getNicknameToken(), e.getMessage()));
                 }
             }
@@ -452,7 +461,7 @@ public class Referee extends AbstractReferee {
 
     @Override
     public void gameTurn(int turn) {
-        if (!actionQueue.get(0).isEmpty() || !actionQueue.get(1).isEmpty()) {
+        if (!actionsQueue.get(0).isEmpty() || !actionsQueue.get(1).isEmpty()) {
             forceAnimationFrame();
         } else {
             turnType = turnType == Action.Type.PUSH ? Action.Type.MOVE : Action.Type.PUSH;

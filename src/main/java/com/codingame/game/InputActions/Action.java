@@ -27,18 +27,5 @@ public abstract class Action {
         public int getValue() {
             return value;
         }
-
-        /**
-         * Converts an integer to a Type enum.
-         * @param value The integer to be converted to a Type enum.
-         * @return the Type enum from the integer value.
-         */
-        public static Type fromInt(int value) {
-            switch (value) {
-                case 0: return PUSH;
-                case 1: return MOVE;
-                default: return null;
-            }
-        }
     }
 }
