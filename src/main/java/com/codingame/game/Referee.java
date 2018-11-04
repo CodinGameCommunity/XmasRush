@@ -18,12 +18,14 @@ import com.codingame.gameengine.module.entities.Sprite;
 import com.codingame.gameengine.module.entities.Text;
 import com.google.inject.Inject;
 import com.codingame.game.View.EndScreenModule;
+import com.codingame.game.View.TooltipModule;
 
 import java.util.*;
 
 public class Referee extends AbstractReferee {
     @Inject private MultiplayerGameManager<Player> gameManager;
     @Inject private GraphicEntityModule graphicEntityModule;
+    @Inject private TooltipModule tooltipModule;
     @Inject private EndScreenModule endScreenModule;
 
     private GameMap map;
@@ -39,6 +41,7 @@ public class Referee extends AbstractReferee {
     @Override
     public void init() {
         Utils.graphicEntityModule = graphicEntityModule;
+        Utils.tooltipModule = tooltipModule;
 
         Properties params = gameManager.getGameParameters();
         Constants.random = new Random(getSeed(params));

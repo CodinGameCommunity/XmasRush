@@ -89,6 +89,10 @@ public class TileView {
         group.add(this.item);
     }
 
+    public Group getGroup() {
+        return group;
+    }
+
     public void removeItem() {
         this.item.setVisible(false);
         group.remove(this.item);

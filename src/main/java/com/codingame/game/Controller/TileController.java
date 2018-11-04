@@ -7,6 +7,10 @@ import com.codingame.game.Utils.Utils;
 import com.codingame.game.Utils.Vector2;
 import com.codingame.game.View.TileView;
 
+import java.util.HashMap;
+
+import static com.codingame.game.Utils.Utils.tooltipModule;
+
 public class TileController {
     /**
      * The tile's model (logic).
@@ -26,6 +30,8 @@ public class TileController {
     public TileController(TileModel model, TileView view) {
         this.model = model;
         this.view = view;
+
+        tooltipModule.registerEntity(view.getGroup(), new HashMap<>());
     }
 
     /**
@@ -65,6 +71,8 @@ public class TileController {
         }
         model.setPos(pos);
         view.setPosInMap(pos);
+
+        .tooltipModule.updateExtraTooltipText(view.getGroup(), pos.toString());
     }
 
     /**
@@ -76,8 +84,10 @@ public class TileController {
     public void setPosAbsolute(int playerId, Vector2 pos) {
         if (playerId == Constants.PLAYER_INDEX) {
             model.setPos(Vector2.MINUS_ONE);
+            tooltipModule.updateExtraTooltipText(view.getGroup(), Vector2.MINUS_ONE.toString());
         } else if (playerId == Constants.OPPONENT_INDEX){
             model.setPos(Vector2.MINUS_TWO);
+            tooltipModule.updateExtraTooltipText(view.getGroup(), Vector2.MINUS_TWO.toString());
         }
         view.setPosAbsolute(pos);
     }
