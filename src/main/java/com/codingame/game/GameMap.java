@@ -145,9 +145,6 @@ public class GameMap {
 	
 	public TileController pushRow(TileController pushedTile, int index, Constants.Direction dir) {
         int lastColIndex = Constants.MAP_WIDTH - 1;
-        for (int i = 0; i <= lastColIndex; i++) {
-            tileControllers[i][index].setPosInMap(new Vector2(i, index));
-        }
         if (dir == Constants.Direction.LEFT) {
             TileController poppedTile = tileControllers[0][index];
             for (int i = 0; i < lastColIndex; i++) {
