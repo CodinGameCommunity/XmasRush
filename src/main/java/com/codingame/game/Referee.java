@@ -52,6 +52,9 @@ public class Referee extends AbstractReferee {
         createCards();
         createTexts();
 
+        // make sure the view is initialized at frame 0
+        graphicEntityModule.commitWorldState(0);
+
         sendInitialInputs();
     }
 
