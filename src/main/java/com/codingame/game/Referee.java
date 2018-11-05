@@ -247,10 +247,10 @@ public class Referee extends AbstractReferee {
                     MoveAction moveAction = (MoveAction)action;
                     for (MoveAction.Step step : moveAction.getSteps()) {
                         MoveAction stepAction = new MoveAction();
-                        stepAction.addAction(step.getDirection());
+                        stepAction.addStep(step.getDirection());
                         playerQueue.add(stepAction);
                     }
-                } else {
+                } else if (action instanceof PushAction) {
                     PushAction pushAction = (PushAction)action;
                     // check if both players tried to push against opposite directions on the same line
                     if (prevPushAction != null && pushAction.getLineId() == prevPushAction.getLineId()
@@ -319,15 +319,11 @@ public class Referee extends AbstractReferee {
                         doPushAction(new PlayerAction(playerController, pushAction), false);
                     }
                     prevPushAction = pushAction;
-                } else if (turnType == Action.Type.MOVE && (action instanceof MoveAction || action instanceof PassAction)) {
-                    if (action instanceof MoveAction) {
-                        MoveAction moveAction = (MoveAction)action;
-                        List<MoveAction.Step> steps = moveAction.getSteps();
-                        for (MoveAction.Step step : steps) {
-                            map.moveAgentBy(playerController, step);
-                        }
-                    } else if (action instanceof PassAction) {
-                        // do nothing
+                } else if (turnType == Action.Type.MOVE && action instanceof MoveAction) {
+                    MoveAction moveAction = (MoveAction)action;
+                    List<MoveAction.Step> steps = moveAction.getSteps();
+                    for (MoveAction.Step step : steps) {
+                        map.moveAgentBy(playerController, step);
                     }
                 } else {
                     throw new InvalidAction(String.format("can't \"%s\" while expecting a %s action", action, turnType));

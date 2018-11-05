@@ -33,14 +33,14 @@ public class MoveAction extends Action {
         return steps;
     }
 
-    public void addAction(Constants.Direction direction) {
+    public void addStep(Constants.Direction direction) {
         steps.add(new Step(direction));
     }
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder("MOVE ");
-
+        StringBuilder sb = new StringBuilder();
+        sb.append(steps.isEmpty() ? "PASS" : "MOVE ");
         for (int i = 0; i < steps.size(); i++) {
             if (i > 0) {
                 sb.append(' ');

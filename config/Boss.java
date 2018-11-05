@@ -41,8 +41,7 @@ class Player {
 
             if (turnType == 0) {
                 System.out.println("PUSH 3 DOWN");
-            }
-            else {
+            } else {
                 System.out.println("PASS");
             }
             turn++;
