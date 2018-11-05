@@ -72,7 +72,7 @@ public class TileController {
         model.setPos(pos);
         view.setPosInMap(pos);
 
-        .tooltipModule.updateExtraTooltipText(view.getGroup(), pos.toString());
+        tooltipModule.updateExtraTooltipText(view.getGroup(), pos.toString());
     }
 
     /**
