@@ -30,11 +30,11 @@ public class Player extends AbstractMultiplayerPlayer {
             Matcher tokensMatcher = Constants.PLAYER_INPUT_MOVE_TOKENS_PATTERN.matcher(playerAction);
             MoveAction moveAction = new MoveAction();
             while (tokensMatcher.find()) {
-                moveAction.addAction(Constants.Direction.valueOf(tokensMatcher.group("direction")));
+                moveAction.addStep(Constants.Direction.valueOf(tokensMatcher.group("direction")));
             }
             return moveAction;
         } else if (matchPass.matches()) {
-            return new PassAction();
+            return new MoveAction();
         } else {
             throw new InvalidAction(playerAction);
         }

@@ -28,7 +28,6 @@ public class TileView {
                 .setImage("tile_background.png")
                 .setAnchor(0.5)
                 .setZIndex(Constants.MapLayers.BACKGROUND.asValue());
-        graphicEntityModule.commitEntityState(0, background);
         group = graphicEntityModule.createGroup()
                 .setScale(1);
         group.add(background);
@@ -41,7 +40,6 @@ public class TileView {
                 .setAnchor(0.5)
                 .setRotation(Math.toRadians(0))
                 .setZIndex(Constants.MapLayers.TILES.asValue());
-        graphicEntityModule.commitEntityState(0, up);
         group.add(up);
     }
 
@@ -52,7 +50,6 @@ public class TileView {
                 .setAnchor(0.5)
                 .setRotation(Math.toRadians(90))
                 .setZIndex(Constants.MapLayers.TILES.asValue());
-        graphicEntityModule.commitEntityState(0, right);
         group.add(right);
     }
 
@@ -63,7 +60,6 @@ public class TileView {
                 .setAnchor(0.5)
                 .setRotation(Math.toRadians(180))
                 .setZIndex(Constants.MapLayers.TILES.asValue());
-        graphicEntityModule.commitEntityState(0, down);
         group.add(down);
     }
 
@@ -74,7 +70,6 @@ public class TileView {
                 .setAnchor(0.5)
                 .setRotation(Math.toRadians(270))
                 .setZIndex(Constants.MapLayers.TILES.asValue());
-        graphicEntityModule.commitEntityState(0, left);
         group.add(left);
     }
 
@@ -85,7 +80,6 @@ public class TileView {
                 .setImage(spritePath)
                 .setAnchor(0.5)
                 .setZIndex(Constants.MapLayers.ITEMS.asValue());
-        graphicEntityModule.commitEntityState(0, this.item);
         group.add(this.item);
     }
 
@@ -127,7 +121,5 @@ public class TileView {
         if (tile.hasDown()) addDown();
         if (tile.hasLeft()) addLeft();
         if (tile.hasItem()) addItem(tile.getItem());
-
-        graphicEntityModule.commitEntityState(0, group);
     }
 }
