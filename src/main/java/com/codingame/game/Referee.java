@@ -16,8 +16,8 @@ import com.codingame.gameengine.core.MultiplayerGameManager;
 import com.codingame.gameengine.module.entities.GraphicEntityModule;
 import com.codingame.gameengine.module.entities.Sprite;
 import com.codingame.gameengine.module.entities.Text;
+import com.codingame.view.endscreen.EndScreenModule;
 import com.google.inject.Inject;
-import com.codingame.game.View.EndScreenModule;
 
 import java.util.*;
 
