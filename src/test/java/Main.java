@@ -5,8 +5,8 @@ public class Main {
 
         MultiplayerGameRunner gameRunner = new MultiplayerGameRunner();
 
-        gameRunner.addAgent(Player.class);
-        gameRunner.addAgent(Player.class);
+        gameRunner.addAgent(PlayerAI.class);
+        gameRunner.addAgent(PlayerAI.class);
 
         gameRunner.setSeed(5984702505893992817L);
 
