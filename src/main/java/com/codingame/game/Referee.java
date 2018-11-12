@@ -3,7 +3,10 @@ package com.codingame.game;
 import com.codingame.game.Controller.CardController;
 import com.codingame.game.Controller.PlayerController;
 import com.codingame.game.Controller.TileController;
-import com.codingame.game.InputActions.*;
+import com.codingame.game.InputActions.Action;
+import com.codingame.game.InputActions.InvalidAction;
+import com.codingame.game.InputActions.MoveAction;
+import com.codingame.game.InputActions.PushAction;
 import com.codingame.game.Model.TileModel;
 import com.codingame.game.Utils.Constants;
 import com.codingame.game.Utils.Utils;
@@ -16,17 +19,17 @@ import com.codingame.gameengine.core.MultiplayerGameManager;
 import com.codingame.gameengine.module.entities.GraphicEntityModule;
 import com.codingame.gameengine.module.entities.Sprite;
 import com.codingame.gameengine.module.entities.Text;
+import com.codingame.view.endscreen.EndScreenModule;
+import com.codingame.view.tooltip.TooltipModule;
 import com.google.inject.Inject;
-import com.codingame.game.View.EndScreenModule;
-import com.codingame.game.View.TooltipModule;
 
 import java.util.*;
 
 public class Referee extends AbstractReferee {
     @Inject private MultiplayerGameManager<Player> gameManager;
     @Inject private GraphicEntityModule graphicEntityModule;
-    @Inject private TooltipModule tooltipModule;
     @Inject private EndScreenModule endScreenModule;
+    @Inject private TooltipModule tooltipModule;
 
     private GameMap map;
 
@@ -415,7 +418,7 @@ public class Referee extends AbstractReferee {
     }
 
     public void forceAnimationFrame() {
-        for (Player player : gameManager.getActivePlayers()) {
+        gameManager.getActivePlayers().stream().limit(1).forEach(player -> {
             player.setExpectedOutputLines(0);
             player.execute();
             try {
@@ -423,7 +426,7 @@ public class Referee extends AbstractReferee {
             } catch (Exception e) {
 
             }
-        }
+        });
     }
 
     public void forceGameFrame() {
@@ -451,9 +454,11 @@ public class Referee extends AbstractReferee {
     private void forceGameEnd() {
         for (Player player : gameManager.getPlayers()) {
             // the player score will be the number of solved cards
-            player.setScore(Constants.ITEM_NAMES.size() - playerControllers.get(player.getIndex()).getNumCards());
             if (player.isActive()) {
                 player.deactivate();
+                player.setScore(Constants.ITEM_NAMES.size() - playerControllers.get(player.getIndex()).getNumCards());
+            } else {
+                player.setScore(-1);
             }
         }
         gameManager.endGame();

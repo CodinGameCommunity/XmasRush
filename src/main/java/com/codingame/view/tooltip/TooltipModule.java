@@ -1,4 +1,4 @@
-package com.codingame.game.View;
+package com.codingame.view.tooltip;
 
 import java.util.Arrays;
 import java.util.HashMap;

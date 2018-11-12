@@ -1,8 +1,8 @@
 package com.codingame.game.Utils;
 
-import com.codingame.game.View.TooltipModule;
 import com.codingame.gameengine.module.entities.Entity;
 import com.codingame.gameengine.module.entities.GraphicEntityModule;
+import com.codingame.view.tooltip.TooltipModule;
 
 public class Utils {
     /**

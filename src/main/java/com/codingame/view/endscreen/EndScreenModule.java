@@ -1,4 +1,4 @@
-package com.codingame.game.View;
+package com.codingame.view.endscreen;
 
 import com.codingame.gameengine.core.AbstractPlayer;
 import com.codingame.gameengine.core.GameManager;
