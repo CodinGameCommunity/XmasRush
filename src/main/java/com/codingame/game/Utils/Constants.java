@@ -21,6 +21,7 @@ public class Constants {
     public static final int MAP_POS_Y = SCREEN_HEIGHT / 2 - (Constants.MAP_WIDTH * Constants.TILE_SIZE) / 2
             + Constants.TILE_SIZE / 2 - TILES_OFFSET / 2 * Constants.MAP_WIDTH;
 
+    public static final int NUM_PLAYERS = 2;
     public static final int PLAYER_TILE_POS_X = 164;
     public static final int PLAYER_TILE_POS_Y = Constants.SCREEN_HEIGHT / 2;
     public static final int OPPONENT_TILE_POS_X = Constants.SCREEN_WIDTH - PLAYER_TILE_POS_X;

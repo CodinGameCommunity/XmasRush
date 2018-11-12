@@ -70,15 +70,10 @@ public class TileController {
     /**
      * Sets a player's tile position anywhere on the screen.
      * The model's position will be (-1,-1) for the player's tile and (-2,-2) for the opponent's tile.
-     * @param playerId The player's identifier (0 for the player, 1 for the opponent).
      * @param pos A Vector2 object representing the position on the screen.
      */
-    public void setPosAbsolute(int playerId, Vector2 pos) {
-        if (playerId == Constants.PLAYER_INDEX) {
-            model.setPos(Vector2.MINUS_ONE);
-        } else if (playerId == Constants.OPPONENT_INDEX){
-            model.setPos(Vector2.MINUS_TWO);
-        }
+    public void setPosAbsolute(Vector2 pos) {
+        model.setPos(Vector2.INVALID);
         view.setPosAbsolute(pos);
     }
 
