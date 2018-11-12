@@ -412,7 +412,7 @@ public class Referee extends AbstractReferee {
     }
 
     public void forceAnimationFrame() {
-        for (Player player : gameManager.getActivePlayers()) {
+        gameManager.getActivePlayers().stream().limit(1).forEach(player -> {
             player.setExpectedOutputLines(0);
             player.execute();
             try {
@@ -420,7 +420,7 @@ public class Referee extends AbstractReferee {
             } catch (Exception e) {
 
             }
-        }
+        });
     }
 
     public void forceGameFrame() {
