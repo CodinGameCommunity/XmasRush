@@ -2,12 +2,14 @@ package com.codingame.game.Utils;
 
 import com.codingame.gameengine.module.entities.Entity;
 import com.codingame.gameengine.module.entities.GraphicEntityModule;
+import com.codingame.view.tooltip.TooltipModule;
 
 public class Utils {
     /**
      * Static reference to the Referee's GraphicEntityModule.
      */
     public static GraphicEntityModule graphicEntityModule;
+    public static TooltipModule tooltipModule;
 
     /**
      * Wraps's a value between a minimum and maximum value.
