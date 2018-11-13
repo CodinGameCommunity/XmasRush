@@ -22,6 +22,7 @@ import com.codingame.gameengine.module.entities.Text;
 import com.codingame.view.endscreen.EndScreenModule;
 import com.codingame.view.tooltip.TooltipModule;
 import com.google.inject.Inject;
+import javafx.util.Pair;
 
 import java.util.*;
 
@@ -132,8 +133,8 @@ public class Referee extends AbstractReferee {
         playerTile.initView();
         opponentTile.initView();
 
-        playerTile.setPosAbsolute(Constants.PLAYER_INDEX, new Vector2(Constants.PLAYER_TILE_POS_X, Constants.PLAYER_TILE_POS_Y));
-        opponentTile.setPosAbsolute(Constants.OPPONENT_INDEX, new Vector2(Constants.OPPONENT_TILE_POS_X, Constants.OPPONENT_TILE_POS_Y));
+        playerTile.setPosAbsolute(new Vector2(Constants.PLAYER_TILE_POS_X, Constants.PLAYER_TILE_POS_Y));
+        opponentTile.setPosAbsolute(new Vector2(Constants.OPPONENT_TILE_POS_X, Constants.OPPONENT_TILE_POS_Y));
 
         playerControllers.get(Constants.PLAYER_INDEX).setTile(playerTile);
         playerControllers.get(Constants.OPPONENT_INDEX).setTile(opponentTile);
@@ -186,8 +187,12 @@ public class Referee extends AbstractReferee {
             }
 
             // Player information
-            for (int i = 0; i < 2; i++) {
-                PlayerController playerController = playerControllers.get(i);
+            // always send the first input to the current player, then to the other player
+            int firstPlayerIndex = player.getIndex();
+            int secondPlayerIndex = (firstPlayerIndex + 1) % Constants.NUM_PLAYERS;
+            for (int i = 0; i < Constants.NUM_PLAYERS; i++) {
+                int playerIndex = (i + firstPlayerIndex) % Constants.NUM_PLAYERS;
+                PlayerController playerController = playerControllers.get(playerIndex);
                 player.sendInputLine(String.format("%d %d %d %s",
                         playerController.getNumCards(),
                         playerController.getPos().getX(),
@@ -195,48 +200,54 @@ public class Referee extends AbstractReferee {
                         playerController.getTile().toInputString()));
             }
 
-            // Items
-            List<TileController> tilesWithItems = new ArrayList<>();
-            TileController playerTile = playerControllers.get(Constants.PLAYER_INDEX).getTile();
-            if (playerTile.hasItem()) {
-                tilesWithItems.add(playerTile);
+            // Player items
+            List<Pair<TileController, Vector2>> tilesWithItems = new ArrayList<>();
+            for (int i = 0; i < Constants.NUM_PLAYERS; i++) {
+                int playerIndex = (i + firstPlayerIndex) % Constants.NUM_PLAYERS;
+                TileController tile = playerControllers.get(playerIndex).getTile();
+                if (tile.hasItem()) {
+                    // the player tiles always have a custom position
+                    // (-1,-1) for the first player, (-2,-2) for the opponent
+                    Vector2 pos = (playerIndex == firstPlayerIndex ? Vector2.MINUS_ONE : Vector2.MINUS_TWO);
+                    tilesWithItems.add(new Pair<>(tile, pos));
+                }
             }
-            TileController opponentTile = playerControllers.get(Constants.OPPONENT_INDEX).getTile();
-            if (opponentTile.hasItem()) {
-                tilesWithItems.add(opponentTile);
-            }
+            // Map items
             for (int y = 0; y < Constants.MAP_HEIGHT; y++) {
                 for (int x = 0; x < Constants.MAP_WIDTH; x++) {
                     TileController tile = map.getTile(x, y);
                     if (tile.hasItem()) {
-                        tilesWithItems.add(tile);
+                        tilesWithItems.add(new Pair<>(tile, tile.getPos()));
                     }
                 }
             }
             int numItems = tilesWithItems.size();
             player.sendInputLine(Integer.toString(numItems));
-            for (TileController tile : tilesWithItems) {
+            for (Pair<TileController, Vector2> tilePair : tilesWithItems) {
+                TileController tile = tilePair.getKey();
                 Item item = tile.getItem();
+                int playerIndex = (item.getPlayerId() + firstPlayerIndex) % Constants.NUM_PLAYERS;
                 player.sendInputLine(String.format("%s %d %d %d",
                         item.getName(),
-                        tile.getPos().getX(),
-                        tile.getPos().getY(),
-                        item.getPlayerId()));
+                        tilePair.getValue().getX(),
+                        tilePair.getValue().getY(),
+                        playerIndex));
             }
 
             // Turn type
             player.sendInputLine(Integer.toString(turnType.getValue()));
 
             // Cards
-            int numQuests = playerControllers.get(Constants.PLAYER_INDEX).getNumQuestCards()
-                    + playerControllers.get(Constants.OPPONENT_INDEX).getNumQuestCards();
+            int numQuests = playerControllers.get(firstPlayerIndex).getNumQuestCards()
+                    + playerControllers.get(secondPlayerIndex).getNumQuestCards();
             player.sendInputLine(Integer.toString(numQuests));
-            for (int i = 0; i < 2; i++) {
-                PlayerController playerController = playerControllers.get(i);
+            for (int i = 0; i < Constants.NUM_PLAYERS; i++) {
+                int playerIndex = (i + firstPlayerIndex) % Constants.NUM_PLAYERS;
+                PlayerController playerController = playerControllers.get(playerIndex);
                 for (CardController card : playerController.getTopCards()) {
                     player.sendInputLine(String.format("%s %d",
                             card.getItem().getName(),
-                            card.getItem().getPlayerId()));
+                            i));
                 }
             }
 
@@ -358,7 +369,7 @@ public class Referee extends AbstractReferee {
         } else {
             poppedTile = map.pushColumn(playerAction.player.getTile(), action.getLineId(), action.getDirection());
         }
-        poppedTile.setPosAbsolute(playerAction.player.getId(), playerAction.player.getTilePosition());
+        poppedTile.setPosAbsolute(playerAction.player.getTilePosition());
         playerAction.player.setTile(poppedTile);
 
         // if there's a player on the pushed line move them too
