@@ -263,14 +263,14 @@ public class Referee extends AbstractReferee {
                 Queue<Action> playerQueue = actionsQueue.get(playerIndex);
                 List<String> outputs = player.getOutputs();
                 Action action = player.getAction(outputs.get(0));
-                if (action instanceof MoveAction) {
+                if (turnType == Action.Type.MOVE && action instanceof MoveAction) {
                     MoveAction moveAction = (MoveAction)action;
                     for (MoveAction.Step step : moveAction.getSteps()) {
                         MoveAction stepAction = new MoveAction();
                         stepAction.addStep(step.getDirection());
                         playerQueue.add(stepAction);
                     }
-                } else if (action instanceof PushAction) {
+                } else if (turnType == Action.Type.PUSH && action instanceof PushAction) {
                     PushAction pushAction = (PushAction)action;
                     // check if both players tried to push against opposite directions on the same line
                     if (prevPushAction != null && pushAction.getLineId() == prevPushAction.getLineId()
@@ -285,6 +285,8 @@ public class Referee extends AbstractReferee {
                         playerQueue.add(action);
                         prevPushAction = pushAction;
                     }
+                } else {
+                    throw new InvalidAction(String.format("can't \"%s\" while expecting a %s action", action, turnType));
                 }
             } catch (AbstractPlayer.TimeoutException e) {
                 gameManager.addToGameSummary(String.format("%s: timeout - no input provided", player.getNicknameToken()));
@@ -315,7 +317,7 @@ public class Referee extends AbstractReferee {
                     continue;
                 }
                 PlayerController playerController = playerControllers.get(player.getIndex());
-                if (turnType == Action.Type.PUSH && action instanceof PushAction) {
+                if (action instanceof PushAction) {
                     PushAction pushAction = (PushAction)action;
                     // check if the previous push action was of the same type as the current one (horizontal or vertical)
                     // similar push actions get processed in the same frame, otherwise they remain in the queue till the next frame
@@ -339,14 +341,12 @@ public class Referee extends AbstractReferee {
                         doPushAction(new PlayerAction(playerController, pushAction), false);
                     }
                     prevPushAction = pushAction;
-                } else if (turnType == Action.Type.MOVE && action instanceof MoveAction) {
+                } else if (action instanceof MoveAction) {
                     MoveAction moveAction = (MoveAction)action;
                     List<MoveAction.Step> steps = moveAction.getSteps();
                     for (MoveAction.Step step : steps) {
                         map.moveAgentBy(playerController, step);
                     }
-                } else {
-                    throw new InvalidAction(String.format("can't \"%s\" while expecting a %s action", action, turnType));
                 }
             } catch (InvalidAction e) {
                 if (e.isFatal()) {
