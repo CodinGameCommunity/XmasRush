@@ -133,8 +133,8 @@ public class Referee extends AbstractReferee {
         playerTile.initView();
         opponentTile.initView();
 
-        playerTile.setPosAbsolute(new Vector2(Constants.PLAYER_TILE_POS_X, Constants.PLAYER_TILE_POS_Y));
-        opponentTile.setPosAbsolute(new Vector2(Constants.OPPONENT_TILE_POS_X, Constants.OPPONENT_TILE_POS_Y));
+        playerTile.setPosAbsolute(Constants.PLAYER_INDEX, new Vector2(Constants.PLAYER_TILE_POS_X, Constants.PLAYER_TILE_POS_Y));
+        opponentTile.setPosAbsolute(Constants.OPPONENT_INDEX, new Vector2(Constants.OPPONENT_TILE_POS_X, Constants.OPPONENT_TILE_POS_Y));
 
         playerControllers.get(Constants.PLAYER_INDEX).setTile(playerTile);
         playerControllers.get(Constants.OPPONENT_INDEX).setTile(opponentTile);
@@ -369,7 +369,7 @@ public class Referee extends AbstractReferee {
         } else {
             poppedTile = map.pushColumn(playerAction.player.getTile(), action.getLineId(), action.getDirection());
         }
-        poppedTile.setPosAbsolute(playerAction.player.getTilePosition());
+        poppedTile.setPosAbsolute(playerAction.player.getId(), playerAction.player.getTilePosition());
         playerAction.player.setTile(poppedTile);
 
         // if there's a player on the pushed line move them too
