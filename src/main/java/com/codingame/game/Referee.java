@@ -9,6 +9,7 @@ import com.codingame.game.InputActions.MoveAction;
 import com.codingame.game.InputActions.PushAction;
 import com.codingame.game.Model.TileModel;
 import com.codingame.game.Utils.Constants;
+import com.codingame.game.Utils.Pair;
 import com.codingame.game.Utils.Utils;
 import com.codingame.game.Utils.Vector2;
 import com.codingame.game.View.PlayerView;
@@ -22,7 +23,6 @@ import com.codingame.gameengine.module.entities.Text;
 import com.codingame.view.endscreen.EndScreenModule;
 import com.codingame.view.tooltip.TooltipModule;
 import com.google.inject.Inject;
-import javafx.util.Pair;
 
 import java.util.*;
 
