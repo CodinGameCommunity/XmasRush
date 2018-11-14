@@ -9,7 +9,7 @@ public class Player extends AbstractMultiplayerPlayer {
 
     @Override
     public int getExpectedOutputLines() {
-        return 1;
+        return expectedOutputLines;
     }
 
     public void setExpectedOutputLines(int expectedOutputLines) {

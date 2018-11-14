@@ -1,16 +1,18 @@
 package com.codingame.game.Model;
 
-import com.codingame.game.Utils.Constants;
-import com.codingame.game.Utils.Vector2;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
-import javax.smartcardio.Card;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.*;
-import static org.testng.Assert.assertEquals;
+import org.junit.Test;
+
+import com.codingame.game.Utils.Constants;
+import com.codingame.game.Utils.Vector2;
 
 public class PlayerModelTest {
 
