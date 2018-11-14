@@ -1,23 +1,38 @@
 package com.codingame.game.View;
 
+import com.codingame.game.Model.PlayerModel;
+import com.codingame.game.Player;
 import com.codingame.game.Utils.Constants;
-import com.codingame.game.Utils.Utils;
-import com.codingame.game.Utils.Vector2;
+import com.codingame.gameengine.module.entities.Entity;
+import com.codingame.gameengine.module.entities.GraphicEntityModule;
 import com.codingame.gameengine.module.entities.Sprite;
 
-import static com.codingame.game.Utils.Utils.graphicEntityModule;
-
-public class PlayerView {
+public class PlayerView extends MovingView{
     private Sprite sprite;
 
-    public PlayerView(int id) {
-        sprite = graphicEntityModule.createSprite()
-                .setImage(String.format("agent_%d.png", id))
-                .setAnchor(0.5)
-                .setZIndex(Constants.MapLayers.AGENTS.asValue());
+    private Player player;
+    private PlayerModel model;
+
+    public PlayerView(GraphicEntityModule entityModule, Player player, PlayerModel model) {
+        super(entityModule);
+        this.player = player;
+        this.model = model;
+        model.addObserver(this);
+        createPlayerView();
     }
 
-    public void setPosInMap(Vector2 pos) {
-        Utils.setPosInMap(sprite, pos);
+    public void createPlayerView() {
+        sprite = entityModule.createSprite()
+                .setImage(String.format("agent_%d.png", player.getIndex()))
+                .setAnchor(0.5)
+                .setZIndex(0);
+    }
+
+    public void updateView(){
+        setMapPos(sprite, model.getPos());
+    }
+
+    public Entity getEntity() {
+        return sprite;
     }
 }

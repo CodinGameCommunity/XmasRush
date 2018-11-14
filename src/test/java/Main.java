@@ -8,7 +8,7 @@ public class Main {
         gameRunner.addAgent(Player1.class);
         gameRunner.addAgent(Player2.class);
 
-        gameRunner.setSeed(5984702505893992817L);
+        gameRunner.setSeed(20L);
 
         gameRunner.start();
     }
