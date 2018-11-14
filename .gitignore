@@ -1,3 +1,5 @@
+.factorypath
+.settings/
 /target/
 /.project
 /.classpath
