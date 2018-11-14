@@ -67,6 +67,11 @@ public class TileModel extends MovingModel{
                 + pattern.substring(0, PATTERN_LENGTH - num);
     }
 
+    //check if it's a 3- or 4-way tile
+    public boolean isThreeWayPlus() {
+        return this.getPattern().chars().filter(ch -> ch == '1').count() >= 3;
+    }
+
     //Player input methods
     public String patternToString() {
         return pattern;

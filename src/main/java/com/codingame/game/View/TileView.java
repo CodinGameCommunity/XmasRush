@@ -123,7 +123,7 @@ public class TileView extends MovingView {
         } else {
             setMapPos(group, model.getPos());
         }
-        tooltipModule.updateExtraTooltipText(group, model.getPos().toString());
+        tooltipModule.updateExtraTooltipText(group, model.getPos().toTooltip());
     }
 
     public void update(Observable observable, Object update) {

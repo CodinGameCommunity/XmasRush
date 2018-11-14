@@ -66,6 +66,10 @@ public class Vector2 {
         return x + " " + y;
     }
 
+    public String toTooltip() {
+        return "(" + x + ", " + y + ")";
+    }
+
     public boolean equals(Object obj) {
         if (!(obj instanceof Vector2))
             return false;
