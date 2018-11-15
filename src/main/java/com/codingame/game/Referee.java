@@ -80,14 +80,14 @@ public class Referee extends AbstractReferee {
                 break;
             case 1: // Some More Whatever
                 availablePatterns = new ArrayList<>(Constants.PATTERNS.get(1));
-                numCardsPerPlayer = 3;
+                numCardsPerPlayer = 6;
                 numVisibleCards = 1;
                 threeWayTiles = true;
                 break;
             case 2: //demo case
                 availablePatterns = new ArrayList<>(Constants.PATTERNS.get(1));
-                numCardsPerPlayer = 3;
-                numVisibleCards = 1;
+                numCardsPerPlayer = 12;
+                numVisibleCards = 3;
                 threeWayTiles = false;
                 break;
         }
@@ -462,7 +462,7 @@ public class Referee extends AbstractReferee {
             if (tile.hasItem() && playerModel.removeItemCard(tile.getItem())) {
                 gameBoard.removeItem(tile);
                 player.setScore(player.getScore() + pointsPerItem);
-                gameManager.addToGameSummary(String.format("%s: completed a quest card", player.getNicknameToken()));
+                gameManager.addToGameSummary(String.format("%s completed a quest card", player.getNicknameToken()));
             }
         }
     }
