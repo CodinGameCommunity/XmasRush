@@ -78,7 +78,7 @@ public class TileModel extends MovingModel{
     }
 
     public String tileToString() {
-        return item != null ? item.getName() + " " + getPos().toString() + " " + item.getPlayerId() : "";
+        return item != null ? item.getName() + " " + getTilePos().toString() + " " + item.getPlayerId() : "";
     }
 
     public String opponentTileToString() {
@@ -89,6 +89,12 @@ public class TileModel extends MovingModel{
     private Vector2 getOpponentTilePos() {
         if (playerId != null)
             return Constants.TILE_MODEL_POSITIONS.get(1 - playerId);
+        return this.getPos();
+    }
+    
+    private Vector2 getTilePos() {
+        if (playerId != null)
+            return Constants.TILE_MODEL_POSITIONS.get(playerId);
         return this.getPos();
     }
 }

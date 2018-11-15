@@ -212,13 +212,16 @@ public class TileModelTest {
     @Test
     public void testOpponentTile() {
         Vector2 pos1 = new Vector2(1, 2);
-        Vector2 pos2 = new Vector2(-1, -1);
         TileModel tile = new TileModel("1010", pos1);
         Item item = new Item("BOOK", 0);
         tile.setItem(item);
         assertEquals("BOOK 1 2 1", tile.opponentTileToString());
-        tile.setPos(pos2);
+        tile.setPos(Constants.TILE_MODEL_POSITIONS.get(0));
+        tile.setPlayerId(0);
         assertEquals("BOOK -2 -2 1", tile.opponentTileToString());
+        tile.setPos(Constants.TILE_MODEL_POSITIONS.get(1));
+        tile.setPlayerId(1);
+        assertEquals("BOOK -1 -1 1", tile.opponentTileToString());
     }
 
     @Test
