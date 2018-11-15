@@ -85,7 +85,7 @@ public class PlayerModelTest {
     }
 
     @Test
-    public void testRemoveItemCardd() {
+    public void testRemoveItemCard() {
         int id = 1;
         PlayerModel player = new PlayerModel(id);
         Item item1 = new Item("BOOK", id);
