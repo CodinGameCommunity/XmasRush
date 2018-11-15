@@ -60,25 +60,35 @@ public class Referee extends AbstractReferee {
     private static List<String> availablePatterns;
     private static int numCardsPerPlayer;
     private static int numVisibleCards;
+    private static boolean threeWayTiles; //place items on 3+ tiles only
 
     public void init() {
         Properties params = gameManager.getGameParameters();
         Constants.random = new Random(getSeed(params));
 
         //leagueLevel = gameManager.getLeagueLevel();
-        leagueLevel = 1;
+        leagueLevel = 2;
 
         switch (leagueLevel) {
             //numCardsPerPlayer and numVisibleCards <= 12!!!
+            //make sure you have enough 3+ tiles when setting threeWayTiles to true
             case 0: // Whatever
                 availablePatterns = new ArrayList<>(Constants.PATTERNS.get(0));
                 numCardsPerPlayer = 1;
                 numVisibleCards = 1;
+                threeWayTiles = true;
                 break;
             case 1: // Some More Whatever
                 availablePatterns = new ArrayList<>(Constants.PATTERNS.get(1));
                 numCardsPerPlayer = 3;
                 numVisibleCards = 1;
+                threeWayTiles = true;
+                break;
+            case 2: //demo case
+                availablePatterns = new ArrayList<>(Constants.PATTERNS.get(1));
+                numCardsPerPlayer = 3;
+                numVisibleCards = 1;
+                threeWayTiles = false;
                 break;
         }
 
@@ -118,7 +128,7 @@ public class Referee extends AbstractReferee {
             playerModel.setCards(itemList.get(player.getIndex()));
             playerModel.setTile(tileList.get(player.getIndex()));
         }
-        gameBoard.placeItems(itemList);
+        gameBoard.placeItems(itemList, threeWayTiles);
     }
 
     private List<List<Item>> getPlayerItems(int numCardsPerPlayer) {
@@ -452,7 +462,7 @@ public class Referee extends AbstractReferee {
             if (tile.hasItem() && playerModel.hasItemCard(tile.getItem())) {
                 gameBoard.removeItem(tile);
                 player.setScore(player.getScore() + pointsPerItem);
-                gameManager.addToGameSummary(String.format("%s completed a quest card", player.getNicknameToken()));
+                gameManager.addToGameSummary(String.format("%s: completed a quest card", player.getNicknameToken()));
             }
         }
     }

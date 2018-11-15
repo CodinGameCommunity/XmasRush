@@ -8,6 +8,7 @@ public class Main {
         gameRunner.addAgent(Player1.class);
         gameRunner.addAgent(Player2.class);
 
+        //required leagueLevel = 2
         gameRunner.setSeed(20L);
 
         gameRunner.start();

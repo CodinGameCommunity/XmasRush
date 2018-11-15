@@ -55,7 +55,7 @@ public class CardView extends AbstractView {
 
     public void updateView() {}
 
-    public void flip() {
+    private void flip() {
         front.setVisible(!front.isVisible());
         item.setVisible(!item.isVisible());
     }

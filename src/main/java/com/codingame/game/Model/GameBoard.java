@@ -62,24 +62,26 @@ public class GameBoard {
     }
 
     //Item methods
-    private TileModel getRandomEmptyTile() {
+    private TileModel getRandomEmptyTile(boolean threeWayTiles) {
         int index = Constants.random.nextInt(Constants.MAP_WIDTH * Constants.MAP_HEIGHT);
         int x = index / Constants.MAP_WIDTH;
         int y = index % Constants.MAP_HEIGHT;
         Vector2 pos = new Vector2(x, y);
-        while (isCenterOrPlayerBase(pos) || getTile(pos).hasItem())
-            return getRandomEmptyTile();
+        while (isCenterOrPlayerBase(pos) || getTile(pos).hasItem() ||
+                //only checks if the tile is 3+ when required
+                (!getTile(pos).isThreeWayPlus() && threeWayTiles))
+            return getRandomEmptyTile(threeWayTiles);
         return getTile(pos);
     }
 
-    public void placeItems(List<List<Item>> itemList) {
+    public void placeItems(List<List<Item>> itemList, boolean threeWayTiles) {
         assert itemList.size() == 2;
         assert itemList.get(0).size() == itemList.get(1).size();
 
         int numItems = itemList.get(0).size();
 
         for (int i = 0; i < numItems; i++) {
-            TileModel playerTile = getRandomEmptyTile();
+            TileModel playerTile = getRandomEmptyTile(threeWayTiles);
             TileModel opponentTile = getTile(getOppositeTilePos(playerTile.getPos()));
             playerTile.setItem(itemList.get(Constants.PLAYER_INDEX).get(i));
             opponentTile.setItem(itemList.get(Constants.OPPONENT_INDEX).get(i));

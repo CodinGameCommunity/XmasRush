@@ -1,7 +1,5 @@
 package com.codingame.game.Model;
 
-
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -197,6 +195,18 @@ public class TileModelTest {
         assertEquals(new Vector2(2, 2), tile.getPos());
         tile.move(Constants.Direction.LEFT);
         assertEquals(new Vector2(1, 2), tile.getPos());
+    }
+
+    @Test
+    public void testIsThreeWayPlus() {
+        TileModel tile1 = new TileModel("0000",new Vector2(1, 2));
+        TileModel tile2 = new TileModel("1010",new Vector2(1, 2));
+        TileModel tile3 = new TileModel("1110",new Vector2(1, 2));
+        TileModel tile4 = new TileModel("1111",new Vector2(1, 2));
+        assertFalse(tile1.isThreeWayPlus());
+        assertFalse(tile2.isThreeWayPlus());
+        assertTrue(tile3.isThreeWayPlus());
+        assertTrue(tile4.isThreeWayPlus());
     }
 
     @Test
