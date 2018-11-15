@@ -1,14 +1,6 @@
 package com.codingame.game;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Random;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -34,6 +26,7 @@ import com.codingame.gameengine.core.MultiplayerGameManager;
 import com.codingame.gameengine.module.entities.GraphicEntityModule;
 import com.codingame.view.endscreen.EndScreenModule;
 import com.codingame.view.tooltip.TooltipModule;
+import com.codingame.game.View.BoardView;
 
 public class Referee extends AbstractReferee {
     @Inject private MultiplayerGameManager<Player> gameManager;
@@ -45,6 +38,7 @@ public class Referee extends AbstractReferee {
     private GameBoard gameBoard;
 
     private ViewController view;
+    public static BoardView observer;
 
     private List<PlayerModel> players = new ArrayList<>();
     private List<Map<Player, PushAction>> pushActions = new ArrayList<>();
@@ -217,6 +211,15 @@ public class Referee extends AbstractReferee {
 
     private void updateView() {
         view.update();
+    }
+
+    //Arrow updates
+    public static void setObserver(BoardView view) {
+        observer = view;
+    }
+
+    private void updateObserver(AbstractMap.SimpleEntry<String, Integer> action) {
+        observer.update(action);
     }
 
     //todo
@@ -394,6 +397,9 @@ public class Referee extends AbstractReferee {
     private void doPushAction(Map<Player, PushAction> actions) {
         if (!areValidPushActions(new ArrayList(actions.values()))) {
             gameManager.addToGameSummary("[WARNING] Both players tried to push the same line. Nothing happens!");
+            for (Map.Entry<Player, PushAction> action : actions.entrySet())
+                //invalid push move update
+                updateObserver(new AbstractMap.SimpleEntry<>(action.getValue().toString(), 2));
             return;
         }
         for (Map.Entry<Player, PushAction> action : actions.entrySet()) {
@@ -410,6 +416,8 @@ public class Referee extends AbstractReferee {
             } else{
                 gameManager.addToGameSummary(String.format("%s pushed column %d %s", player.getNicknameToken(), line, direction));
             }
+            //valid push move update
+            updateObserver(new AbstractMap.SimpleEntry<>(pushAction.toString(), player.getIndex()));
         }
     }
 

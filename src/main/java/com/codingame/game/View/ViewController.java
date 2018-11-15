@@ -3,6 +3,7 @@ package com.codingame.game.View;
 import com.codingame.game.Model.CardModel;
 import com.codingame.game.Model.TileModel;
 import com.codingame.game.Player;
+import com.codingame.game.Referee;
 import com.codingame.game.Utils.Constants;
 import com.codingame.gameengine.module.entities.GraphicEntityModule;
 import com.codingame.view.tooltip.TooltipModule;
@@ -22,6 +23,7 @@ public class ViewController {
         this.tooltipModule = tooltipModule;
 
         this.board = new BoardView(entityModule, tooltipModule);
+        Referee.setObserver(board);
 
         initView();
     }
@@ -31,6 +33,8 @@ public class ViewController {
     }
 
     public void update() {
+        board.updateView();
+
         for(AbstractView view : views) {
             view.updateView();
         }

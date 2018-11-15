@@ -58,6 +58,7 @@ public class CardView extends AbstractView {
     private void flip() {
         front.setVisible(!front.isVisible());
         item.setVisible(!item.isVisible());
+        entityModule.commitEntityState(0, front, item);
     }
 
     private void removeCardView() {

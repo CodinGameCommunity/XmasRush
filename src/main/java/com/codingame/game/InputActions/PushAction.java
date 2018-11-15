@@ -36,4 +36,9 @@ public class PushAction extends Action {
                 (!actions.get(0).isHorizontal() && !actions.get(1).isHorizontal());
         return actions.get(0).line == actions.get(1).line;
     }
+
+    //used for arrow updates
+    public String toString() {
+        return line + "" + direction.asValue();
+    }
 }
