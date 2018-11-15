@@ -73,7 +73,7 @@ public class PlayerModel extends MovingModel {
         return visibleCards.size();
     }
 
-    public boolean hasItemCard(Item item){
+    public boolean removeItemCard(Item item){
         for (CardModel card : visibleCards) {
             if (item.equals(card.getItem())) {
                 removeCard(card);

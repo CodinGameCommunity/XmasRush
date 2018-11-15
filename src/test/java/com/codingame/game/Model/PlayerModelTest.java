@@ -93,13 +93,13 @@ public class PlayerModelTest {
         List<Item> itemList = new ArrayList<>();
         itemList.addAll(Arrays.asList(item1, item2));
         player.setCards(itemList);
-        assertFalse(player.hasItemCard(item1));
-        assertFalse(player.hasItemCard(item2));
+        assertFalse(player.removeItemCard(item1));
+        assertFalse(player.removeItemCard(item2));
         player.flipCards(1);
-        assertTrue(player.hasItemCard(item2));
-        assertFalse(player.hasItemCard(item2));
-        assertTrue(player.hasItemCard(item1));
-        assertFalse(player.hasItemCard(item1));
+        assertTrue(player.removeItemCard(item2));
+        assertFalse(player.removeItemCard(item2));
+        assertTrue(player.removeItemCard(item1));
+        assertFalse(player.removeItemCard(item1));
     }
 
     @Test
