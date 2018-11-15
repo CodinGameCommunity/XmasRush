@@ -2,7 +2,6 @@ package com.codingame.game.View;
 
 import com.codingame.game.Model.PlayerModel;
 import com.codingame.game.Player;
-import com.codingame.game.Utils.Constants;
 import com.codingame.gameengine.module.entities.Entity;
 import com.codingame.gameengine.module.entities.GraphicEntityModule;
 import com.codingame.gameengine.module.entities.Sprite;

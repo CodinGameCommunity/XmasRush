@@ -4,8 +4,6 @@ import com.codingame.game.Model.CardModel;
 import com.codingame.game.Model.Item;
 import com.codingame.game.Model.StateUpdates.FlipCardUpdate;
 import com.codingame.game.Model.StateUpdates.RemoveCardUpdate;
-import com.codingame.game.Utils.Constants;
-import com.codingame.gameengine.module.entities.Entity;
 import com.codingame.gameengine.module.entities.GraphicEntityModule;
 import com.codingame.gameengine.module.entities.Group;
 import com.codingame.gameengine.module.entities.Sprite;
