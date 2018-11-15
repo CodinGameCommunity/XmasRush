@@ -1,14 +1,6 @@
 package com.codingame.game;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Random;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -35,7 +27,6 @@ import com.codingame.gameengine.module.entities.GraphicEntityModule;
 import com.codingame.view.endscreen.EndScreenModule;
 import com.codingame.view.tooltip.TooltipModule;
 import com.codingame.game.View.BoardView;
-import javafx.util.Pair;
 
 public class Referee extends AbstractReferee {
     @Inject private MultiplayerGameManager<Player> gameManager;
@@ -227,7 +218,7 @@ public class Referee extends AbstractReferee {
         observer = view;
     }
 
-    private void updateObserver(Pair<String, Integer> action) {
+    private void updateObserver(AbstractMap.SimpleEntry<String, Integer> action) {
         observer.update(action);
     }
 
@@ -408,7 +399,7 @@ public class Referee extends AbstractReferee {
             gameManager.addToGameSummary("[WARNING] Both players tried to push the same line. Nothing happens!");
             for (Map.Entry<Player, PushAction> action : actions.entrySet())
                 //invalid push move update
-                updateObserver(new Pair<>(action.getValue().toString(), 2));
+                updateObserver(new AbstractMap.SimpleEntry<>(action.getValue().toString(), 2));
             return;
         }
         for (Map.Entry<Player, PushAction> action : actions.entrySet()) {
@@ -426,7 +417,7 @@ public class Referee extends AbstractReferee {
                 gameManager.addToGameSummary(String.format("%s pushed column %d %s", player.getNicknameToken(), line, direction));
             }
             //valid push move update
-            updateObserver(new Pair<>(pushAction.toString(), player.getIndex()));
+            updateObserver(new AbstractMap.SimpleEntry<>(pushAction.toString(), player.getIndex()));
         }
     }
 

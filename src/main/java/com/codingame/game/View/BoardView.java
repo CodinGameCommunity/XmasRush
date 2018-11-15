@@ -8,7 +8,6 @@ import com.codingame.game.Utils.Vector2;
 import com.codingame.gameengine.module.entities.GraphicEntityModule;
 import com.codingame.view.tooltip.TooltipModule;
 import com.codingame.gameengine.module.entities.Group;
-import javafx.util.Pair;
 
 
 import java.util.*;
@@ -27,7 +26,7 @@ public class BoardView extends AbstractView{
     List<PlayerView> players;
     Map<String, ArrowView> arrows;
 
-    Set<Pair<String, Integer>> arrowsToShow = new HashSet<>();
+    Set<AbstractMap.SimpleEntry<String, Integer>> arrowsToShow = new HashSet<>();
 
     public BoardView(GraphicEntityModule entityModule, TooltipModule tooltipModule){
         super(entityModule);
@@ -62,7 +61,7 @@ public class BoardView extends AbstractView{
     }
 
     public void updateView() {
-        for (Pair<String, Integer> arrow : arrowsToShow){
+        for (AbstractMap.SimpleEntry<String, Integer> arrow : arrowsToShow){
             String arrowId = arrow.getKey();
             int arrowType = arrow.getValue();
             arrows.get(arrowId).showArrow(arrowType);
@@ -70,7 +69,7 @@ public class BoardView extends AbstractView{
         arrowsToShow.clear();
     }
 
-    public void update(Pair<String, Integer> action) {
+    public void update(AbstractMap.SimpleEntry<String, Integer> action) {
         arrowsToShow.add(action);
     }
 
