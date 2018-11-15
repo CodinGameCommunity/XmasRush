@@ -85,7 +85,7 @@ public class PlayerModelTest {
     }
 
     @Test
-    public void testHasItemCard() {
+    public void testRemoveItemCardd() {
         int id = 1;
         PlayerModel player = new PlayerModel(id);
         Item item1 = new Item("BOOK", id);
@@ -98,6 +98,7 @@ public class PlayerModelTest {
         player.flipCards(1);
         assertTrue(player.removeItemCard(item2));
         assertFalse(player.removeItemCard(item2));
+        player.flipCards(1);
         assertTrue(player.removeItemCard(item1));
         assertFalse(player.removeItemCard(item1));
     }
