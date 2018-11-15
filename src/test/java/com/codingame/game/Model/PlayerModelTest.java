@@ -98,6 +98,7 @@ public class PlayerModelTest {
         player.flipCards(1);
         assertTrue(player.removeItemCard(item2));
         assertFalse(player.removeItemCard(item2));
+        player.flipCards(1);
         assertTrue(player.removeItemCard(item1));
         assertFalse(player.removeItemCard(item1));
     }
