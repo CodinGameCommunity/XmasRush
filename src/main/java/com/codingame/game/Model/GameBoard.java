@@ -10,7 +10,7 @@ import java.util.List;
 
 public class GameBoard {
     private final Vector2 centerTilePos = new Vector2(Constants.MAP_WIDTH / 2, Constants.MAP_HEIGHT / 2);
-    private final String centerTilePattern = "1111";
+    private final String[] centerTilePatterns = new String[]{"1111", "1010", "0101"};
     private final Vector2 playerBasePos = Constants.PLAYER_POSITIONS.get(Constants.PLAYER_INDEX);
     private final String playerBasePattern = "0110";
 
@@ -21,7 +21,7 @@ public class GameBoard {
 
     public GameBoard(List<String> availablePatterns) {
         this.availablePatterns = availablePatterns;
-
+        String centerTilePattern = centerTilePatterns[Constants.random.nextInt(centerTilePatterns.length)];
         setTile(centerTilePos, new TileModel(centerTilePattern, centerTilePos));
         setTile(playerBasePos, new TileModel(playerBasePattern, playerBasePos));
 
