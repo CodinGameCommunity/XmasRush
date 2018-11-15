@@ -198,7 +198,7 @@ public class TileModelTest {
     }
 
     @Test
-    public void testiIsThreeWayPlus() {
+    public void testIsThreeWayPlus() {
         TileModel tile1 = new TileModel("0000",new Vector2(1, 2));
         TileModel tile2 = new TileModel("1010",new Vector2(1, 2));
         TileModel tile3 = new TileModel("1110",new Vector2(1, 2));
