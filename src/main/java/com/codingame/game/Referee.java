@@ -66,25 +66,30 @@ public class Referee extends AbstractReferee {
         Properties params = gameManager.getGameParameters();
         Constants.random = new Random(getSeed(params));
 
-        //leagueLevel = gameManager.getLeagueLevel();
-        leagueLevel = 2;
+        leagueLevel = gameManager.getLeagueLevel();
 
         switch (leagueLevel) {
             //numCardsPerPlayer and numVisibleCards <= 12!!!
             //make sure you have enough 3+ tiles when setting threeWayTiles to true
-            case 0: // Whatever
-                availablePatterns = new ArrayList<>(Constants.PATTERNS.get(0));
+            case 0: //demo case
+                availablePatterns = new ArrayList<>(Constants.PATTERNS.get(1));
+                numCardsPerPlayer = 3;
+                numVisibleCards = 1;
+                threeWayTiles = false;
+                break;
+            case 1: // First league
+                availablePatterns = new ArrayList<>(Constants.PATTERNS.get(1));
                 numCardsPerPlayer = 1;
                 numVisibleCards = 1;
                 threeWayTiles = true;
                 break;
-            case 1: // Some More Whatever
+            case 2: // Second league
                 availablePatterns = new ArrayList<>(Constants.PATTERNS.get(1));
                 numCardsPerPlayer = 6;
                 numVisibleCards = 1;
                 threeWayTiles = true;
                 break;
-            case 2: //demo case
+            case 3: // Final league
                 availablePatterns = new ArrayList<>(Constants.PATTERNS.get(1));
                 numCardsPerPlayer = 12;
                 numVisibleCards = 3;
