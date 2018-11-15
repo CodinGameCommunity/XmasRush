@@ -462,7 +462,7 @@ public class Referee extends AbstractReferee {
             if (tile.hasItem() && playerModel.hasItemCard(tile.getItem())) {
                 gameBoard.removeItem(tile);
                 player.setScore(player.getScore() + pointsPerItem);
-                gameManager.addToGameSummary(String.format("%s: completed a quest card", player.getNicknameToken()));
+                gameManager.addToGameSummary(String.format("%s completed a quest card", player.getNicknameToken()));
             }
         }
     }
