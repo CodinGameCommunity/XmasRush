@@ -27,6 +27,7 @@ public class BoardView extends AbstractView{
     Map<String, ArrowView> arrows;
 
     Set<AbstractMap.SimpleEntry<String, Integer>> arrowsToShow = new HashSet<>();
+    List<ArrowView> arrowsToHide = new ArrayList<>();
 
     public BoardView(GraphicEntityModule entityModule, TooltipModule tooltipModule){
         super(entityModule);
@@ -61,10 +62,16 @@ public class BoardView extends AbstractView{
     }
 
     public void updateView() {
+        for (ArrowView arrow : arrowsToHide)
+            arrow.hideArrow();
+        arrowsToHide.clear();
+
         for (AbstractMap.SimpleEntry<String, Integer> arrow : arrowsToShow){
             String arrowId = arrow.getKey();
             int arrowType = arrow.getValue();
-            arrows.get(arrowId).showArrow(arrowType);
+            ArrowView arrowView = arrows.get(arrowId);
+            arrowView.showArrow(arrowType);
+            arrowsToHide.add(arrowView);
         }
         arrowsToShow.clear();
     }
