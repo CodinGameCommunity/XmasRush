@@ -38,8 +38,11 @@ public class ArrowView extends AbstractView {
         sprite.setImage(String.format("arrow_%d.png", type))
                 .setVisible(true);
         entityModule.commitEntityState(0, sprite);
+    }
+
+    public void hideArrows() {
         sprite.setVisible(false);
-        entityModule.commitEntityState(1, sprite);
+        entityModule.commitEntityState(0, sprite);
     }
 
     public Entity getEntity() {
