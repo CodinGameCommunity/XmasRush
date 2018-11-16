@@ -17,7 +17,7 @@ def approach(target_x, player_x, target_y, player_y):
     elif target_y > player_y:
         return "MOVE DOWN"
     else:
-        return f"target: {target_x},{target_y} player: {player_x},{player_y}"
+        return "PASS"
 
 
 spinner = {
