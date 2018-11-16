@@ -63,7 +63,7 @@ public class BoardView extends AbstractView{
 
     public void updateView() {
         for (ArrowView arrow : arrowsToHide)
-            arrow.hideArrows();
+            arrow.hideArrow();
         arrowsToHide.clear();
 
         for (AbstractMap.SimpleEntry<String, Integer> arrow : arrowsToShow){

@@ -40,7 +40,7 @@ public class ArrowView extends AbstractView {
         entityModule.commitEntityState(0, sprite);
     }
 
-    public void hideArrows() {
+    public void hideArrow() {
         sprite.setVisible(false);
         entityModule.commitEntityState(0, sprite);
     }
