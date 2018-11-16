@@ -27,13 +27,15 @@ public class Constants {
     public static final int PLAYER_INFO_POS_X = (MAP_POS_X - TILE_SIZE / 2) / 2;
     public static final int OPPONENT_INFO_POS_X = SCREEN_WIDTH - PLAYER_INFO_POS_X;
 
-    public static final int PLAYER_TILE_POS_Y = 650;
+    public static final int PLAYER_TILE_POS_Y = 540;
     public static final int OPPONENT_TILE_POS_Y = SCREEN_HEIGHT - PLAYER_TILE_POS_Y - 20;
 
     public static final int CARD_WIDTH = 118;
     public static final int CARD_HEIGHT = 160;
     public static final int CARDS_OFFSET = 13;
-    public static final int PLAYER_CARDS_POS_Y = 130;
+    public static final int PLAYER_CARDS_POS_X = 110;
+    public static final int PLAYER_CARDS_POS_Y = 275;
+    public static final int OPPONENT_CARDS_POS_X = SCREEN_WIDTH - PLAYER_CARDS_POS_X;
     public static final int OPPONENT_CARDS_POS_Y = SCREEN_HEIGHT - PLAYER_CARDS_POS_Y;
 
     public static final List<String> ITEM_NAMES = Arrays.asList(
@@ -61,8 +63,8 @@ public class Constants {
     );
 
     public static final List<Vector2> CARD_POSITIONS = Arrays.asList(
-            new Vector2(PLAYER_INFO_POS_X, PLAYER_CARDS_POS_Y),
-            new Vector2(OPPONENT_INFO_POS_X, OPPONENT_CARDS_POS_Y)
+            new Vector2(PLAYER_CARDS_POS_X, PLAYER_CARDS_POS_Y),
+            new Vector2(OPPONENT_CARDS_POS_X, OPPONENT_CARDS_POS_Y)
     );
 
     public static final List<Vector2> TILE_POSITIONS = Arrays.asList(
