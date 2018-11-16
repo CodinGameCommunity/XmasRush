@@ -74,6 +74,7 @@ public class Constants {
     public static final List<Vector2> TILE_MODEL_POSITIONS = Arrays.asList(
             Vector2.MINUS_ONE, Vector2.MINUS_TWO);
     //todo
+    public static final int MAX_GAME_TURNS = 150;
     public static final int MAX_MOVE_STEPS = 20;
 
     public static final Pattern PLAYER_INPUT_PUSH_PATTERN = Pattern

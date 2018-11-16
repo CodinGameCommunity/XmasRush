@@ -45,9 +45,9 @@ public class Referee extends AbstractReferee {
     private Map<Player, MoveAction> moveActions = new HashMap<>();
 
     //Score
-    private final int pointsPerItem = 1;
-    //Max number of turns
-    private final int maxGameTurns = 150;
+    private final int POINTS_PER_ITEM = 1;
+    //Number of game turns
+    private int numGameTurns = 0;
 
     //League stuff
     private static int leagueLevel;
@@ -91,7 +91,8 @@ public class Referee extends AbstractReferee {
                 break;
         }
 
-        gameManager.setMaxTurns(maxGameTurns);
+        // MAX_FRAMES = (20 move frames + 1 row push frame + 1 col push frame) * MAX_GAME_TURNS
+        gameManager.setMaxTurns((Constants.MAX_MOVE_STEPS + 2) * Constants.MAX_GAME_TURNS);
 
         createBoard();
         createPlayers();
@@ -230,6 +231,7 @@ public class Referee extends AbstractReferee {
         else {
             hasWinner();
             turnType = (turnType == Action.Type.PUSH) ? Action.Type.MOVE : Action.Type.PUSH;
+            numGameTurns++;
             forceGameFrame();
             flipCards();
             sendPlayerInputs();
@@ -241,8 +243,10 @@ public class Referee extends AbstractReferee {
             updateView();
             checkForFinishedItems();
         }
-        if (turn >= maxGameTurns - 1)
-            gameManager.addToGameSummary(String.format("Max turns reached"));
+        if (numGameTurns >= Constants.MAX_GAME_TURNS) {
+            gameManager.addToGameSummary("Max turns reached!");
+            forceGameEnd();
+        }
     }
 
     //Flip cards
@@ -474,7 +478,7 @@ public class Referee extends AbstractReferee {
             TileModel tile = gameBoard.getTile(playerModel.getPos());
             if (tile.hasItem() && playerModel.removeItemCard(tile.getItem())) {
                 gameBoard.removeItem(tile);
-                player.setScore(player.getScore() + pointsPerItem);
+                player.setScore(player.getScore() + POINTS_PER_ITEM);
                 gameManager.addToGameSummary(String.format("%s completed a quest card", player.getNicknameToken()));
             }
         }
