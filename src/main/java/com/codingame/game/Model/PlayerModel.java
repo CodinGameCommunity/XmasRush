@@ -98,7 +98,7 @@ public class PlayerModel extends MovingModel {
         int offsetY = !hiddenCards.isEmpty() ? hiddenCards.lastElement().getPos().getY() : visibleCards.get(0).getPos().getY();
         for (int i = visibleCards.size() - 2; i >= 0; i--) {
             CardModel card = visibleCards.get(i);
-            offsetY += orientation * (Constants.CARDS_OFFSET + Constants.CARD_HEIGHT - 20);
+            offsetY += orientation * (Constants.CARDS_OFFSET + Constants.CARD_HEIGHT / 1.5);
             Vector2 newCardPos = new Vector2(card.getPos().getX(), offsetY);
             card.setPos(newCardPos);
             card.updatePosition();

@@ -5,6 +5,7 @@ import com.codingame.game.Model.Item;
 import com.codingame.game.Model.StateUpdates.CardPositionUpdate;
 import com.codingame.game.Model.StateUpdates.FlipCardUpdate;
 import com.codingame.game.Model.StateUpdates.RemoveCardUpdate;
+import com.codingame.game.Utils.Constants;
 import com.codingame.gameengine.module.entities.GraphicEntityModule;
 import com.codingame.gameengine.module.entities.Group;
 import com.codingame.gameengine.module.entities.Sprite;
@@ -31,11 +32,15 @@ public class CardView extends AbstractView {
     public void createCardView() {
         back = entityModule.createSprite()
                 .setImage(String.format("cardBack_%d.png", cardItem.getPlayerId()))
+                .setBaseWidth(Constants.CARD_WIDTH)
+                .setBaseHeight(Constants.CARD_HEIGHT)
                 .setAnchor(0.5)
                 .setZIndex(0)
                 .setVisible(true);
         front = entityModule.createSprite()
                 .setImage("cardFront.png")
+                .setBaseWidth(Constants.CARD_WIDTH)
+                .setBaseHeight(Constants.CARD_HEIGHT)
                 .setAnchor(0.5)
                 .setZIndex(0)
                 .setVisible(false);
