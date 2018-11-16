@@ -95,11 +95,15 @@ public class PlayerModel extends MovingModel {
 
     private void adjustCardsPosition() {
         int orientation = (id == 0) ? 1 : -1;
-        int offsetX = !hiddenCards.isEmpty() ? hiddenCards.lastElement().getPos().getX() : visibleCards.get(0).getPos().getX();
+        int offsetX = !hiddenCards.isEmpty() ? hiddenCards.firstElement().getPos().getX() : visibleCards.get(0).getPos().getX();
+        int offsetY = !hiddenCards.isEmpty() ? hiddenCards.firstElement().getPos().getY() : visibleCards.get(0).getPos().getY();
+        offsetY += Constants.CARD_HEIGHT + 13;
+        visibleCards.get(visibleCards.size() - 1).setPos(new Vector2(offsetX, offsetY));
+        visibleCards.get(visibleCards.size() - 1).updatePosition();
         for (int i = visibleCards.size() - 2; i >= 0; i--) {
             CardModel card = visibleCards.get(i);
             offsetX += orientation * (Constants.CARDS_OFFSET + Constants.CARD_WIDTH / 1.5);
-            Vector2 newCardPos = new Vector2(offsetX, card.getPos().getY());
+            Vector2 newCardPos = new Vector2(offsetX, offsetY);
             card.setPos(newCardPos);
             card.updatePosition();
         }
