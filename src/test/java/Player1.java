@@ -39,8 +39,8 @@ public class Player1 {
                 System.err.println(questItemName + questPlayerId);
             }
 
-            if (turn == 0) System.out.println("PUSH 0 DOWN");
-            if (turn == 1) System.out.println("MOVE RIGHT");
+            if (turn == 0) System.out.println("PUSH 0 UP");
+            if (turn == 1) System.out.println("MOVE UP");
             if (turn == 2) System.out.println("PUSH 2 LEFT");
             if (turn == 3) System.out.println("PASS");
             if (turn == 4) System.out.println("PUSH 3 LEFT");
