@@ -402,8 +402,8 @@ public class Referee extends AbstractReferee {
         if (!areValidPushActions(new ArrayList(actions.values()))) {
             gameManager.addToGameSummary("[WARNING] Both players tried to push the same line. Nothing happens!");
             for (Map.Entry<Player, PushAction> action : actions.entrySet())
-                //invalid push move update
-                updateObserver(new AbstractMap.SimpleEntry<>(action.getValue().toString(), 2));
+                //invalid push action update
+                updateObserver(new AbstractMap.SimpleEntry<>(action.getValue().toString(), null));
             return;
         }
         for (Map.Entry<Player, PushAction> action : actions.entrySet()) {
@@ -420,7 +420,7 @@ public class Referee extends AbstractReferee {
             } else{
                 gameManager.addToGameSummary(String.format("%s pushed column %d %s", player.getNicknameToken(), line, direction));
             }
-            //valid push move update
+            //valid push action update
             updateObserver(new AbstractMap.SimpleEntry<>(pushAction.toString(), player.getIndex()));
         }
     }

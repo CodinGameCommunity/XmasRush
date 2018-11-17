@@ -68,7 +68,9 @@ public class BoardView extends AbstractView{
 
         for (AbstractMap.SimpleEntry<String, Integer> arrow : arrowsToShow){
             String arrowId = arrow.getKey();
-            int arrowType = arrow.getValue();
+            Integer arrowType = arrow.getValue();
+            //sets arrow type to WARNING in case of invalid push action
+            arrowType = (arrowType == null)? 2 : arrowType;
             ArrowView arrowView = arrows.get(arrowId);
             arrowView.showArrow(arrowType);
             arrowsToHide.add(arrowView);
