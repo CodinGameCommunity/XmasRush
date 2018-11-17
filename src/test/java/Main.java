@@ -8,7 +8,9 @@ public class Main {
         gameRunner.addAgent(PlayerAI.class);
         gameRunner.addAgent(PlayerAI.class);
 
-        gameRunner.setSeed(5984702505893992817L);
+        //required leagueLevel = 0
+        System.setProperty("league.level", "0");
+        gameRunner.setSeed(20L);
 
         gameRunner.start();
     }

@@ -1,60 +1,105 @@
 package com.codingame.game;
 
-import com.codingame.game.Controller.CardController;
-import com.codingame.game.Controller.PlayerController;
-import com.codingame.game.Controller.TileController;
-import com.codingame.game.InputActions.*;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+import javax.inject.Inject;
+
+import com.codingame.game.InputActions.Action;
+import com.codingame.game.InputActions.InvalidAction;
+import com.codingame.game.InputActions.MoveAction;
+import com.codingame.game.InputActions.PassAction;
+import com.codingame.game.InputActions.PushAction;
+import com.codingame.game.Model.CardModel;
+import com.codingame.game.Model.GameBoard;
+import com.codingame.game.Model.Item;
+import com.codingame.game.Model.PlayerModel;
 import com.codingame.game.Model.TileModel;
 import com.codingame.game.Utils.Constants;
-import com.codingame.game.Utils.Utils;
 import com.codingame.game.Utils.Vector2;
-import com.codingame.game.View.PlayerView;
-import com.codingame.game.View.TileView;
+import com.codingame.game.View.ViewController;
 import com.codingame.gameengine.core.AbstractPlayer;
 import com.codingame.gameengine.core.AbstractReferee;
 import com.codingame.gameengine.core.MultiplayerGameManager;
 import com.codingame.gameengine.module.entities.GraphicEntityModule;
-import com.codingame.gameengine.module.entities.Sprite;
-import com.codingame.gameengine.module.entities.Text;
 import com.codingame.view.endscreen.EndScreenModule;
-import com.google.inject.Inject;
-import javafx.util.Pair;
-
-import java.util.*;
+import com.codingame.view.tooltip.TooltipModule;
+import com.codingame.game.View.BoardView;
 
 public class Referee extends AbstractReferee {
     @Inject private MultiplayerGameManager<Player> gameManager;
-    @Inject private GraphicEntityModule graphicEntityModule;
+    @Inject private GraphicEntityModule entityModule;
+    @Inject private TooltipModule tooltipModule;
     @Inject private EndScreenModule endScreenModule;
 
-    private GameMap map;
+    public static Action.Type turnType;
+    private GameBoard gameBoard;
 
-    private List<PlayerController> playerControllers = new ArrayList<>();
+    private ViewController view;
+    public static BoardView observer;
 
-    private Text turnText;
+    private List<PlayerModel> players = new ArrayList<>();
+    private List<Map<Player, PushAction>> pushActions = new ArrayList<>();
+    private Map<Player, MoveAction> moveActions = new HashMap<>();
 
-    private Action.Type turnType;
+    //Score
+    private final int POINTS_PER_ITEM = 1;
+    //Number of game turns
+    private int numGameTurns = 0;
 
-    private List<Queue<Action>> actionsQueue = new ArrayList<>(Arrays.asList(new ArrayDeque<>(), new ArrayDeque<>()));
+    //League stuff
+    private static int leagueLevel;
+    private static List<String> availablePatterns;
+    private static int numCardsPerPlayer;
+    private static int numVisibleCards;
+    private static boolean threeWayTiles; //place items on 3+ tiles only
 
-    @Override
     public void init() {
-        Utils.graphicEntityModule = graphicEntityModule;
-
         Properties params = gameManager.getGameParameters();
         Constants.random = new Random(getSeed(params));
 
-        gameManager.setMaxTurns(150);
+        leagueLevel = gameManager.getLeagueLevel();
 
-        createBackground();
+        switch (leagueLevel) {
+            //numCardsPerPlayer and numVisibleCards <= 12!!!
+            //make sure you have enough 3+ tiles when setting threeWayTiles to true
+            case 0: //demo case
+                availablePatterns = new ArrayList<>(Constants.PATTERNS.get(1));
+                numCardsPerPlayer = 3;
+                numVisibleCards = 1;
+                threeWayTiles = false;
+                break;
+            case 1: // First league
+                availablePatterns = new ArrayList<>(Constants.PATTERNS.get(1));
+                numCardsPerPlayer = 1;
+                numVisibleCards = 1;
+                threeWayTiles = true;
+                break;
+            case 2: // Second league
+                availablePatterns = new ArrayList<>(Constants.PATTERNS.get(1));
+                numCardsPerPlayer = 6;
+                numVisibleCards = 1;
+                threeWayTiles = true;
+                break;
+            case 3: // Final league
+                availablePatterns = new ArrayList<>(Constants.PATTERNS.get(1));
+                numCardsPerPlayer = 12;
+                numVisibleCards = 3;
+                threeWayTiles = false;
+                break;
+        }
+
+        // MAX_FRAMES = (20 move frames + 1 row push frame + 1 col push frame) * MAX_GAME_TURNS
+        gameManager.setMaxTurns((Constants.MAX_MOVE_STEPS + 2) * Constants.MAX_GAME_TURNS);
+
+        createBoard();
         createPlayers();
-        createMap();
-        createPlayerTiles();
-        createCards();
-        createTexts();
+        createView();
 
         // make sure the view is initialized at frame 0
-        graphicEntityModule.commitWorldState(0);
+        entityModule.commitWorldState(0);
 
         sendInitialInputs();
     }
@@ -67,15 +112,38 @@ public class Referee extends AbstractReferee {
         }
     }
 
-    private void createPlayers() {
-        for (Player player : gameManager.getActivePlayers()) {
-            PlayerController playerController = new PlayerController(player, new PlayerView(player.getIndex()));
-            playerController.setPosInMap(Constants.PLAYER_POSITIONS.get(player.getIndex()));
-            playerControllers.add(playerController);
-        }
+    //Models
+    private void createBoard() {
+        gameBoard = new GameBoard(availablePatterns);
     }
 
-    private List<String> getShuffledItemNames() {
+    private void createPlayers() {
+        List<List<Item>> itemList = getPlayerItems(numCardsPerPlayer);
+        List<TileModel> tileList = getPlayerTiles(availablePatterns.get(0));
+
+        for (Player player : gameManager.getActivePlayers()) {
+            PlayerModel playerModel = player.createPlayer();
+            players.add(playerModel);
+
+            playerModel.setCards(itemList.get(player.getIndex()));
+            playerModel.setTile(tileList.get(player.getIndex()));
+        }
+        gameBoard.placeItems(itemList, threeWayTiles);
+    }
+
+    private List<List<Item>> getPlayerItems(int numCardsPerPlayer) {
+        assert numCardsPerPlayer <= Constants.ITEM_NAMES.size();
+
+        List<List<Item>> items = new ArrayList<>();
+        List<String> shuffledItemNames = shuffleItemNames();
+        for (int i = 0; i < Constants.NUM_PLAYERS; i++) {
+            List<String> playerItems = shuffledItemNames.subList(0, numCardsPerPlayer);
+            items.add(i, createItems(playerItems, i));
+        }
+        return items;
+    }
+
+    private List<String> shuffleItemNames() {
         List<String> shuffledItems = new ArrayList<>(Constants.ITEM_NAMES);
         Random rnd = Constants.random;
 
@@ -86,80 +154,109 @@ public class Referee extends AbstractReferee {
             shuffledItems.set(index, shuffledItems.get(i));
             shuffledItems.set(i, a);
         }
-
         return shuffledItems;
     }
 
-    private void createCards() {
-        List<String> shuffledItemIds = getShuffledItemNames();
+    private List<Item> createItems(List<String> itemNames, int playerId) {
+        List<Item> itemList = new ArrayList<>();
+        for (String name : itemNames)
+            itemList.add(new Item(name, playerId));
+        return itemList;
+    }
 
-        for (Player player : gameManager.getPlayers()) {
-            for (int i = 0; i < shuffledItemIds.size(); i++) {
-                int playerId = player.getIndex();
-                int orientation = playerId == 0 ? 1 : -1;
-                Vector2 cardPos = new Vector2(Constants.CARDS_POSITIONS.get(playerId)).add(new Vector2(0, orientation * i * Constants.CARDS_OFFSET));
-                playerControllers.get(player.getIndex()).addCard(new Item(shuffledItemIds.get(i), player.getIndex()), cardPos);
+    private List<TileModel> getPlayerTiles(String pattern) {
+        List<TileModel> tileList = new ArrayList<>();
+        for (int i = 0; i < Constants.NUM_PLAYERS; i++) {
+            TileModel playerTile = new TileModel(pattern, Constants.TILE_MODEL_POSITIONS.get(i));
+            playerTile.rotate(i * 2);
+            tileList.add(i, playerTile);
+        }
+        return tileList;
+    }
+
+    //Views
+    private void createView() {
+        view = new ViewController(entityModule, tooltipModule);
+        createTextView();
+        createBoardView();
+        createPlayersView();
+        updateView();
+    }
+
+    private void createTextView() {
+        view.createTextView();
+    }
+
+    private void createBoardView() {
+        for (int y = 0; y < Constants.MAP_HEIGHT; y++) {
+            for (int x = 0; x < Constants.MAP_WIDTH; x++) {
+                TileModel tile = gameBoard.getTile(x, y);
+                view.createTileView(tile);
             }
         }
+    }
 
-        for (PlayerController player : playerControllers) {
-            player.flipVisibleCards(Constants.NUM_QUEST_CARDS);
+    private void createPlayersView() {
+        for (Player player : gameManager.getPlayers()) {
+            view.createPlayerView(player);
+            PlayerModel model = player.getPlayer();
+
+            for (CardModel card : model.getCards()) {
+                view.createCardView(card);
+            }
+            model.flipCards(numVisibleCards);
+
+            view.createTileView(model.getTile());
         }
     }
 
-    private void createTexts() {
-        turnText = graphicEntityModule.createText(String.format("Turn: %s", Action.Type.PUSH))
-                .setX(Constants.TURN_TEXT_POS_X)
-                .setY(Constants.TURN_TEXT_POS_Y)
-                .setFontSize(50)
-                .setFillColor(0x000000)
-                .setAnchorX(1)
-                .setAnchorY(1);
+    private void updateView() {
+        view.update();
     }
 
-    private void createMap() {
-        map = new GameMap();
+    //Arrow updates
+    public static void setObserver(BoardView view) {
+        observer = view;
     }
 
-    private void createPlayerTiles() {
-        TileController playerTile = new TileController(new TileModel("0110"), new TileView());
-        TileController opponentTile = new TileController(new TileModel("1001"), new TileView());
-        playerTile.initView();
-        opponentTile.initView();
-
-        playerTile.setPosAbsolute(new Vector2(Constants.PLAYER_TILE_POS_X, Constants.PLAYER_TILE_POS_Y));
-        opponentTile.setPosAbsolute(new Vector2(Constants.OPPONENT_TILE_POS_X, Constants.OPPONENT_TILE_POS_Y));
-
-        playerControllers.get(Constants.PLAYER_INDEX).setTile(playerTile);
-        playerControllers.get(Constants.OPPONENT_INDEX).setTile(opponentTile);
+    private void updateObserver(AbstractMap.SimpleEntry<String, Integer> action) {
+        observer.update(action);
     }
 
-    private void createBackground() {
-        graphicEntityModule.createRectangle()
-                .setX(0)
-                .setY(0)
-                .setWidth(Constants.SCREEN_WIDTH)
-                .setHeight(Constants.SCREEN_HEIGHT)
-                .setFillColor(0x669999)
-                .setZIndex(Constants.MapLayers.BACKGROUND.asValue());
-
-        graphicEntityModule.createSprite()
-                .setImage("logoCG.png")
-                .setX(200)
-                .setY(Constants.SCREEN_HEIGHT - 80)
-                .setAnchor(0.5);
+    //todo
+    //Game turn
+    public void gameTurn(int turn) {
+        if (hasActions())
+            forceAnimationFrame();
+        else {
+            hasWinner();
+            turnType = (turnType == Action.Type.PUSH) ? Action.Type.MOVE : Action.Type.PUSH;
+            numGameTurns++;
+            forceGameFrame();
+            flipCards();
+            sendPlayerInputs();
+            getPlayerActions();
+        }
+        //continues only if receives actions
+        if (hasActions()) {
+            doPlayerActions();
+            updateView();
+            checkForFinishedItems();
+        }
+        if (numGameTurns >= Constants.MAX_GAME_TURNS) {
+            gameManager.addToGameSummary("Max turns reached!");
+            forceGameEnd();
+        }
     }
 
-    private Sprite createSprite(String path, int x, int y, double rotation, int zIndex) {
-        return graphicEntityModule.createSprite()
-                .setImage(path)
-                .setX(x)
-                .setY(y)
-                .setRotation(rotation)
-                .setZIndex(zIndex)
-                .setAnchor(0.5);
+    //Flip cards
+    private void flipCards() {
+        gameManager.getActivePlayers().stream()
+                .forEach(player -> player.getPlayer()
+                        .flipCards(numVisibleCards));
     }
 
+    //Player Inputs
     private void sendInitialInputs() {
         for (Player player : gameManager.getActivePlayers()) {
             player.sendInputLine(String.format("%d %d",
@@ -170,298 +267,204 @@ public class Referee extends AbstractReferee {
 
     private void sendPlayerInputs() {
         for (Player player : gameManager.getActivePlayers()) {
-            // Game map
-            for (int y = 0; y < Constants.MAP_HEIGHT; y++) {
-                StringBuilder sb = new StringBuilder();
-                sb.append(map.getTile(0, y).toInputString());
-                for (int x = 1; x < Constants.MAP_WIDTH; x++) {
-                    sb.append(" " + map.getTile(x, y).toInputString());
-                }
-                player.sendInputLine(sb.toString());
-            }
+            // Game gameBoard
+            gameBoard.sendMapToPlayer(player);
 
             // Player information
-            // always send the first input to the current player, then to the other player
             int firstPlayerIndex = player.getIndex();
-            int secondPlayerIndex = (firstPlayerIndex + 1) % Constants.NUM_PLAYERS;
+            int secondPlayerIndex = 1 - firstPlayerIndex;
+            //int secondPlayerIndex = (firstPlayerIndex + 1) % Constants.NUM_PLAYERS;
             for (int i = 0; i < Constants.NUM_PLAYERS; i++) {
+                // always send the first input to the current player, then to the other player
                 int playerIndex = (i + firstPlayerIndex) % Constants.NUM_PLAYERS;
-                PlayerController playerController = playerControllers.get(playerIndex);
-                player.sendInputLine(String.format("%d %d %d %s",
-                        playerController.getNumCards(),
-                        playerController.getPos().getX(),
-                        playerController.getPos().getY(),
-                        playerController.getTile().toInputString()));
+                player.sendInputLine(players.get(playerIndex).playerToString());
             }
 
-            // Player items
-            List<Pair<TileController, Vector2>> tilesWithItems = new ArrayList<>();
-            for (int i = 0; i < Constants.NUM_PLAYERS; i++) {
-                int playerIndex = (i + firstPlayerIndex) % Constants.NUM_PLAYERS;
-                TileController tile = playerControllers.get(playerIndex).getTile();
-                if (tile.hasItem()) {
-                    // the player tiles always have a custom position
-                    // (-1,-1) for the first player, (-2,-2) for the opponent
-                    Vector2 pos = (playerIndex == firstPlayerIndex ? Vector2.MINUS_ONE : Vector2.MINUS_TWO);
-                    tilesWithItems.add(new Pair<>(tile, pos));
-                }
-            }
-            // Map items
-            for (int y = 0; y < Constants.MAP_HEIGHT; y++) {
-                for (int x = 0; x < Constants.MAP_WIDTH; x++) {
-                    TileController tile = map.getTile(x, y);
-                    if (tile.hasItem()) {
-                        tilesWithItems.add(new Pair<>(tile, tile.getPos()));
-                    }
-                }
-            }
-            int numItems = tilesWithItems.size();
-            player.sendInputLine(Integer.toString(numItems));
-            for (Pair<TileController, Vector2> tilePair : tilesWithItems) {
-                TileController tile = tilePair.getKey();
-                Item item = tile.getItem();
-                int playerIndex = (item.getPlayerId() + firstPlayerIndex) % Constants.NUM_PLAYERS;
-                player.sendInputLine(String.format("%s %d %d %d",
-                        item.getName(),
-                        tilePair.getValue().getX(),
-                        tilePair.getValue().getY(),
-                        playerIndex));
-            }
+            // Items
+            gameBoard.sendItemsToPlayer(player);
 
             // Turn type
             player.sendInputLine(Integer.toString(turnType.getValue()));
 
             // Cards
-            int numQuests = playerControllers.get(firstPlayerIndex).getNumQuestCards()
-                    + playerControllers.get(secondPlayerIndex).getNumQuestCards();
+            int numQuests = players.get(firstPlayerIndex).getNumQuestCards()
+                    + players.get(secondPlayerIndex).getNumQuestCards();
             player.sendInputLine(Integer.toString(numQuests));
             for (int i = 0; i < Constants.NUM_PLAYERS; i++) {
+                // always send the first input to the current player, then to the other player
                 int playerIndex = (i + firstPlayerIndex) % Constants.NUM_PLAYERS;
-                PlayerController playerController = playerControllers.get(playerIndex);
-                for (CardController card : playerController.getTopCards()) {
-                    player.sendInputLine(String.format("%s %d",
-                            card.getItem().getName(),
-                            i));
-                }
+                players.get(playerIndex).sendCardsToPlayer(player);
             }
-
             player.execute();
         }
     }
 
+    //Player actions
+    private boolean hasActions() {
+        return !pushActions.isEmpty() || !moveActions.isEmpty();
+    }
+
     private void getPlayerActions() {
-        PushAction prevPushAction = null;
         for (Player player : gameManager.getActivePlayers()) {
             try {
-                int playerIndex = player.getIndex();
-                Queue<Action> playerQueue = actionsQueue.get(playerIndex);
                 List<String> outputs = player.getOutputs();
-                Action action = player.getAction(outputs.get(0));
-                if (action instanceof MoveAction) {
-                    MoveAction moveAction = (MoveAction)action;
-                    for (MoveAction.Step step : moveAction.getSteps()) {
-                        MoveAction stepAction = new MoveAction();
-                        stepAction.addStep(step.getDirection());
-                        playerQueue.add(stepAction);
-                    }
-                } else if (action instanceof PushAction) {
-                    PushAction pushAction = (PushAction)action;
-                    // check if both players tried to push against opposite directions on the same line
-                    if (prevPushAction != null && pushAction.getLineId() == prevPushAction.getLineId()
-                            && (pushAction.getDirection() == prevPushAction.getDirection().getOpposite()
-                            || pushAction.getDirection() == prevPushAction.getDirection())) {
-                        gameManager.addToGameSummary("[WARNING] Both players tried to push the same line. Nothing happens!");
-                        // remove the previous push action from the first player's queue
-                        if (playerIndex > 0) {
-                            actionsQueue.get(playerIndex - 1).remove(prevPushAction);
-                        }
+                Action action = parseAction(outputs.get(0));
+                if (action.isLegalAction(turnType)) {
+                    if (turnType.equals(Action.Type.PUSH)) {
+                        if (pushActions.size() < 2)
+                            pushActions.addAll(Arrays.asList(new HashMap<>(), new HashMap<>()));
+                        //0 - for rows, 1 - for columns
+                        if (((PushAction) action).isHorizontal())
+                            pushActions.get(0).put(player, (PushAction) action);
+                        else
+                            pushActions.get(1).put(player, (PushAction) action);
+
                     } else {
-                        playerQueue.add(action);
-                        prevPushAction = pushAction;
+                        if (!action.isPassAction())
+                            moveActions.put(player, (MoveAction) action);
                     }
-                }
+                } else
+                    throw new InvalidAction(String.format("can't \"%s\" while expecting a %s action", action.getType(), turnType));
+            }catch (InvalidAction e) {
+                if (e.isFatal()) {
+                    gameManager.addToGameSummary(String.format("%s: invalid input - %s", player.getNicknameToken(), e.getMessage()));
+                    player.deactivate(String.format("%s: invalid input", player.getNicknameToken()));
+                    forceGameEnd();
+                } else
+                    gameManager.addToGameSummary(String.format("[WARNING] %s: invalid input - %s", player.getNicknameToken(), e.getMessage()));
             } catch (AbstractPlayer.TimeoutException e) {
                 gameManager.addToGameSummary(String.format("%s: timeout - no input provided", player.getNicknameToken()));
                 player.deactivate(String.format("%s: timeout", player.getNicknameToken()));
                 forceGameEnd();
-            } catch (InvalidAction e) {
-                if (e.isFatal()) {
-                    gameManager.addToGameSummary(String.format("%s: invalid input - %s", player.getNicknameToken(), e.getMessage()));
-                    player.deactivate(String.format("%s: invalid input", player.getNicknameToken()));
-                    forceGameEnd();
-                } else {
-                    gameManager.addToGameSummary(String.format("[WARNING] %s: invalid input - %s", player.getNicknameToken(), e.getMessage()));
-                }
-            } catch (IndexOutOfBoundsException e) {
-                gameManager.addToGameSummary(String.format("%s: timeout - player provided an empty input", player.getNicknameToken()));
-                player.deactivate(String.format("%s: timeout", player.getNicknameToken()));
-                forceGameEnd();
             }
         }
+        pushActions.removeIf(HashMap -> HashMap.isEmpty());
     }
 
-    private void doPlayerActions() {
-        PushAction prevPushAction = null;
-        for (Player player : gameManager.getActivePlayers()) {
-            try {
-                Action action = actionsQueue.get(player.getIndex()).poll();
-                if (action == null) {
-                    continue;
-                }
-                PlayerController playerController = playerControllers.get(player.getIndex());
-                if (turnType == Action.Type.PUSH && action instanceof PushAction) {
-                    PushAction pushAction = (PushAction)action;
-                    // check if the previous push action was of the same type as the current one (horizontal or vertical)
-                    // similar push actions get processed in the same frame, otherwise they remain in the queue till the next frame
-                    if (prevPushAction != null
-                            && (prevPushAction.getDirection() != pushAction.getDirection()
-                            && prevPushAction.getDirection() != pushAction.getDirection().getOpposite())) {
-                        // put the action back in the queue to be processed in the next frame
-                        actionsQueue.get(player.getIndex()).add(pushAction);
-                        return;
-                    }
-                    if (pushAction.getDirection() == Constants.Direction.RIGHT
-                            || pushAction.getDirection() == Constants.Direction.LEFT) {
-                        if (pushAction.getLineId() >= Constants.MAP_HEIGHT) {
-                            throw new InvalidAction("out of bounds line index");
-                        }
-                        doPushAction(new PlayerAction(playerController, pushAction), true);
-                    } else {
-                        if (pushAction.getLineId() >= Constants.MAP_WIDTH) {
-                            throw new InvalidAction("out of bounds line index");
-                        }
-                        doPushAction(new PlayerAction(playerController, pushAction), false);
-                    }
-                    prevPushAction = pushAction;
-                } else if (turnType == Action.Type.MOVE && action instanceof MoveAction) {
-                    MoveAction moveAction = (MoveAction)action;
-                    List<MoveAction.Step> steps = moveAction.getSteps();
-                    for (MoveAction.Step step : steps) {
-                        map.moveAgentBy(playerController, step);
-                    }
-                } else {
-                    throw new InvalidAction(String.format("can't \"%s\" while expecting a %s action", action, turnType));
-                }
-            } catch (InvalidAction e) {
-                if (e.isFatal()) {
-                    gameManager.addToGameSummary(String.format("%s: invalid input - %s", player.getNicknameToken(), e.getMessage()));
-                    player.deactivate(String.format("%s: invalid input", player.getNicknameToken()));
-                    forceGameEnd();
-                } else {
-                    actionsQueue.get(player.getIndex()).clear();
-                    gameManager.addToGameSummary(String.format("[WARNING] %s: invalid input - %s", player.getNicknameToken(), e.getMessage()));
-                }
+    private Action parseAction(String action) throws InvalidAction {
+        Matcher matchPush = Constants.PLAYER_INPUT_PUSH_PATTERN.matcher(action);
+        Matcher matchMove = Constants.PLAYER_INPUT_MOVE_PATTERN.matcher(action);
+        Matcher matchPass = Constants.PLAYER_INPUT_PASS_PATTERN.matcher(action);
+        if (matchPush.matches()) {
+            return new PushAction(Integer.parseInt(matchPush.group("id")),
+                    Constants.Direction.valueOf(matchPush.group("direction")), Action.Type.PUSH);
+        } else if (matchMove.matches()) {
+            Matcher tokensMatcher = Constants.PLAYER_INPUT_MOVE_TOKENS_PATTERN.matcher(action);
+            MoveAction moveAction = new MoveAction(Action.Type.MOVE);
+            while (tokensMatcher.find()) {
+                moveAction.addStep(Constants.Direction.valueOf(tokensMatcher.group("direction")));
             }
-        }
-    }
-
-    private void doPushAction(PlayerAction playerAction, boolean isRowPush) {
-        PushAction action = (PushAction)playerAction.action;
-        TileController poppedTile;
-        if (isRowPush) {
-            poppedTile = map.pushRow(playerAction.player.getTile(), action.getLineId(), action.getDirection());
+            return moveAction;
+        } else if (matchPass.matches()) {
+            return new PassAction(Action.Type.PASS);
         } else {
-            poppedTile = map.pushColumn(playerAction.player.getTile(), action.getLineId(), action.getDirection());
-        }
-        poppedTile.setPosAbsolute(playerAction.player.getTilePosition());
-        playerAction.player.setTile(poppedTile);
-
-        // if there's a player on the pushed line move them too
-        for (Player player : gameManager.getActivePlayers()) {
-            int playerLineId = isRowPush ? player.getAgentPosition().getY() : player.getAgentPosition().getX();
-            if (playerLineId == action.getLineId()) {
-                Vector2 pos = new Vector2(playerControllers.get(player.getIndex()).getPos());
-                pos.add(action.getDirection().asValue());
-                if (isRowPush) {
-                    pos.setX(Utils.wrap(pos.getX(), 0, Constants.MAP_WIDTH - 1));
-                } else {
-                    pos.setY(Utils.wrap(pos.getY(), 0, Constants.MAP_HEIGHT - 1));
-                }
-                playerControllers.get(player.getIndex()).setPosInMap(pos);
-            }
+            throw new InvalidAction(action);
         }
     }
 
-    private void checkForFinishedItems() {
-        gameManager.getActivePlayers().forEach(player -> {
-            PlayerController playerController = playerControllers.get(player.getIndex());
-            Vector2 pos = player.getAgentPosition();
-            TileController tile = map.getTile(pos.getX(), pos.getY());
-            if (!tile.hasItem()) return;
-
-            Item item = tile.getItem();
-            List<CardController> topCards = playerController.getTopCards();
-            for (CardController card : topCards) {
-                if (item.getName().equals(card.getItem().getName())
-                        && item.getPlayerId() == player.getIndex()) {
-                    playerController.removeCard(card);
-                    playerController.flipNewCard();
-                    tile.removeItem();
-                    gameManager.addToGameSummary(String.format("%s: completed a quest card", player.getNicknameToken()));
-                    break;
-                }
+    private void doPlayerActions(){
+        if (turnType.equals(Action.Type.PUSH)) {
+            Map actions = pushActions.get(0);
+            pushActions.remove(0);
+            doPushAction(actions);
+        } else {
+            for (Map.Entry action : moveActions.entrySet()) {
+                doMoveAction(action);
             }
-        });
+            moveActions.values().removeIf(MoveAction::isEmpty);
+        }
     }
 
-    private void checkForWinner() {
-        gameManager.getActivePlayers().forEach(player -> {
-            if (!playerControllers.get(player.getIndex()).hasCards()) {
-                declareWinner(player);
-                forceGameEnd();
+    //Move actions
+    private void doMoveAction(Map.Entry<Player, MoveAction> action) {
+        Player player = action.getKey();
+        PlayerModel playerModel = players.get(player.getIndex());
+        MoveAction moveAction = action.getValue();
+        Constants.Direction step = moveAction.getStep();
+        try {
+            movePlayer(playerModel, step);
+            gameManager.addToGameSummary(String.format("%s moved %s", player.getNicknameToken(), step));
+        }
+        catch (InvalidAction e) {
+            moveAction.setEmpty();
+            gameManager.addToGameSummary(String.format("[WARNING] %s: invalid input - %s", player.getNicknameToken(), e.getMessage()));
+        }
+    }
+
+    private void movePlayer(PlayerModel player, Constants.Direction step) throws InvalidAction {
+        if (!gameBoard.isValidMove(player.getPos(), step))
+            throw new InvalidAction(step.toString(), false);
+        player.move(step);
+    }
+
+    //Push actions
+    private void doPushAction(Map<Player, PushAction> actions) {
+        if (!areValidPushActions(new ArrayList(actions.values()))) {
+            gameManager.addToGameSummary("[WARNING] Both players tried to push the same line. Nothing happens!");
+            for (Map.Entry<Player, PushAction> action : actions.entrySet())
+                //invalid push action update
+                updateObserver(new AbstractMap.SimpleEntry<>(action.getValue().toString(), null));
+            return;
+        }
+        for (Map.Entry<Player, PushAction> action : actions.entrySet()) {
+            Player player = action.getKey();
+            PlayerModel playerModel = players.get(player.getIndex());
+            PushAction pushAction = action.getValue();
+            int line = pushAction.getLine();
+            Constants.Direction direction = pushAction.getDirection();
+            TileModel poppedTile = gameBoard.pushLine(playerModel.getTile(), line, direction);
+            playerModel.setTile(poppedTile);
+            updatePlayerPos(pushAction, pushAction.isHorizontal());
+            if (pushAction.isHorizontal()) {
+                gameManager.addToGameSummary(String.format("%s pushed row %d to the %s", player.getNicknameToken(), line, direction));
+            } else{
+                gameManager.addToGameSummary(String.format("%s pushed column %d %s", player.getNicknameToken(), line, direction));
             }
-        });
+            //valid push action update
+            updateObserver(new AbstractMap.SimpleEntry<>(pushAction.toString(), player.getIndex()));
+        }
     }
 
-    private void declareWinner(Player player) {
-        gameManager.addToGameSummary(player.getNicknameToken() + " is a winner!");
+    private boolean areValidPushActions(List<PushAction> actions) {
+        if (actions.size() < 2)
+            return true;
+        return !PushAction.pushSameLine(actions);
     }
 
-    private void updateTexts(Action.Type turnType) {
-        turnText.setText(String.format("Turn: %s", turnType));
-        graphicEntityModule.commitEntityState(0, turnText);
+    private void updatePlayerPos(PushAction action, boolean horizontal){
+        for (PlayerModel player : players) {
+            int playerLine = horizontal ? player.getPos().getY() : player.getPos().getX();
+
+            if (playerLine == action.getLine()) {
+                Vector2 pos = new Vector2(player.getPos());
+                pos.wrap(action.getDirection().asVector());
+                player.move(pos);
+            }
+        }
     }
 
-    public void forceAnimationFrame() {
+    //Game management
+    private void forceAnimationFrame() {
         gameManager.getActivePlayers().stream().limit(1).forEach(player -> {
             player.setExpectedOutputLines(0);
             player.execute();
             try {
                 player.getOutputs();
             } catch (Exception e) {
-
             }
         });
     }
 
-    public void forceGameFrame() {
+    private void forceGameFrame() {
         for (Player player : gameManager.getActivePlayers()) {
             player.setExpectedOutputLines(1);
         }
     }
 
-    @Override
-    public void gameTurn(int turn) {
-        if (!actionsQueue.get(0).isEmpty() || !actionsQueue.get(1).isEmpty()) {
-            forceAnimationFrame();
-        } else {
-            turnType = turnType == Action.Type.PUSH ? Action.Type.MOVE : Action.Type.PUSH;
-            forceGameFrame();
-            sendPlayerInputs();
-            getPlayerActions();
-        }
-        updateTexts(turnType);
-        doPlayerActions();
-        checkForFinishedItems();
-        checkForWinner();
-    }
-
     private void forceGameEnd() {
         for (Player player : gameManager.getPlayers()) {
-            // the player score will be the number of solved cards
             if (player.isActive()) {
                 player.deactivate();
-                player.setScore(Constants.ITEM_NAMES.size() - playerControllers.get(player.getIndex()).getNumCards());
             } else {
                 player.setScore(-1);
             }
@@ -469,18 +472,56 @@ public class Referee extends AbstractReferee {
         gameManager.endGame();
     }
 
-    @Override
-    public void onEnd() {
-        endScreenModule.setScores(gameManager.getPlayers().stream().mapToInt(player -> player.getScore()).toArray());
+    private void checkForFinishedItems() {
+        for (Player player : gameManager.getActivePlayers()) {
+            PlayerModel playerModel = players.get(player.getIndex());
+            TileModel tile = gameBoard.getTile(playerModel.getPos());
+            if (tile.hasItem() && playerModel.removeItemCard(tile.getItem())) {
+                gameBoard.removeItem(tile);
+                player.setScore(player.getScore() + POINTS_PER_ITEM);
+                gameManager.addToGameSummary(String.format("%s completed a quest card", player.getNicknameToken()));
+            }
+        }
     }
 
-    static class PlayerAction {
-        PlayerController player;
-        Action action;
-
-        public PlayerAction(PlayerController player, Action action) {
-            this.player = player;
-            this.action = action;
+    private void hasWinner() {
+        boolean win = gameManager.getActivePlayers().stream()
+                .anyMatch(player -> player.getScore() == numCardsPerPlayer);
+        if (win) {
+            //allows both players to finish the path
+            forceAnimationFrame();
+            forceGameEnd();
         }
+    }
+
+    private void checkForWinner() {
+        List<Integer> score = gameManager.getPlayers().stream()
+                .map(player -> player.getScore())
+                .collect(Collectors.toList());
+        if (new HashSet(score).size() == 1) declareDraw();
+        else {
+            IntStream.range(0, score.size())
+                    .boxed()
+                    .max(Comparator.comparing(score::get))
+                    .ifPresent(index -> declareWinner(gameManager.getPlayers().get(index)));
+        }
+    }
+
+    private void declareWinner(Player player) {
+        gameManager.addToGameSummary(player.getNicknameToken() + " is a winner!");
+    }
+
+    private void declareDraw() {
+        gameManager.addToGameSummary("It's a draw!");
+    }
+
+    public void onEnd() {
+        endScreenModule.setScores(
+                gameManager
+                        .getPlayers()
+                        .stream()
+                        .mapToInt(player -> player.getScore())
+                        .toArray());
+        checkForWinner();
     }
 }

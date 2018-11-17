@@ -1,84 +1,74 @@
 package com.codingame.game.View;
 
-import com.codingame.game.Utils.Constants;
+import com.codingame.game.Model.CardModel;
+import com.codingame.game.Model.Item;
+import com.codingame.game.Model.StateUpdates.FlipCardUpdate;
+import com.codingame.game.Model.StateUpdates.RemoveCardUpdate;
+import com.codingame.gameengine.module.entities.GraphicEntityModule;
 import com.codingame.gameengine.module.entities.Group;
 import com.codingame.gameengine.module.entities.Sprite;
 
-import static com.codingame.game.Utils.Utils.graphicEntityModule;
+import java.util.Observable;
 
-public class CardView {
-    /**
-     * Acts as a parent for all graphic elements.
-     */
+public class CardView extends AbstractView {
     private Group group;
-
-    /**
-     * The front sprite of a card.
-     */
     private Sprite front;
-
-    /**
-     * The back sprite of a card.
-     */
     private Sprite back;
-
-    /**
-     * The item sprite of a card.
-     */
     private Sprite item;
 
-    /**
-     * Create a card using a unique id and item id
-     * @param itemName The name of the item on the card.
-     * @param playerId The id of the player the card belongs to.
-     */
-    public CardView(String itemName, int playerId) {
-        back = graphicEntityModule.createSprite()
-                .setImage(String.format("cardBack_%d.png", playerId))
+    private Item cardItem;
+    private CardModel model;
+
+    public CardView(GraphicEntityModule entityModule, CardModel card) {
+        super(entityModule);
+        this.model = card;
+        this.cardItem = model.getItem();
+        card.addObserver(this);
+        createCardView();
+    }
+
+    public void createCardView() {
+        back = entityModule.createSprite()
+                .setImage(String.format("cardBack_%d.png", cardItem.getPlayerId()))
                 .setAnchor(0.5)
-                .setZIndex(Constants.MapLayers.TILES.asValue())
+                .setZIndex(0)
                 .setVisible(true);
-        front = graphicEntityModule.createSprite()
+        front = entityModule.createSprite()
                 .setImage("cardFront.png")
                 .setAnchor(0.5)
-                .setZIndex(Constants.MapLayers.TILES.asValue())
+                .setZIndex(0)
                 .setVisible(false);
-        item = graphicEntityModule.createSprite()
-                .setImage(String.format("items" + System.getProperty("file.separator") + "item_%s_%d.png", itemName, playerId))
+        item = entityModule.createSprite()
+                .setImage(String.format("items" + System.getProperty("file.separator") + "item_%s_%d.png", cardItem.getName(), cardItem.getPlayerId()))
                 .setAnchor(0.5)
-                .setZIndex(Constants.MapLayers.TILES.asValue())
+                .setZIndex(0)
                 .setVisible(false);
-        group = graphicEntityModule.createGroup()
+        group = entityModule.createGroup()
                 .setScale(1)
                 .setX(0)
                 .setY(0);
         group.add(back, front, item);
+        group.setX(model.getPos().getX()).setY(model.getPos().getY());
     }
 
-    /**
-     * Sets a player's card position anywhere on the screen.
-     * @param x The x coordinate.
-     * @param y The y coordinate.
-     */
-    public void setPosAbsolute(int x, int y) {
-        group.setX(x).setY(y);
-    }
+    public void updateView() {}
 
-    /**
-     * Flips a card's side.
-     * Shows the front if the back was visible.
-     * Shows the back if the front was visible.
-     */
-    public void flip() {
-        back.setVisible(!back.isVisible());
+    private void flip() {
         front.setVisible(!front.isVisible());
         item.setVisible(!item.isVisible());
+        entityModule.commitEntityState(0, front, item);
     }
 
-    /**
-     * Sets a card as invisible.
-     */
-    public void hide() {
+    private void removeCardView() {
         group.setVisible(false);
+        doDispose();
+    }
+
+    public void update(Observable observable, Object update) {
+        super.update(model, update);
+        if (update instanceof FlipCardUpdate) flip();
+        else if (update instanceof RemoveCardUpdate){
+            removeCardView();
+        }
     }
 }
