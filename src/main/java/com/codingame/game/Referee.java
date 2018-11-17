@@ -47,9 +47,9 @@ public class Referee extends AbstractReferee {
     //Score
     private final int POINTS_PER_ITEM = 1;
     //Game turns
-    private int numGameTurns = 0;
+    private int gameTurnsLeft = Constants.MAX_GAME_TURNS;
     //MAX_FRAMES = (20 move frames + 1 row push frame + 1 col push frame) * MAX_GAME_TURNS
-    private int maxNumGameTurns = (Constants.MAX_MOVE_STEPS + 2) * Constants.MAX_GAME_TURNS;
+    private int maxNumTurns = (Constants.MAX_MOVE_STEPS + 2) * Constants.MAX_GAME_TURNS;
 
 
     //League stuff
@@ -94,7 +94,7 @@ public class Referee extends AbstractReferee {
                 break;
         }
 
-        gameManager.setMaxTurns(maxNumGameTurns);
+        gameManager.setMaxTurns(maxNumTurns);
 
         createBoard();
         createPlayers();
@@ -231,13 +231,13 @@ public class Referee extends AbstractReferee {
         if (hasActions())
             forceAnimationFrame();
         else {
-            if (numGameTurns >= Constants.MAX_GAME_TURNS) {
+            if (gameTurnsLeft <= 0) {
                 gameManager.addToGameSummary("Max turns reached!");
                 forceGameEnd();
             }
             hasWinner();
             turnType = (turnType == Action.Type.PUSH) ? Action.Type.MOVE : Action.Type.PUSH;
-            numGameTurns++;
+            gameTurnsLeft--;
             forceGameFrame();
             flipCards();
             sendPlayerInputs();
