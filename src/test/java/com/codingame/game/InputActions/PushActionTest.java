@@ -105,4 +105,28 @@ public class PushActionTest {
         assertFalse(PushAction.pushSameLine(Arrays.asList(action1, action4)));
     }
 
+    @Test
+    public void testToString() {
+        int lineId1 = 0;
+        int lineId2 = 2;
+        int lineId3 = 5;
+        int lineId4 = 6;
+        Constants.Direction direction1 = Constants.Direction.UP;
+        Constants.Direction direction2 = Constants.Direction.RIGHT;
+        Constants.Direction direction3 = Constants.Direction.DOWN;
+        Constants.Direction direction4 = Constants.Direction.LEFT;
+        Action.Type type = Action.Type.PUSH;
+
+        PushAction action1 = new PushAction(lineId1, direction1, type);
+        PushAction action2 = new PushAction(lineId2, direction2, type);
+        PushAction action3 = new PushAction(lineId3, direction3, type);
+        PushAction action4 = new PushAction(lineId4, direction4, type);
+
+        assertEquals("00", action1.toString());
+        assertEquals("21", action2.toString());
+        assertEquals("52", action3.toString());
+        assertEquals("63", action4.toString());
+
+    }
+
 }
