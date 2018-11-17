@@ -48,8 +48,10 @@ public class Referee extends AbstractReferee {
     private final int POINTS_PER_ITEM = 1;
     //Game turns
     private int gameTurnsLeft = Constants.MAX_GAME_TURNS;
-    //MAX_FRAMES = (20 move frames + 1 row push frame + 1 col push frame) * MAX_GAME_TURNS
-    private int maxNumTurns = (Constants.MAX_MOVE_STEPS + 2) * Constants.MAX_GAME_TURNS;
+    //Number of turns required to accommodate the worst case scenario:
+    //MAX_MOVE_STEPS frames per MOVE turn + (1 row frame + 1 push frame) per PUSH turn
+    //+ 1 extra frame to return "Max turns reached!", if required
+    private int maxNumTurns = (Constants.MAX_MOVE_STEPS + 2) * Constants.MAX_GAME_TURNS + 1;
 
 
     //League stuff
@@ -232,12 +234,15 @@ public class Referee extends AbstractReferee {
             forceAnimationFrame();
         else {
             if (gameTurnsLeft <= 0) {
+                //allows both players to complete the action
+                forceAnimationFrame();
                 gameManager.addToGameSummary("Max turns reached!");
                 forceGameEnd();
             }
             hasWinner();
             turnType = (turnType == Action.Type.PUSH) ? Action.Type.MOVE : Action.Type.PUSH;
-            gameTurnsLeft--;
+            //update number of turns on MOVE turn only
+            gameTurnsLeft = (turnType == Action.Type.MOVE) ? gameTurnsLeft - 1 : gameTurnsLeft;
             forceGameFrame();
             flipCards();
             sendPlayerInputs();
@@ -471,6 +476,7 @@ public class Referee extends AbstractReferee {
                 player.setScore(-1);
             }
         }
+
         gameManager.endGame();
     }
 
@@ -490,7 +496,7 @@ public class Referee extends AbstractReferee {
         boolean win = gameManager.getActivePlayers().stream()
                 .anyMatch(player -> player.getScore() == numCardsPerPlayer);
         if (win) {
-            //allows both players to finish the path
+            //allows both players to complete the action
             forceAnimationFrame();
             forceGameEnd();
         }
