@@ -6,11 +6,11 @@ public class Main {
         MultiplayerGameRunner gameRunner = new MultiplayerGameRunner();
 
         gameRunner.addAgent(PlayerAI.class);
-        gameRunner.addAgent(PlayerAI.class);
+        gameRunner.addAgent(EmptyAI.class);
 
         //required leagueLevel = 0
         System.setProperty("league.level", "0");
-        gameRunner.setSeed(20L);
+        //gameRunner.setSeed(20L);
 
         gameRunner.start();
     }
