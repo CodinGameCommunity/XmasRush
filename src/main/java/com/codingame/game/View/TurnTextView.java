@@ -7,31 +7,63 @@ import com.codingame.gameengine.module.entities.Text;
 
 
 public class TurnTextView extends AbstractView {
-    public static final int TURN_TEXT_POS_X = Constants.SCREEN_WIDTH - 50;
-    public static final int TURN_TEXT_POS_Y = 100;
+    private final int TURN_TEXT_POS_X = Constants.SCREEN_WIDTH - 490;
+    private final int NUM_TURNS_TEXT_POS_X = Constants.SCREEN_WIDTH - 180;
+    private final int TYPE_TEXT_POS_X = Constants.SCREEN_WIDTH - 160;
+    private final int TURN_TEXT_POS_Y = 100;
+
+    //import it once
+    private final int maxTurns = Constants.MAX_GAME_TURNS;
 
     private Text turnText;
+    private Text typeText;
+    private Text numTurnsText;
+
 
     public TurnTextView(GraphicEntityModule entityModule){
         super(entityModule);
 
-        createTurnText();
+        createTexts();
     }
 
-    private void createTurnText() {
-        turnText = entityModule.createText(String.format("Turn: %s", Referee.turnType))
+    private void createTexts() {
+        turnText = entityModule.createText("")
                 .setX(TURN_TEXT_POS_X)
                 .setY(TURN_TEXT_POS_Y)
                 .setFontSize(50)
                 .setFillColor(0x000000)
+                .setFontFamily("Arial")
+                //aligned to the left
+                .setAnchorX(0)
+                .setAnchorY(1);
+
+        numTurnsText = entityModule.createText("")
+                .setX(NUM_TURNS_TEXT_POS_X)
+                .setY(TURN_TEXT_POS_Y)
+                .setFontSize(50)
+                .setFillColor(0x000000)
+                .setFontFamily("Arial")
+                //aligned to the right
                 .setAnchorX(1)
                 .setAnchorY(1);
-        turnText.setVisible(false);
+
+        typeText = entityModule.createText("")
+                .setX(TYPE_TEXT_POS_X)
+                .setY(TURN_TEXT_POS_Y)
+                .setFontSize(50)
+                .setFillColor(0x000000)
+                .setFontFamily("Arial")
+                //aligned to the left
+                .setAnchorX(0)
+                .setAnchorY(1);
     }
 
     public void updateView() {
-        turnText.setText(String.format("Turn: %s", Referee.turnType));
-        if (Referee.turnType != null) turnText.setVisible(true);
-        entityModule.commitEntityState(0, turnText);
+        if (Referee.turnType != null){
+            turnText.setText("Turn:");
+            typeText.setText(Referee.turnType.toString());
+            numTurnsText.setText(String.format("%d/%d", maxTurns - Referee.gameTurnsLeft, maxTurns));
+        }
+        entityModule.commitEntityState(0, turnText, numTurnsText, typeText);
     }
 }
