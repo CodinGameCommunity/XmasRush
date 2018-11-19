@@ -41,7 +41,7 @@ public class Constants {
             "ARROW", "BOOK", "CANE", "CANDY", "DIAMOND", "FISH", "MASK", "KEY", "POTION", "SCROLL", "SHIELD", "SWORD"
     );
 
-    public static final List<List<String>> PATTERNS = new ArrayList<>(Arrays.asList(
+    public static final List<List<String>> TILE_PATTERNS = new ArrayList<>(Arrays.asList(
             Arrays.asList("1111", "1111", "1111", "1111", "1111", "1111", "1111", "1111",
                     "1111", "1111", "1111", "1111", "1111", "1111", "1111", "1111",
                     "1111", "1111", "1111", "1111", "1111", "1111", "1111", "1111"),
@@ -73,7 +73,8 @@ public class Constants {
 
     public static final List<Vector2> TILE_MODEL_POSITIONS = Arrays.asList(
             Vector2.MINUS_ONE, Vector2.MINUS_TWO);
-    //todo
+
+    //make sure the number of GAME turns is EVEN for equal number of PUSH and MOVE turns
     public static final int MAX_GAME_TURNS = 150;
     public static final int MAX_MOVE_STEPS = 20;
 

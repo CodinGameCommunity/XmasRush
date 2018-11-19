@@ -46,8 +46,12 @@ public class Referee extends AbstractReferee {
 
     //Score
     private final int POINTS_PER_ITEM = 1;
-    //Number of game turns
-    private int numGameTurns = 0;
+    //Game turns
+    public static int gameTurnsLeft = Constants.MAX_GAME_TURNS;
+    //Number of turns required to accommodate the worst case scenario:
+    //MAX_MOVE_STEPS frames per MOVE turn + (1 row frame + 1 push frame) per PUSH turn
+    //+ 1 extra frame to return "Max turns reached!", if required
+    private int maxNumTurns = (Constants.MAX_MOVE_STEPS + 2) * Constants.MAX_GAME_TURNS / 2 + 1;
 
     //League stuff
     private static int leagueLevel;
@@ -66,33 +70,32 @@ public class Referee extends AbstractReferee {
             //numCardsPerPlayer and numVisibleCards <= 12!!!
             //make sure you have enough 3+ tiles when setting threeWayTiles to true
             case 0: //demo case
-                availablePatterns = new ArrayList<>(Constants.PATTERNS.get(1));
+                availablePatterns = new ArrayList<>(Constants.TILE_PATTERNS.get(1));
                 numCardsPerPlayer = 3;
                 numVisibleCards = 1;
                 threeWayTiles = false;
                 break;
             case 1: // First league
-                availablePatterns = new ArrayList<>(Constants.PATTERNS.get(1));
+                availablePatterns = new ArrayList<>(Constants.TILE_PATTERNS.get(1));
                 numCardsPerPlayer = 1;
                 numVisibleCards = 1;
                 threeWayTiles = true;
                 break;
             case 2: // Second league
-                availablePatterns = new ArrayList<>(Constants.PATTERNS.get(1));
+                availablePatterns = new ArrayList<>(Constants.TILE_PATTERNS.get(1));
                 numCardsPerPlayer = 6;
                 numVisibleCards = 1;
                 threeWayTiles = true;
                 break;
             case 3: // Final league
-                availablePatterns = new ArrayList<>(Constants.PATTERNS.get(1));
+                availablePatterns = new ArrayList<>(Constants.TILE_PATTERNS.get(1));
                 numCardsPerPlayer = 12;
                 numVisibleCards = 3;
                 threeWayTiles = false;
                 break;
         }
 
-        // MAX_FRAMES = (20 move frames + 1 row push frame + 1 col push frame) * MAX_GAME_TURNS
-        gameManager.setMaxTurns((Constants.MAX_MOVE_STEPS + 2) * Constants.MAX_GAME_TURNS);
+        gameManager.setMaxTurns(maxNumTurns);
 
         createBoard();
         createPlayers();
@@ -229,9 +232,15 @@ public class Referee extends AbstractReferee {
         if (hasActions())
             forceAnimationFrame();
         else {
+            if (gameTurnsLeft <= 0) {
+                //allows both players to complete the action
+                forceAnimationFrame();
+                gameManager.addToGameSummary("Max turns reached!");
+                forceGameEnd();
+            }
             hasWinner();
             turnType = (turnType == Action.Type.PUSH) ? Action.Type.MOVE : Action.Type.PUSH;
-            numGameTurns++;
+            gameTurnsLeft--;
             forceGameFrame();
             flipCards();
             sendPlayerInputs();
@@ -242,10 +251,6 @@ public class Referee extends AbstractReferee {
             doPlayerActions();
             updateView();
             checkForFinishedItems();
-        }
-        if (numGameTurns >= Constants.MAX_GAME_TURNS) {
-            gameManager.addToGameSummary("Max turns reached!");
-            forceGameEnd();
         }
     }
 
@@ -469,6 +474,7 @@ public class Referee extends AbstractReferee {
                 player.setScore(-1);
             }
         }
+
         gameManager.endGame();
     }
 
@@ -488,7 +494,7 @@ public class Referee extends AbstractReferee {
         boolean win = gameManager.getActivePlayers().stream()
                 .anyMatch(player -> player.getScore() == numCardsPerPlayer);
         if (win) {
-            //allows both players to finish the path
+            //allows both players to complete the action
             forceAnimationFrame();
             forceGameEnd();
         }
