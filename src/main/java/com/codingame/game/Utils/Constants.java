@@ -30,9 +30,9 @@ public class Constants {
     public static final int PLAYER_TILE_POS_Y = 630;
     public static final int OPPONENT_TILE_POS_Y = SCREEN_HEIGHT - PLAYER_TILE_POS_Y + 10;
 
-    public static final int CARD_WIDTH = 118;
-    public static final int CARD_HEIGHT = 160;
-    public static final int CARDS_OFFSET_X = 30;
+    public static final int CARD_WIDTH = 116;
+    public static final int CARD_HEIGHT = 157;
+    public static final int CARDS_OFFSET_X = 29;
     public static final int CARDS_OFFSET_Y = 13;
     public static final int PLAYER_CARDS_POS_X = 140;
     public static final int PLAYER_CARDS_POS_Y = MAP_POS_Y - TILE_SIZE / 2 + CARD_HEIGHT / 2;
