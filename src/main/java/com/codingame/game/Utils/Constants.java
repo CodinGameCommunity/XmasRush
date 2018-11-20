@@ -32,11 +32,12 @@ public class Constants {
 
     public static final int CARD_WIDTH = 118;
     public static final int CARD_HEIGHT = 160;
-    public static final int CARDS_OFFSET = 26;
+    public static final int CARDS_OFFSET_X = 30;
+    public static final int CARDS_OFFSET_Y = 13;
     public static final int PLAYER_CARDS_POS_X = 140;
-    public static final int PLAYER_CARDS_POS_Y = 200;
+    public static final int PLAYER_CARDS_POS_Y = MAP_POS_Y - TILE_SIZE / 2 + CARD_HEIGHT / 2;
     public static final int OPPONENT_CARDS_POS_X = SCREEN_WIDTH - PLAYER_CARDS_POS_X;
-    public static final int OPPONENT_CARDS_POS_Y = SCREEN_HEIGHT - PLAYER_CARDS_POS_Y - 200;
+    public static final int OPPONENT_CARDS_POS_Y = SCREEN_HEIGHT - PLAYER_CARDS_POS_Y;
 
     public static final List<String> ITEM_NAMES = Arrays.asList(
             "ARROW", "BOOK", "CANE", "CANDY", "DIAMOND", "FISH", "MASK", "KEY", "POTION", "SCROLL", "SHIELD", "SWORD"

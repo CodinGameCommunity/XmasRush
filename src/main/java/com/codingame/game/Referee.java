@@ -98,6 +98,14 @@ public class Referee extends AbstractReferee {
 
         gameManager.setMaxTurns(maxNumTurns);
 
+        int oldX = Constants.CARD_POSITIONS.get(0).getX();
+        int formula = (Constants.TILE_SIZE - Constants.CARD_WIDTH) / 2 + (Constants.CARD_WIDTH + (Math.max(0, numCardsPerPlayer - numVisibleCards - 1)) * Constants.CARDS_OFFSET_X);
+        formula += Constants.CARDS_OFFSET_X * 2;
+        int newX = Constants.MAP_POS_X - formula - Constants.CARDS_OFFSET_X / 3;
+
+        //int newX = Constants.MAP_POS_X - (Constants.TILE_SIZE - Constants.CARD_WIDTH) / 2;
+        Constants.CARD_POSITIONS.get(0).setX(newX);
+
         createBoard();
         createPlayers();
         createView();

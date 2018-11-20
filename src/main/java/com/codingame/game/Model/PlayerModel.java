@@ -46,12 +46,11 @@ public class PlayerModel extends MovingModel {
         Vector2 cardPos = new Vector2(Constants.CARD_POSITIONS.get(id));
 
         for (int i = 0; i < itemList.size(); i++) {
-            Vector2 newCardPos = new Vector2(cardPos.getX() + orientation * i * Constants.CARDS_OFFSET,
-                    cardPos.getY());
-            CardModel card = new CardModel(itemList.get(i), newCardPos);
+            CardModel card = new CardModel(itemList.get(i), cardPos);
             //check if item belongs to the player
             assert card.getItem().getPlayerId() == id;
             hiddenCards.add(card);
+            cardPos.setX(cardPos.getX() + orientation * Constants.CARDS_OFFSET_X);
         }
     }
 
@@ -94,18 +93,22 @@ public class PlayerModel extends MovingModel {
     }
 
     private void adjustCardsPosition() {
+        if (visibleCards.isEmpty()) {
+            return;
+        }
         int orientation = (id == 0) ? 1 : -1;
-        int offsetX = !hiddenCards.isEmpty() ? hiddenCards.firstElement().getPos().getX() : visibleCards.get(0).getPos().getX();
-        int offsetY = !hiddenCards.isEmpty() ? hiddenCards.firstElement().getPos().getY() : visibleCards.get(0).getPos().getY();
-        offsetY += Constants.CARD_HEIGHT + 13;
-        visibleCards.get(visibleCards.size() - 1).setPos(new Vector2(offsetX, offsetY));
-        visibleCards.get(visibleCards.size() - 1).updatePosition();
-        for (int i = visibleCards.size() - 2; i >= 0; i--) {
+        Vector2 cardPos = new Vector2(Constants.CARD_POSITIONS.get(id));
+
+        // if there are no hidden cards, no need to offset the visible ones
+        if (!hiddenCards.isEmpty()) {
+            cardPos.setY(cardPos.getY() + orientation * (Constants.CARD_HEIGHT + Constants.CARDS_OFFSET_Y));
+        }
+
+        for (int i = 0; i < visibleCards.size(); i++) {
             CardModel card = visibleCards.get(i);
-            offsetX += orientation * (Constants.CARDS_OFFSET + Constants.CARD_WIDTH / 1.5);
-            Vector2 newCardPos = new Vector2(offsetX, offsetY);
-            card.setPos(newCardPos);
+            card.setPos(cardPos);
             card.updatePosition();
+            cardPos.setX(cardPos.getX() + orientation * Constants.CARD_WIDTH);
         }
     }
 
