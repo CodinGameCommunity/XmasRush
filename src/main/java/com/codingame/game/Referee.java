@@ -22,6 +22,7 @@ import com.codingame.game.Utils.Vector2;
 import com.codingame.game.View.ViewController;
 import com.codingame.gameengine.core.AbstractPlayer;
 import com.codingame.gameengine.core.AbstractReferee;
+import com.codingame.gameengine.core.GameManager;
 import com.codingame.gameengine.core.MultiplayerGameManager;
 import com.codingame.gameengine.module.entities.GraphicEntityModule;
 import com.codingame.view.endscreen.EndScreenModule;
@@ -235,7 +236,7 @@ public class Referee extends AbstractReferee {
             if (gameTurnsLeft <= 0) {
                 //allows both players to complete the action
                 forceAnimationFrame();
-                gameManager.addToGameSummary("Max turns reached!");
+                gameManager.addToGameSummary(GameManager.formatErrorMessage("Max turns reached!"));
                 forceGameEnd();
             }
             hasWinner();
@@ -332,13 +333,12 @@ public class Referee extends AbstractReferee {
                     throw new InvalidAction(String.format("can't \"%s\" while expecting a %s action", action.getType(), turnType));
             }catch (InvalidAction e) {
                 if (e.isFatal()) {
-                    gameManager.addToGameSummary(String.format("%s: invalid input - %s", player.getNicknameToken(), e.getMessage()));
                     player.deactivate(String.format("%s: invalid input", player.getNicknameToken()));
                     forceGameEnd();
-                } else
-                    gameManager.addToGameSummary(String.format("[WARNING] %s: invalid input - %s", player.getNicknameToken(), e.getMessage()));
+                }
+                gameManager.addToGameSummary(GameManager.formatErrorMessage(String.format("%s: invalid input - %s", player.getNicknameToken(), e.getMessage())));
             } catch (AbstractPlayer.TimeoutException e) {
-                gameManager.addToGameSummary(String.format("%s: timeout - no input provided", player.getNicknameToken()));
+                gameManager.addToGameSummary(GameManager.formatErrorMessage(String.format("%s: timeout - no input provided", player.getNicknameToken())));
                 player.deactivate(String.format("%s: timeout", player.getNicknameToken()));
                 forceGameEnd();
             }
@@ -392,7 +392,7 @@ public class Referee extends AbstractReferee {
         }
         catch (InvalidAction e) {
             moveAction.setEmpty();
-            gameManager.addToGameSummary(String.format("[WARNING] %s: invalid input - %s", player.getNicknameToken(), e.getMessage()));
+            gameManager.addToGameSummary(GameManager.formatErrorMessage(String.format("%s: invalid input - %s", player.getNicknameToken(), e.getMessage())));
         }
     }
 
@@ -405,7 +405,7 @@ public class Referee extends AbstractReferee {
     //Push actions
     private void doPushAction(Map<Player, PushAction> actions) {
         if (!areValidPushActions(new ArrayList(actions.values()))) {
-            gameManager.addToGameSummary("[WARNING] Both players tried to push the same line. Nothing happens!");
+            gameManager.addToGameSummary(GameManager.formatErrorMessage("Both players tried to push the same line. Nothing happens!"));
             for (Map.Entry<Player, PushAction> action : actions.entrySet())
                 //invalid push action update
                 updateObserver(new AbstractMap.SimpleEntry<>(action.getValue().toString(), null));
@@ -485,7 +485,7 @@ public class Referee extends AbstractReferee {
             if (tile.hasItem() && playerModel.removeItemCard(tile.getItem())) {
                 gameBoard.removeItem(tile);
                 player.setScore(player.getScore() + POINTS_PER_ITEM);
-                gameManager.addToGameSummary(String.format("%s completed a quest card", player.getNicknameToken()));
+                gameManager.addToGameSummary(GameManager.formatSuccessMessage(String.format("%s completed a quest card", player.getNicknameToken())));
             }
         }
     }
@@ -514,7 +514,7 @@ public class Referee extends AbstractReferee {
     }
 
     private void declareWinner(Player player) {
-        gameManager.addToGameSummary(player.getNicknameToken() + " is a winner!");
+        gameManager.addToGameSummary(GameManager.formatSuccessMessage(player.getNicknameToken() + " is a winner!"));
     }
 
     private void declareDraw() {
