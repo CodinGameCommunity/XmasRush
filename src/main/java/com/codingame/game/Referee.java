@@ -47,7 +47,7 @@ public class Referee extends AbstractReferee {
     //Score
     private final int POINTS_PER_ITEM = 1;
     //Game turns
-    public static int gameTurnsLeft = Constants.MAX_GAME_TURNS;
+    public static int gameTurnsLeft = 0;
     //Number of turns required to accommodate the worst case scenario:
     //MAX_MOVE_STEPS frames per MOVE turn + (1 row frame + 1 push frame) per PUSH turn
     //+ 1 extra frame to return "Max turns reached!", if required
@@ -61,6 +61,8 @@ public class Referee extends AbstractReferee {
     private static boolean threeWayTiles; //place items on 3+ tiles only
 
     public void init() {
+        gameTurnsLeft = Constants.MAX_GAME_TURNS;
+
         Properties params = gameManager.getGameParameters();
         Constants.random = new Random(getSeed(params));
 
