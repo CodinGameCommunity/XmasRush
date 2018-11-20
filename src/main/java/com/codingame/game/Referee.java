@@ -411,11 +411,12 @@ public class Referee extends AbstractReferee {
 
     //Push actions
     private void doPushAction(Map<Player, PushAction> actions) {
+        for (Map.Entry<Player, PushAction> action : actions.entrySet())
+            //push action update: action and player id
+            updateObserver(new AbstractMap.SimpleEntry<>(action.getValue().toString(), action.getKey().getIndex()));
+
         if (!areValidPushActions(new ArrayList(actions.values()))) {
             gameManager.addToGameSummary(GameManager.formatErrorMessage("Both players tried to push the same line. Nothing happens!"));
-            for (Map.Entry<Player, PushAction> action : actions.entrySet())
-                //invalid push action update
-                updateObserver(new AbstractMap.SimpleEntry<>(action.getValue().toString(), null));
             return;
         }
         for (Map.Entry<Player, PushAction> action : actions.entrySet()) {
@@ -432,8 +433,6 @@ public class Referee extends AbstractReferee {
             } else{
                 gameManager.addToGameSummary(String.format("%s pushed column %d %s", player.getNicknameToken(), line, direction));
             }
-            //valid push action update
-            updateObserver(new AbstractMap.SimpleEntry<>(pushAction.toString(), player.getIndex()));
         }
     }
 
