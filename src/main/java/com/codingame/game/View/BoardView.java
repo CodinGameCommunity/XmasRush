@@ -104,7 +104,7 @@ public class BoardView extends AbstractView{
                 Constants.MAP_POS_Y + arrowSpacing * (Constants.MAP_HEIGHT - 1) + arrowOffset);
         for (int x = 0; x < Constants.MAP_WIDTH; x++) {
             String id = x + "" + Constants.Direction.UP.asValue();
-            ArrowView view = new ArrowView(entityModule, pos, Math.toRadians(0), id);
+            ArrowView view = new ArrowView(entityModule, pos, Math.toRadians(0));
             group.add(view.getEntity().setZIndex(0));
             arrows.put(id, view);
             pos.setX(pos.getX() + arrowSpacing);
@@ -115,7 +115,7 @@ public class BoardView extends AbstractView{
         Vector2 pos = new Vector2(Constants.MAP_POS_X  - arrowOffset, Constants.MAP_POS_Y);
         for (int y = 0; y < Constants.MAP_HEIGHT; y++){
             String id = y + "" + Constants.Direction.RIGHT.asValue();
-            ArrowView view = new ArrowView(entityModule, pos, Math.toRadians(90),id);
+            ArrowView view = new ArrowView(entityModule, pos, Math.toRadians(90));
             group.add(view.getEntity().setZIndex(0));
             arrows.put(id, view);
             pos.setY(pos.getY() + arrowSpacing);
@@ -126,7 +126,7 @@ public class BoardView extends AbstractView{
         Vector2 pos = new Vector2(Constants.MAP_POS_X, Constants.MAP_POS_Y - arrowOffset);
         for (int x = 0; x < Constants.MAP_WIDTH; x++) {
             String id = x + "" + Constants.Direction.DOWN.asValue();
-            ArrowView view = new ArrowView(entityModule, pos, Math.toRadians(180), id);
+            ArrowView view = new ArrowView(entityModule, pos, Math.toRadians(180));
             group.add(view.getEntity().setZIndex(0));
             arrows.put(id, view);
             pos.setX(pos.getX() + arrowSpacing);
@@ -138,7 +138,7 @@ public class BoardView extends AbstractView{
                 Constants.MAP_POS_Y);
         for (int y = 0; y < Constants.MAP_HEIGHT; y++){
             String id = y + "" + Constants.Direction.LEFT.asValue();
-            ArrowView view = new ArrowView(entityModule, pos, Math.toRadians(270), id);
+            ArrowView view = new ArrowView(entityModule, pos, Math.toRadians(270));
             group.add(view.getEntity().setZIndex(0));
             arrows.put(id, view);
             pos.setY(pos.getY() + arrowSpacing);
