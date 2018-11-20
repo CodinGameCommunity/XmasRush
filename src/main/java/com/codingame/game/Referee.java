@@ -101,6 +101,7 @@ public class Referee extends AbstractReferee {
         int cardsPosX = (Constants.MAP_POS_X - Constants.TILE_SIZE / 2) / 2
                 - Math.max(0, numCardsPerPlayer - numVisibleCards - 1) * Constants.CARDS_OFFSET_X / 2;
         Constants.CARD_POSITIONS.get(0).setX(cardsPosX);
+        Constants.CARD_POSITIONS.get(1).setX(Constants.SCREEN_WIDTH - cardsPosX);
 
         gameManager.setMaxTurns(maxNumTurns);
 
