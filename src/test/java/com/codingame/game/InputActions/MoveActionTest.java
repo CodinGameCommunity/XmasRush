@@ -44,16 +44,11 @@ public class MoveActionTest {
 
     @Test
     public void testActionMethods() {
+        Action.Type type = Action.Type.MOVE;
+        MoveAction action = new MoveAction(type);
         Action.Type turn = Action.Type.MOVE;
-        MoveAction action = new MoveAction(turn);
         assertFalse(action.isPassAction());
         assertTrue(action.isLegalAction(turn));
-        Constants.Direction step1 = Constants.Direction.UP;
-        Constants.Direction step2 = Constants.Direction.LEFT;
-        action.addStep(step1);
-        action.addStep(step2);
-        assertTrue(action.getStep() == step1);
-        assertTrue(action.getStep() == step2);
         turn = Action.Type.PUSH;
         assertFalse(action.isLegalAction(turn));
         assertEquals(1, action.getType().getValue());
