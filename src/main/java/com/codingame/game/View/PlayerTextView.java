@@ -10,14 +10,12 @@ import java.util.List;
 
 public class PlayerTextView extends AbstractView{
     //todo
-    private final int PLAYER_AVATAR_POS_X = 100;
     private final int PLAYER_AVATAR_POS_Y = 880;
-    private final int OPPONENT_AVATAR_POS_X = Constants.SCREEN_WIDTH - PLAYER_AVATAR_POS_X;
     private final int OPPONENT_AVATAR_POS_Y = Constants.SCREEN_HEIGHT - PLAYER_AVATAR_POS_Y + 50;
-    private List<Vector2> AVATAR_POS = Arrays.asList(new Vector2(PLAYER_AVATAR_POS_X, PLAYER_AVATAR_POS_Y),
-            new Vector2(OPPONENT_AVATAR_POS_X, OPPONENT_AVATAR_POS_Y));
+    private List<Vector2> AVATAR_POS = Arrays.asList(new Vector2(Constants.PLAYER_INFO_POS_X, PLAYER_AVATAR_POS_Y),
+            new Vector2(Constants.OPPONENT_INFO_POS_X, OPPONENT_AVATAR_POS_Y));
     private final int AVATAR_SIZE = 128;
-    private final int PLAYER_NAME_OFFSET = 40;
+    private final int PLAYER_NAME_OFFSET_Y = 40;
 
     private Player player;
     private Vector2 pos;
@@ -38,17 +36,16 @@ public class PlayerTextView extends AbstractView{
                 .setImage(player.getAvatarToken())
                 .setBaseWidth(AVATAR_SIZE)
                 .setBaseHeight(AVATAR_SIZE)
-                .setAnchorX(player.getIndex())
+                .setAnchorX(0.5)
                 .setAnchorY(1);
 
         entityModule.createText(player.getNicknameToken())
                 .setX(pos.getX())
-                .setY(pos.getY() + PLAYER_NAME_OFFSET)
+                .setY(pos.getY() + PLAYER_NAME_OFFSET_Y)
                 .setFillColor(player.getColorToken())
                 .setFontSize(40)
                 .setFontFamily("Arial Black")
-                .setAnchorX(player.getIndex())
-                .setAnchorY(0.5);
+                .setAnchor(0.5);
     }
 
     public void updateView() {}
