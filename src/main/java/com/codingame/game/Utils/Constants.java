@@ -24,16 +24,18 @@ public class Constants {
     public static final int MAP_POS_Y = SCREEN_HEIGHT / 2 - (MAP_WIDTH * TILE_SIZE) / 2
             + TILE_SIZE / 2 - TILES_OFFSET / 2 * MAP_WIDTH;
 
-    public static final int PLAYER_TILE_POS_X = 164;
-    public static final int PLAYER_TILE_POS_Y = SCREEN_HEIGHT / 2;
-    public static final int OPPONENT_TILE_POS_X = SCREEN_WIDTH - PLAYER_TILE_POS_X;
-    public static final int OPPONENT_TILE_POS_Y = SCREEN_HEIGHT - PLAYER_TILE_POS_Y;
+    public static final int PLAYER_INFO_POS_X = (MAP_POS_X - TILE_SIZE / 2) / 2;
+    public static final int OPPONENT_INFO_POS_X = SCREEN_WIDTH - PLAYER_INFO_POS_X;
 
-    public static final int CARD_WIDTH = 128;
-    public static final int CARD_HEIGHT = 256;
-    public static final int CARDS_OFFSET = 15;
-    public static final int PLAYER_CARDS_POS_X = 100 + CARD_WIDTH / 2;
-    public static final int PLAYER_CARDS_POS_Y = 25 + CARD_HEIGHT / 2;
+    public static final int PLAYER_TILE_POS_Y = 630;
+    public static final int OPPONENT_TILE_POS_Y = SCREEN_HEIGHT - PLAYER_TILE_POS_Y + 10;
+
+    public static final int CARD_WIDTH = 116;
+    public static final int CARD_HEIGHT = 157;
+    public static final int CARDS_OFFSET_X = 29;
+    public static final int CARDS_OFFSET_Y = 13;
+    public static final int PLAYER_CARDS_POS_X = 140;
+    public static final int PLAYER_CARDS_POS_Y = MAP_POS_Y - TILE_SIZE / 2 + CARD_HEIGHT / 2;
     public static final int OPPONENT_CARDS_POS_X = SCREEN_WIDTH - PLAYER_CARDS_POS_X;
     public static final int OPPONENT_CARDS_POS_Y = SCREEN_HEIGHT - PLAYER_CARDS_POS_Y;
 
@@ -67,8 +69,8 @@ public class Constants {
     );
 
     public static final List<Vector2> TILE_POSITIONS = Arrays.asList(
-            new Vector2(PLAYER_TILE_POS_X, PLAYER_TILE_POS_Y),
-            new Vector2(OPPONENT_TILE_POS_X, OPPONENT_TILE_POS_Y)
+            new Vector2(PLAYER_INFO_POS_X, PLAYER_TILE_POS_Y),
+            new Vector2(OPPONENT_INFO_POS_X, OPPONENT_TILE_POS_Y)
     );
 
     public static final List<Vector2> TILE_MODEL_POSITIONS = Arrays.asList(

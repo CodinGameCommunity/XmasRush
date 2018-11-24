@@ -44,6 +44,7 @@ public class Referee extends AbstractReferee {
     private List<PlayerModel> players = new ArrayList<>();
     private List<Map<Player, PushAction>> pushActions = new ArrayList<>();
     private Map<Player, MoveAction> moveActions = new HashMap<>();
+    private boolean passActions = false;
 
     //Score
     private final int POINTS_PER_ITEM = 1;
@@ -53,6 +54,7 @@ public class Referee extends AbstractReferee {
     //MAX_MOVE_STEPS frames per MOVE turn + (1 row frame + 1 push frame) per PUSH turn
     //+ 1 extra frame to return "Max turns reached!", if required
     private int maxNumTurns = (Constants.MAX_MOVE_STEPS + 2) * Constants.MAX_GAME_TURNS / 2 + 1;
+
 
     //League stuff
     private static int leagueLevel;
@@ -95,6 +97,13 @@ public class Referee extends AbstractReferee {
                 threeWayTiles = false;
                 break;
         }
+
+        // align the cards based on league data
+        //Constants.CARDS_OFFSET_X = (numVisibleCards - 1) * Constants.CARD_WIDTH / (numCardsPerPlayer - numVisibleCards - 1);
+        int cardsPosX = (Constants.MAP_POS_X - Constants.TILE_SIZE / 2) / 2
+                - Math.max(0, numCardsPerPlayer - numVisibleCards - 1) * Constants.CARDS_OFFSET_X / 2;
+        Constants.CARD_POSITIONS.get(0).setX(cardsPosX);
+        Constants.CARD_POSITIONS.get(1).setX(Constants.SCREEN_WIDTH - cardsPosX);
 
         gameManager.setMaxTurns(maxNumTurns);
 
@@ -307,7 +316,7 @@ public class Referee extends AbstractReferee {
 
     //Player actions
     private boolean hasActions() {
-        return !pushActions.isEmpty() || !moveActions.isEmpty();
+        return !pushActions.isEmpty() || !moveActions.isEmpty() || passActions;
     }
 
     private void getPlayerActions() {
@@ -328,10 +337,14 @@ public class Referee extends AbstractReferee {
                     } else {
                         if (!action.isPassAction())
                             moveActions.put(player, (MoveAction) action);
+                        else {
+                            passActions = true;
+                            gameManager.addToGameSummary(String.format("%s passed", player.getNicknameToken()));
+                        }
                     }
                 } else
                     throw new InvalidAction(String.format("can't \"%s\" while expecting a %s action", action.getType(), turnType));
-            }catch (InvalidAction e) {
+            } catch (InvalidAction e) {
                 if (e.isFatal()) {
                     player.deactivate(String.format("%s: invalid input", player.getNicknameToken()));
                     forceGameEnd();
@@ -377,6 +390,7 @@ public class Referee extends AbstractReferee {
                 doMoveAction(action);
             }
             moveActions.values().removeIf(MoveAction::isEmpty);
+            passActions = false;
         }
     }
 
@@ -404,11 +418,12 @@ public class Referee extends AbstractReferee {
 
     //Push actions
     private void doPushAction(Map<Player, PushAction> actions) {
+        for (Map.Entry<Player, PushAction> action : actions.entrySet())
+            //push action update: action and player id
+            updateObserver(new AbstractMap.SimpleEntry<>(action.getValue().toString(), action.getKey().getIndex()));
+
         if (!areValidPushActions(new ArrayList(actions.values()))) {
             gameManager.addToGameSummary(GameManager.formatErrorMessage("Both players tried to push the same line. Nothing happens!"));
-            for (Map.Entry<Player, PushAction> action : actions.entrySet())
-                //invalid push action update
-                updateObserver(new AbstractMap.SimpleEntry<>(action.getValue().toString(), null));
             return;
         }
         for (Map.Entry<Player, PushAction> action : actions.entrySet()) {
@@ -425,8 +440,6 @@ public class Referee extends AbstractReferee {
             } else{
                 gameManager.addToGameSummary(String.format("%s pushed column %d %s", player.getNicknameToken(), line, direction));
             }
-            //valid push action update
-            updateObserver(new AbstractMap.SimpleEntry<>(pushAction.toString(), player.getIndex()));
         }
     }
 
@@ -474,7 +487,6 @@ public class Referee extends AbstractReferee {
                 player.setScore(-1);
             }
         }
-
         gameManager.endGame();
     }
 
