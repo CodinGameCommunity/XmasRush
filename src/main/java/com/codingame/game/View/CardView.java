@@ -3,6 +3,7 @@ package com.codingame.game.View;
 import com.codingame.game.Model.CardModel;
 import com.codingame.game.Model.Item;
 import com.codingame.game.Model.StateUpdates.CardPositionUpdate;
+import com.codingame.game.Model.StateUpdates.CardZIndexUpdate;
 import com.codingame.game.Model.StateUpdates.FlipCardUpdate;
 import com.codingame.game.Model.StateUpdates.RemoveCardUpdate;
 import com.codingame.game.Utils.Constants;
@@ -72,6 +73,10 @@ public class CardView extends AbstractView {
         entityModule.commitEntityState(0.5, group);
     }
 
+    private void updateZIndex(int zIndex) {
+        group.setZIndex(zIndex);
+    }
+
     private void removeCardView() {
         group.setAlpha(0);
         group.setZIndex(group.getZIndex() - 1);
@@ -87,6 +92,8 @@ public class CardView extends AbstractView {
             updatePosition();
         } else if (update instanceof RemoveCardUpdate) {
             removeCardView();
+        } else if (update instanceof CardZIndexUpdate) {
+            updateZIndex(((CardZIndexUpdate)update).getZIndex());
         }
     }
 }

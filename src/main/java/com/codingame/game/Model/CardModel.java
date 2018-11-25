@@ -1,6 +1,7 @@
 package com.codingame.game.Model;
 
 import com.codingame.game.Model.StateUpdates.CardPositionUpdate;
+import com.codingame.game.Model.StateUpdates.CardZIndexUpdate;
 import com.codingame.game.Model.StateUpdates.FlipCardUpdate;
 import com.codingame.game.Model.StateUpdates.RemoveCardUpdate;
 import com.codingame.game.Utils.Constants;
@@ -30,6 +31,10 @@ public class CardModel extends AbstractModel {
 
     public void updatePosition() {
         updateState(new CardPositionUpdate());
+    }
+
+    public void updateZIndex(int zIndex) {
+        updateState(new CardZIndexUpdate(zIndex));
     }
 
     public void remove() {

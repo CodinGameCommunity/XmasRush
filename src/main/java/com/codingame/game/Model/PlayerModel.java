@@ -50,7 +50,7 @@ public class PlayerModel extends MovingModel {
             //check if item belongs to the player
             assert card.getItem().getPlayerId() == id;
             hiddenCards.add(card);
-            cardPos.setX(cardPos.getX() + orientation * Constants.CARDS_OFFSET_X);
+            cardPos.setX(cardPos.getX());
         }
     }
 
@@ -98,17 +98,13 @@ public class PlayerModel extends MovingModel {
         }
         int orientation = (id == 0) ? 1 : -1;
         Vector2 cardPos = new Vector2(Constants.CARD_POSITIONS.get(id));
-
-        // if there are no hidden cards, no need to offset the visible ones
-        if (!hiddenCards.isEmpty()) {
-            cardPos.setY(cardPos.getY() + orientation * (Constants.CARD_HEIGHT + Constants.CARDS_OFFSET_Y));
-        }
-
+        cardPos.setX(cardPos.getX() + orientation * (Constants.CARD_WIDTH + Constants.CARDS_OFFSET));
         for (int i = 0; i < visibleCards.size(); i++) {
             CardModel card = visibleCards.get(i);
             card.setPos(cardPos);
             card.updatePosition();
-            cardPos.setX(cardPos.getX() + orientation * Constants.CARD_WIDTH);
+            cardPos.setX(cardPos.getX() + orientation * (int)(Constants.CARD_WIDTH / 1.2));
+            card.updateZIndex(i);
         }
     }
 
