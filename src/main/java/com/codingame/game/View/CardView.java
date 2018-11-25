@@ -64,7 +64,7 @@ public class CardView extends AbstractView {
         front.setVisible(!front.isVisible());
         back.setVisible(!back.isVisible());
         item.setVisible(!item.isVisible());
-        entityModule.commitEntityState(0, front, item);
+        entityModule.commitEntityState(0, front, back, item);
     }
 
     private void updatePosition() {
