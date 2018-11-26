@@ -46,24 +46,24 @@ public class ViewController {
     }
 
     private void createBackground() {
-        entityModule.createRectangle()
+        entityModule.createSprite()
+                .setImage("background.jpg")
+                .setBaseWidth(Constants.SCREEN_WIDTH)
+                .setBaseHeight(Constants.SCREEN_HEIGHT)
                 .setX(0)
                 .setY(0)
-                .setWidth(Constants.SCREEN_WIDTH)
-                .setHeight(Constants.SCREEN_HEIGHT)
-                .setFillColor(0x669999)
-                .setZIndex(0);
-
-        entityModule.createSprite()
-                .setImage("logoCG.png")
-                .setX(200)
-                .setY(Constants.SCREEN_HEIGHT - 80)
-                .setAnchor(0.5);
+                .setScale(1)
+                .setAnchor(0)
+                .setZIndex(-1);
     }
 
     public void createCardView(CardModel card) {
-        CardView cardView = new CardView(entityModule, card);
-        views.add(cardView);
+        views.add(board.createCardView(card));
+    }
+
+    public void createCardDeckView(Player player) {
+        CardDeckView deckView = new CardDeckView(entityModule, player.getPlayer());
+        views.add(deckView);
     }
 
     public void createTileView(TileModel tile) {

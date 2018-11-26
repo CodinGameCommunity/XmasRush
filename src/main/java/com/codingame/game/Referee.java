@@ -51,10 +51,9 @@ public class Referee extends AbstractReferee {
     //Game turns
     public static int gameTurnsLeft = Constants.MAX_GAME_TURNS;
     //Number of turns required to accommodate the worst case scenario:
-    //MAX_MOVE_STEPS frames per MOVE turn + (1 row frame + 1 push frame) per PUSH turn
+    //max move step frames per MOVE turn + (1 row frame + 1 push frame) per PUSH turn
     //+ 1 extra frame to return "Max turns reached!", if required
     private int maxNumTurns = (Constants.MAX_MOVE_STEPS + 2) * Constants.MAX_GAME_TURNS / 2 + 1;
-
 
     //League stuff
     private static int leagueLevel;
@@ -98,13 +97,6 @@ public class Referee extends AbstractReferee {
                 break;
         }
 
-        // align the cards based on league data
-        //Constants.CARDS_OFFSET_X = (numVisibleCards - 1) * Constants.CARD_WIDTH / (numCardsPerPlayer - numVisibleCards - 1);
-        int cardsPosX = (Constants.MAP_POS_X - Constants.TILE_SIZE / 2) / 2
-                - Math.max(0, numCardsPerPlayer - numVisibleCards - 1) * Constants.CARDS_OFFSET_X / 2;
-        Constants.CARD_POSITIONS.get(0).setX(cardsPosX);
-        Constants.CARD_POSITIONS.get(1).setX(Constants.SCREEN_WIDTH - cardsPosX);
-
         gameManager.setMaxTurns(maxNumTurns);
 
         createBoard();
@@ -138,6 +130,7 @@ public class Referee extends AbstractReferee {
             PlayerModel playerModel = player.createPlayer();
             players.add(playerModel);
 
+            playerModel.setNumVisibleCards(numVisibleCards);
             playerModel.setCards(itemList.get(player.getIndex()));
             playerModel.setTile(tileList.get(player.getIndex()));
         }
@@ -214,12 +207,14 @@ public class Referee extends AbstractReferee {
             view.createPlayerView(player);
             PlayerModel model = player.getPlayer();
 
-            for (CardModel card : model.getCards()) {
+            for (CardModel card : model.getCards())
                 view.createCardView(card);
-            }
-            model.flipCards(numVisibleCards);
+
+            model.flipCards();
 
             view.createTileView(model.getTile());
+
+            view.createCardDeckView(player);
         }
     }
 
@@ -268,7 +263,7 @@ public class Referee extends AbstractReferee {
     private void flipCards() {
         gameManager.getActivePlayers().stream()
                 .forEach(player -> player.getPlayer()
-                        .flipCards(numVisibleCards));
+                        .flipCards());
     }
 
     //Player Inputs
@@ -406,7 +401,7 @@ public class Referee extends AbstractReferee {
         }
         catch (InvalidAction e) {
             moveAction.setEmpty();
-            gameManager.addToGameSummary(GameManager.formatErrorMessage(String.format("%s: invalid input - %s", player.getNicknameToken(), e.getMessage())));
+            gameManager.addToGameSummary(GameManager.formatErrorMessage(String.format("%s: invalid input - MOVE %s", player.getNicknameToken(), e.getMessage())));
         }
     }
 
@@ -494,7 +489,7 @@ public class Referee extends AbstractReferee {
         for (Player player : gameManager.getActivePlayers()) {
             PlayerModel playerModel = players.get(player.getIndex());
             TileModel tile = gameBoard.getTile(playerModel.getPos());
-            if (tile.hasItem() && playerModel.removeItemCard(tile.getItem())) {
+            if (tile.hasItem() && playerModel.removeCard(tile.getItem())) {
                 gameBoard.removeItem(tile);
                 player.setScore(player.getScore() + POINTS_PER_ITEM);
                 gameManager.addToGameSummary(GameManager.formatSuccessMessage(String.format("%s completed a quest card", player.getNicknameToken())));

@@ -8,15 +8,26 @@ import java.util.*;
 
 public class PlayerModel extends MovingModel {
     public final int id;
+    public final int orientation;
     private final Vector2 tilePos;
     private final Stack<CardModel> hiddenCards = new Stack<>();
     private final List<CardModel> visibleCards = new ArrayList<>();
+
+    private final int maxNumCards = 3; //max number of cards to show
+    private int numVisibleCards;
+    private final Vector2 deckPosition;
+    private final Vector2 cardPosition;
+    //cards overlapping each other
+    private int verticalOffset = (int)(Constants.CARD_HEIGHT / 1.45);
 
     private TileModel tile;
 
     public PlayerModel(int id) {
         super(Constants.PLAYER_POSITIONS.get(id));
         this.id = id;
+        orientation = (id == 0) ? 1 : -1;
+        deckPosition = new Vector2(Constants.DECK_POSITIONS.get(id));
+        cardPosition = new Vector2(Constants.CARD_POSITIONS.get(id));
         tilePos = Constants.TILE_MODEL_POSITIONS.get(id);
     }
 
@@ -42,15 +53,13 @@ public class PlayerModel extends MovingModel {
         //check if all items are unique
         assert itemList.size() == new HashSet<>(itemList).size();
 
-        int orientation = (id == 0) ? 1 : -1;
-        Vector2 cardPos = new Vector2(Constants.CARD_POSITIONS.get(id));
+        Vector2 cardPos = new Vector2(deckPosition);
 
-        for (int i = 0; i < itemList.size(); i++) {
-            CardModel card = new CardModel(itemList.get(i), cardPos);
+        for (Item item : itemList) {
+             CardModel card = new CardModel(item, cardPos);
             //check if item belongs to the player
             assert card.getItem().getPlayerId() == id;
             hiddenCards.add(card);
-            cardPos.setX(cardPos.getX() + orientation * Constants.CARDS_OFFSET_X);
         }
     }
 
@@ -58,25 +67,39 @@ public class PlayerModel extends MovingModel {
         return Collections.unmodifiableList(hiddenCards);
     }
 
-    private void removeCard(CardModel card) {
-        assert visibleCards.contains(card);
-        card.remove();
-        visibleCards.remove(card);
+    public void setNumVisibleCards(int numVisibleCards) {
+        this.numVisibleCards = (numVisibleCards <= maxNumCards) ? numVisibleCards : maxNumCards;
+    }
+
+    private void adjustCardPosition() {
+        Vector2 cardPos = new Vector2(cardPosition);
+        int layer = 0;
+        for (CardModel card : visibleCards) {
+            card.move(cardPos);
+            layer++;
+            card.setCardLayer(layer);
+            cardPos.setY(cardPos.getY() + orientation * verticalOffset);
+        }
     }
 
     private int getNumCards() {
         return hiddenCards.size() + visibleCards.size();
     }
 
+    public int getNumDeckCards() {
+        return hiddenCards.size();
+    }
+
     public int getNumQuestCards() {
         return visibleCards.size();
     }
 
-    public boolean removeItemCard(Item item){
+    public boolean removeCard(Item item){
         for (CardModel card : visibleCards) {
             if (item.equals(card.getItem())) {
-                removeCard(card);
-                adjustCardsPosition();
+                card.remove();
+                visibleCards.remove(card);
+                adjustCardPosition();
                 return true;
             }
         }
@@ -88,34 +111,14 @@ public class PlayerModel extends MovingModel {
             CardModel card = hiddenCards.pop();
             card.flip();
             visibleCards.add(card);
-            adjustCardsPosition();
+            adjustCardPosition();
         }
     }
 
-    private void adjustCardsPosition() {
-        if (visibleCards.isEmpty()) {
-            return;
-        }
-        int orientation = (id == 0) ? 1 : -1;
-        Vector2 cardPos = new Vector2(Constants.CARD_POSITIONS.get(id));
-
-        // if there are no hidden cards, no need to offset the visible ones
-        if (!hiddenCards.isEmpty()) {
-            cardPos.setY(cardPos.getY() + orientation * (Constants.CARD_HEIGHT + Constants.CARDS_OFFSET_Y));
-        }
-
-        for (int i = 0; i < visibleCards.size(); i++) {
-            CardModel card = visibleCards.get(i);
-            card.setPos(cardPos);
-            card.updatePosition();
-            cardPos.setX(cardPos.getX() + orientation * Constants.CARD_WIDTH);
-        }
-    }
-
-    //Flip the number of cards required to have the specified number of visible cards (numCards)
-    public void flipCards(int numCards) {
-        if (visibleCards.size() < numCards) {
-            int availableCards = Math.min(numCards - visibleCards.size(), hiddenCards.size());
+    //Flip the number of cards required to have the specified number of visible cards
+    public void flipCards() {
+        if (visibleCards.size() < numVisibleCards) {
+            int availableCards = Math.min(numVisibleCards - visibleCards.size(), hiddenCards.size());
             for (int i = 0; i < availableCards; i++) flipCard();
         }
     }
