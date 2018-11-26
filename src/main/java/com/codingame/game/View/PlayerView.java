@@ -17,14 +17,14 @@ public class PlayerView extends MovingView{
         this.player = player;
         this.model = model;
         model.addObserver(this);
+
         createPlayerView();
     }
 
-    public void createPlayerView() {
+    private void createPlayerView() {
         sprite = entityModule.createSprite()
                 .setImage(String.format("agent_%d.png", player.getIndex()))
-                .setAnchor(0.5)
-                .setZIndex(0);
+                .setAnchor(0.5);
     }
 
     public void updateView(){

@@ -2,13 +2,11 @@ package com.codingame.game.View;
 
 import com.codingame.game.Model.Item;
 import com.codingame.game.Model.StateUpdates.RemoveItemUpdate;
+import com.codingame.game.Model.StateUpdates.ShowFrameUpdate;
 import com.codingame.game.Model.TileModel;
 import com.codingame.game.Utils.Constants;
 import com.codingame.game.Utils.Vector2;
-import com.codingame.gameengine.module.entities.Entity;
-import com.codingame.gameengine.module.entities.GraphicEntityModule;
-import com.codingame.gameengine.module.entities.Group;
-import com.codingame.gameengine.module.entities.Sprite;
+import com.codingame.gameengine.module.entities.*;
 import com.codingame.view.tooltip.TooltipModule;
 
 import java.util.HashMap;
@@ -19,12 +17,13 @@ public class TileView extends MovingView {
 
     private Group group;
 
+    private Sprite decors;
+    private Sprite directions;
     private Sprite background;
-    private Sprite up;
-    private Sprite right;
-    private Sprite down;
-    private Sprite left;
+    private Sprite frame;
     private Sprite item;
+
+    private boolean showFrame = false;
 
     private Item tileItem;
     private TileModel model;
@@ -35,68 +34,43 @@ public class TileView extends MovingView {
         this.model = tile;
         this.tileItem = model.getItem();
         tile.addObserver(this);
+
         createTileView();
         tooltipModule.registerEntity(group.getId(), new HashMap<>());
     }
 
     private void createTileView() {
+        decors = entityModule.createSprite()
+                .setImage(String.format("decors_%s.png", model.getPattern()))
+                .setBaseWidth(Constants.TILE_SIZE)
+                .setBaseHeight(Constants.TILE_SIZE)
+                .setAnchor(0.5)
+                .setZIndex(1);
+        directions = entityModule.createSprite()
+                .setImage(String.format("paths_%s.png", model.getPattern()))
+                .setBaseWidth(Constants.TILE_SIZE)
+                .setBaseHeight(Constants.TILE_SIZE)
+                .setAnchor(0.5)
+                .setZIndex(2);
+        frame = entityModule.createSprite()
+                .setImage("frame.png")
+                .setBaseWidth(Constants.TILE_SIZE)
+                .setBaseHeight(Constants.TILE_SIZE)
+                .setAnchor(0.5)
+                .setZIndex(2)
+                .setVisible(false);
         background = entityModule.createSprite()
                 .setImage("tile_background.png")
+                .setBaseWidth(Constants.TILE_SIZE)
+                .setBaseHeight(Constants.TILE_SIZE)
+                .setAlpha(0.3)
                 .setAnchor(0.5)
                 .setZIndex(0);
         group = entityModule.createGroup()
                 .setScale(1);
-        group.add(background);
+        group.add(decors, directions, frame, background);
 
-        addDirections();
         addItem();
-    }
-
-    private void addDirections() {
-        if (model.hasDirection(Constants.Direction.UP))
-            addUp();
-        if (model.hasDirection(Constants.Direction.RIGHT))
-            addRight();
-        if (model.hasDirection(Constants.Direction.DOWN))
-            addDown();
-        if (model.hasDirection(Constants.Direction.LEFT))
-            addLeft();
-    }
-
-    private void addUp() {
-        up = entityModule.createSprite()
-                .setImage("tile_path.png")
-                .setAnchor(0.5)
-                .setRotation(Math.toRadians(0))
-                .setZIndex(1);
-        group.add(up);
-    }
-
-    private void addRight() {
-        right = entityModule.createSprite()
-                .setImage("tile_path.png")
-                .setAnchor(0.5)
-                .setRotation(Math.toRadians(90))
-                .setZIndex(1);
-        group.add(right);
-    }
-
-    private void addDown() {
-        down = entityModule.createSprite()
-                .setImage("tile_path.png")
-                .setAnchor(0.5)
-                .setRotation(Math.toRadians(180))
-                .setZIndex(1);
-        group.add(down);
-    }
-
-    private void addLeft() {
-        left = entityModule.createSprite()
-                .setImage("tile_path.png")
-                .setAnchor(0.5)
-                .setRotation(Math.toRadians(270))
-                .setZIndex(1);
-        group.add(left);
     }
 
     private void addItem() {
@@ -118,9 +92,24 @@ public class TileView extends MovingView {
 
     public void updateView(){
         if (model.getPlayerId() != null) {
+            //player tile is always on top of everything
+            group.setZIndex(4);
+            //always show frame for player's tiles
+            frame.setVisible(true);
+            entityModule.commitEntityState(0, frame);
+
             Vector2 pos = Constants.TILE_POSITIONS.get(model.getPlayerId());
             group.setX(pos.getX()).setY(pos.getY());
         } else {
+            //only show frames for moving map tiles
+            if (showFrame) {
+                frame.setVisible(true);
+                entityModule.commitEntityState(0, frame);
+                //get pushed tile zIndex back
+                group.setZIndex(1);
+                frame.setVisible(false);
+                showFrame = false;
+            }
             setMapPos(group, model.getPos());
         }
         tooltipModule.updateExtraTooltipText(group, model.getPos().toTooltip());
@@ -130,6 +119,8 @@ public class TileView extends MovingView {
         super.update(model, update);
         if (update instanceof RemoveItemUpdate)
             removeItem();
+        else if (update instanceof ShowFrameUpdate)
+            showFrame = true;
     }
 
     public Entity getEntity() {

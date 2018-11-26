@@ -90,37 +90,71 @@ public class PlayerModelTest {
         PlayerModel player = new PlayerModel(id);
         Item item1 = new Item("BOOK", id);
         Item item2 = new Item("POTION", id);
-        List<Item> itemList = new ArrayList<>();
-        itemList.addAll(Arrays.asList(item1, item2));
+        int numVisibleCards = 1;
+        List<Item> itemList = Arrays.asList(item1, item2);
         player.setCards(itemList);
-        assertFalse(player.removeItemCard(item1));
-        assertFalse(player.removeItemCard(item2));
-        player.flipCards(1);
-        assertTrue(player.removeItemCard(item2));
-        assertFalse(player.removeItemCard(item2));
-        player.flipCards(1);
-        assertTrue(player.removeItemCard(item1));
-        assertFalse(player.removeItemCard(item1));
+        assertFalse(player.removeCard(item1));
+        assertFalse(player.removeCard(item2));
+        player.setNumVisibleCards(numVisibleCards);
+        player.flipCards();
+        assertTrue(player.removeCard(item2));
+        assertFalse(player.removeCard(item2));
+        player.flipCards();
+        assertTrue(player.removeCard(item1));
+        assertFalse(player.removeCard(item1));
+    }
+
+    @Test
+    public void testSetNumVisibleCards() {
+        int id = 1;
+        PlayerModel player = new PlayerModel(id);
+        Item item1 = new Item("BOOK", id);
+        Item item2 = new Item("POTION", id);
+        Item item3 = new Item("ARROW", id);
+        Item item4 = new Item("FISH", id);
+        int numVisibleCards1 = 1;
+        int numVisibleCards2 = 3;
+        int numVisibleCards3 = 4;
+        List<Item> itemList = Arrays.asList(item1, item2, item3, item4);
+        player.setCards(itemList);
+        player.setNumVisibleCards(numVisibleCards1);
+        player.flipCards();
+        assertEquals(1, player.getNumQuestCards());
+        assertEquals(3, player.getNumDeckCards());
+        player.setNumVisibleCards(numVisibleCards2);
+        player.flipCards();
+        assertEquals(3, player.getNumQuestCards());
+        assertEquals(1, player.getNumDeckCards());
+        player.setNumVisibleCards(numVisibleCards3);
+        player.flipCards();
+        assertEquals(3, player.getNumQuestCards());
+        assertEquals(1, player.getNumDeckCards());
     }
 
     @Test
     public void testFlipCards() {
         int id = 1;
         PlayerModel player = new PlayerModel(id);
-        Item item1 = new Item("BOOK", 1);
-        Item item2 = new Item("POTION", 1);
-        Item item3 = new Item("ARROW", 1);
-        Item item4 = new Item("FISH", 1);
-        List<Item> itemList = new ArrayList<>();
-        itemList.addAll(Arrays.asList(item1, item2, item3, item4));
-        player.setCards(itemList);
+        Item item1 = new Item("BOOK", id);
+        Item item2 = new Item("POTION", id);
+        Item item3 = new Item("ARROW", id);
+        Item item4 = new Item("FISH", id);
+        int numVisibleCards = 3;
+        List<Item> itemList = Arrays.asList(item1, item2, item3, item4);
+        player.flipCards(); // shall not produce errors
         assertEquals(0, player.getNumQuestCards());
-        player.flipCards(1);
-        assertEquals(1, player.getNumQuestCards());
-        player.flipCards(2);
-        assertEquals(2, player.getNumQuestCards());
-        player.flipCards(3);
+        assertEquals(0, player.getNumDeckCards());
+        player.setCards(itemList);
+        player.flipCards();
+        assertEquals(0, player.getNumQuestCards());
+        assertEquals(4, player.getNumDeckCards());
+        player.setNumVisibleCards(numVisibleCards);
+        player.flipCards();
         assertEquals(3, player.getNumQuestCards());
+        assertEquals(1, player.getNumDeckCards());
+        player.flipCards();
+        assertEquals(3, player.getNumQuestCards());
+        assertEquals(1, player.getNumDeckCards());
     }
 
     @Test

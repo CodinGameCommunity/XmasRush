@@ -1,6 +1,6 @@
 package com.codingame.game.View;
 
-
+import com.codingame.game.Model.CardModel;
 import com.codingame.game.Model.TileModel;
 import com.codingame.game.Player;
 import com.codingame.game.Utils.Constants;
@@ -8,7 +8,6 @@ import com.codingame.game.Utils.Vector2;
 import com.codingame.gameengine.module.entities.GraphicEntityModule;
 import com.codingame.view.tooltip.TooltipModule;
 import com.codingame.gameengine.module.entities.Group;
-
 
 import java.util.*;
 
@@ -24,6 +23,7 @@ public class BoardView extends AbstractView{
 
     List<TileView> tiles;
     List<PlayerView> players;
+    List<CardView> cards;
     Map<String, ArrowView> arrows;
 
     List<AbstractMap.SimpleEntry<String, Integer>> arrowsToShow = new ArrayList<>();
@@ -35,6 +35,7 @@ public class BoardView extends AbstractView{
 
         tiles = new ArrayList<>();
         players = new ArrayList<>();
+        cards = new ArrayList<>();
         arrows = new HashMap<>();
 
         this.group = this.entityModule.createGroup()
@@ -49,16 +50,24 @@ public class BoardView extends AbstractView{
 
     public TileView createTileView(TileModel tile) {
         TileView tileView = new TileView(entityModule, tooltipModule, tile);
-        group.add(tileView.getEntity().setZIndex(0));
+        group.add(tileView.getEntity().setZIndex(1));
         tiles.add(tileView);
         return tileView;
     }
 
     public PlayerView createPlayerView(Player player) {
         PlayerView playerView = new PlayerView(entityModule, player, player.getPlayer());
-        group.add(playerView.getEntity().setZIndex(1));
+        group.add(playerView.getEntity().setZIndex(2));
         players.add(playerView);
         return playerView;
+    }
+
+    public CardView createCardView(CardModel card) {
+        CardView cardView = new CardView(entityModule, card);
+        //cards are always below tiles
+        group.add(cardView.getEntity().setZIndex(0));
+        cards.add(cardView);
+        return cardView;
     }
 
     public void updateView() {
@@ -67,6 +76,7 @@ public class BoardView extends AbstractView{
         arrowsToHide.clear();
 
         if (arrowsToShow.size() == 2 && isSamePushAction())
+            //show two arrows pushing the same line
             showArrow(new AbstractMap.SimpleEntry<>(arrowsToShow.get(0).getKey(), 2));
         else
             arrowsToShow.stream().forEach(arrow -> showArrow(arrow));
@@ -92,14 +102,14 @@ public class BoardView extends AbstractView{
         arrowsToShow.add(action);
     }
 
-    public void createArrows() {
+    private void createArrows() {
         createUpArrows();
         createRightArrows();
         createDownArrows();
         createLeftArrows();
     }
 
-    public void createUpArrows() {
+    private void createUpArrows() {
         Vector2 pos = new Vector2(Constants.MAP_POS_X,
                 Constants.MAP_POS_Y + arrowSpacing * (Constants.MAP_HEIGHT - 1) + arrowOffset);
         for (int x = 0; x < Constants.MAP_WIDTH; x++) {
@@ -111,7 +121,7 @@ public class BoardView extends AbstractView{
         }
     }
 
-    public void createRightArrows(){
+    private void createRightArrows(){
         Vector2 pos = new Vector2(Constants.MAP_POS_X  - arrowOffset, Constants.MAP_POS_Y);
         for (int y = 0; y < Constants.MAP_HEIGHT; y++){
             String id = y + "" + Constants.Direction.RIGHT.asValue();
@@ -122,7 +132,7 @@ public class BoardView extends AbstractView{
         }
     }
 
-    public void createDownArrows() {
+    private void createDownArrows() {
         Vector2 pos = new Vector2(Constants.MAP_POS_X, Constants.MAP_POS_Y - arrowOffset);
         for (int x = 0; x < Constants.MAP_WIDTH; x++) {
             String id = x + "" + Constants.Direction.DOWN.asValue();
@@ -133,7 +143,7 @@ public class BoardView extends AbstractView{
         }
     }
 
-    public void createLeftArrows(){
+    private void createLeftArrows(){
         Vector2 pos = new Vector2(Constants.MAP_POS_X + arrowSpacing * (Constants.MAP_WIDTH - 1) + arrowOffset,
                 Constants.MAP_POS_Y);
         for (int y = 0; y < Constants.MAP_HEIGHT; y++){
