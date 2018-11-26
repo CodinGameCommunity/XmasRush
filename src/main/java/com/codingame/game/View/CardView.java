@@ -33,15 +33,15 @@ public class CardView extends AbstractView {
     public void createCardView() {
         back = entityModule.createSprite()
                 .setImage(String.format("cardBack_%d.png", cardItem.getPlayerId()))
-                .setBaseWidth(Constants.CARD_WIDTH)
-                .setBaseHeight(Constants.CARD_HEIGHT)
+                .setBaseWidth(Constants.CARD_SIZE)
+                .setBaseHeight(Constants.CARD_SIZE)
                 .setAnchor(0.5)
                 .setZIndex(0)
                 .setVisible(true);
         front = entityModule.createSprite()
                 .setImage("cardFront.png")
-                .setBaseWidth(Constants.CARD_WIDTH)
-                .setBaseHeight(Constants.CARD_HEIGHT)
+                .setBaseWidth(Constants.CARD_SIZE)
+                .setBaseHeight(Constants.CARD_SIZE)
                 .setAnchor(0.5)
                 .setZIndex(1)
                 .setVisible(false);

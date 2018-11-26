@@ -98,12 +98,12 @@ public class PlayerModel extends MovingModel {
         }
         int orientation = (id == 0) ? 1 : -1;
         Vector2 cardPos = new Vector2(Constants.CARD_POSITIONS.get(id));
-        cardPos.setX(cardPos.getX() + orientation * (Constants.CARD_WIDTH + Constants.CARDS_OFFSET));
+        cardPos.setX(cardPos.getX() + orientation * (Constants.CARD_SIZE + Constants.CARDS_OFFSET));
         for (int i = 0; i < visibleCards.size(); i++) {
             CardModel card = visibleCards.get(i);
             card.setPos(cardPos);
             card.updatePosition();
-            cardPos.setX(cardPos.getX() + orientation * (int)(Constants.CARD_WIDTH / 1.2));
+            cardPos.setX(cardPos.getX() + orientation * (int)(Constants.CARD_SIZE / 1.2));
             card.updateZIndex(i);
         }
     }
