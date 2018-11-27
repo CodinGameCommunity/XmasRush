@@ -56,8 +56,8 @@
     </h2>
     <div class="statement-rules-content">
       <p>
-        The game is played by 2 players on a 7x7 board with 49 square tiles. The (0,0) coordinates correspond to the top left
-        corner.
+        The game is played by 2 players on a 7x7 board with 49 square tiles. The (0,0) coordinate corresponds to the top
+        left corner.
       </p>
       <p>
         Each player has 1 tile which they can use to push a row or a column on the board, trying to make a path toward
@@ -68,7 +68,8 @@
       </p>
       <ul style="padding-top: 0;padding-bottom: 0;">
         <li>
-          The board contains square tiles with paths on them. A path can lead to one or the four directions (<const>UP</const>, <const>RIGHT</const>, <const>DOWN</const> and <const>LEFT</const>).
+          The board contains square tiles with paths on them. A path can lead to one of the four directions
+          (<const>UP</const>, <const>RIGHT</const>, <const>DOWN</const> and <const>LEFT</const>).
         </li>
         <li>
           Some tiles have items on them.
@@ -82,7 +83,8 @@
           Each quest corresponds to an item on the board.
         </li>
         <li>
-          To complete a quest, a player must move to the tile containing the corresponding item. The quest must be revealed to be able to complete it.
+          To complete a quest, a player must move to the tile containing the corresponding item. The quest must be
+          revealed to be able to complete it.
         </li>
           <!-- BEGIN level1 -->
         <li>
@@ -94,7 +96,8 @@
         background-color: rgba(124, 197, 118,.1);
         padding: 2px; display:inline-block;">
         <li>
-            For this league, each player has <const>6</const> quests to complete. At most <const>1</const> quest is revealed.
+            For this league, each player has <const>6</const> quests to complete. At most <const>1</const> quest is
+            revealed.
           </li>
             <li>
           When an item is collected, it is removed from the tile and the quest is marked as completed and removed
@@ -107,7 +110,8 @@
         background-color: rgba(124, 197, 118,.1);
         padding: 2px; display:inline-block;">
         <li>
-            For this league, each player has <const>12</const> quests to complete. At most <const>3</const> quests are revealed. They can be collected in any order.
+            For this league, each player has <const>12</const> quests to complete. At most <const>3</const> quests are
+            revealed. They can be collected in any order.
           </li>
           <li>
           A player can complete multiple quests in one turn.
@@ -116,7 +120,8 @@
           <!-- END -->
           <!-- BEGIN level4 -->
           <li>
-            For this league, each player has <const>12</const> quests to complete. At most <const>3</const> quests are revealed. They can be collected in any order.
+            For this league, each player has <const>12</const> quests to complete. At most <const>3</const> quests are
+            revealed. They can be collected in any order.
           </li>
           <li>
           A player can complete multiple quests in one turn.
@@ -163,7 +168,8 @@
       </p>
       <ul style="padding-top: 0;padding-bottom: 0;">
         <li>
-          To allow a player to move between two adjacent tiles, the tiles respective paths must connect to form a longer path. Moving to an adjacent tile counts for <const>1</const> step.
+          To allow a player to move between two adjacent tiles, the tiles' respective paths must connect to form a longer
+          path. Moving to an adjacent tile counts as <const>1</const> step.
         </li>
         <li>
           Each player can move at most <const>20</const> steps during this turn via connected paths.
@@ -250,13 +256,16 @@
       <p>
         <ul style="padding-top: 0;padding-bottom: 0;">
           <li>
-            Players don't need to finish their turn on an item to collect it. Moving over it during a movement is sufficient to complete revealed quests.
+            Players don't need to finish their turn on an item to collect it. Moving over it during a longer movement
+            sequence is sufficient to complete revealed quests.
           </li>
           <li>
-            An invalid move ends the current movement. Moving to a direction without a connected path in that direction is considered as invalid.
+            An invalid move ends the current movement. Moving to a direction without a connected path in that direction
+            is considered as invalid.
           </li>
           <li>
-            It is possible to complete a quest during a push turn. If a push command warps a player onto a quest item, the quest, if revealed, is completed and another one is revealed at the end of the turn.
+            It is possible to complete a quest during a push turn. If a push command warps a player onto a quest item,
+            the quest, if revealed, is completed and another one is revealed at the end of the turn.
           </li>
         </ul>
       </p>
@@ -413,7 +422,7 @@
         <!-- END -->
 
         <br>
-        Response time per turn ≤ <const>100</const>ms<br>
+        Response time per turn ≤ <const>50</const>ms<br>
       </div>
     </div>
   </div>
