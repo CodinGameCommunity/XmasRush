@@ -23,7 +23,8 @@ public class PlayerView extends MovingView{
 
     private void createPlayerView() {
         sprite = entityModule.createSprite()
-                .setImage(String.format("agent_%d.png", player.getIndex()))
+                .setImage(String.format("elf_%d.png", player.getIndex()))
+                .setScale(2)
                 .setAnchor(0.5);
     }
 
