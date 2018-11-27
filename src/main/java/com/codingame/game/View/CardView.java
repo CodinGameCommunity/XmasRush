@@ -37,8 +37,7 @@ public class CardView extends MovingView {
                 .setAnchor(0.5)
                 .setZIndex(0);
         item = entityModule.createSprite()
-                .setImage(String.format("items" + System.getProperty("file.separator") + "item_%s_%d.png",
-                        cardItem.getName(), cardItem.getPlayerId()))
+                .setImage(String.format("item_%s_%d", cardItem.getName(), cardItem.getPlayerId()))
                 .setAnchor(0.5)
                 .setZIndex(1);
         group = entityModule.createGroup()

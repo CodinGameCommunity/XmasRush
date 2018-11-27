@@ -97,6 +97,17 @@ public class Referee extends AbstractReferee {
                 break;
         }
 
+        entityModule.createSpriteSheetLoader()
+                .setSourceImage("items.png")
+                .setImageCount(12)
+                .setWidth(48)
+                .setHeight(48)
+                .setOrigRow(0)
+                .setOrigCol(0)
+                .setImagesPerRow(5)
+                .setName("items")
+                .load();
+
         gameManager.setMaxTurns(maxNumTurns);
 
         createBoard();

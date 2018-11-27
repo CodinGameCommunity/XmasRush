@@ -75,8 +75,7 @@ public class TileView extends MovingView {
 
     private void addItem() {
         if (tileItem != null) {
-            String itemsPath = "items" + System.getProperty("file.separator") + "item_%s_%d.png";
-            String spritePath = String.format(itemsPath, tileItem.getName(), tileItem.getPlayerId());
+            String spritePath = String.format("item_%s_%d", tileItem.getName(), tileItem.getPlayerId());
             item = entityModule.createSprite()
                 .setImage(spritePath)
                 .setAnchor(0.5)
