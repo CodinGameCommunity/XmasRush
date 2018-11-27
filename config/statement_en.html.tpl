@@ -21,9 +21,6 @@
       <!-- BEGIN level3 -->
       Welcome to the Bronze league!
       <!-- END -->
-      <!-- BEGIN level2 level3 -->
-      Summary of the new rules:
-      <!-- END -->
     </p>
     <span class="statement-league-alert-content">
       <!-- BEGIN level1 -->
@@ -31,10 +28,10 @@
       In Bronze league, all rules will be unlocked and the real challenge will begin.
       <!-- END -->
       <!-- BEGIN level2 -->
-      In Wood 1, players have 6 quest cards with 1 visible one.
+      In Wood 1, players must complete <const>6</const> quests. At most <const>1</const> quest is revealed.
       <!-- END -->
       <!-- BEGIN level3 -->
-      In Bronze, players have 12 quest cards with 3 visible ones.
+      In Bronze, players must complete <const>12</const> quests. At most <const>3</const> quests are revealed.
       <!-- END -->
     </span>
   </div>
@@ -47,7 +44,7 @@
       <span>The Goal</span>
     </h2>
     <div class="statement-goal-content">
-      Make your way to the items on the board and be the first to complete the quest cards to win!
+      Make your way to the items on the board and be the first to complete your quests!
     </div>
   </div>
 
@@ -59,11 +56,11 @@
     </h2>
     <div class="statement-rules-content">
       <p>
-        The game is played by 2 players on a 7x7 board with 49 square tiles. The (0,0) coordinate is the top left
+        The game is played by 2 players on a 7x7 board with 49 square tiles. The (0,0) coordinates correspond to the top left
         corner.
       </p>
       <p>
-        Each player has 1 tile which they can use to push rows or columns on the board, trying to make a path toward
+        Each player has 1 tile which they can use to push a row or a column on the board, trying to make a path toward
         their quest items.
       </p>
       <p>
@@ -71,22 +68,75 @@
       </p>
       <ul style="padding-top: 0;padding-bottom: 0;">
         <li>
-          The board contains square tiles with paths on them. Paths can lead to one or more directions (left, right,
-          up or down). If a player is on a tile and wants to reach an adjacent tile, then the tile the player is on
-          and the adjacent one need to have 2 opposite directions that connects them. For example, if the current tile
-          has an <b>up</b> path, then the tile directly above it needs to have a <b>down</b> path to allow a player to
-          move between them.
+          The board contains square tiles with paths on them. A path can lead to one or the four directions (<const>UP</const>, <const>RIGHT</const>, <const>DOWN</const> and <const>LEFT</const>).
         </li>
         <li>
-          Some tiles have items on them corresponding to the items on each player's quest cards.
+          Some tiles have items on them.
         </li>
+      </ul>
+      <p>
+        <b>Quest</b>
+      </p>
+      <ul style="padding-top: 0;padding-bottom: 0;">
+        <li>
+          Each quest corresponds to an item on the board.
+        </li>
+        <li>
+          To complete a quest, a player must move to the tile containing the corresponding item. The quest must be revealed to be able to complete it.
+        </li>
+          <!-- BEGIN level1 -->
+        <li>
+          For this league, each player has <const>1</const> quest to complete.
+        </li>
+          <!-- END -->
+          <!-- BEGIN level2 -->
+          <div style="color: #7cc576;
+        background-color: rgba(124, 197, 118,.1);
+        padding: 2px; display:inline-block;">
+        <li>
+            For this league, each player has <const>6</const> quests to complete. At most <const>1</const> quest is revealed.
+          </li>
+            <li>
+          When an item is collected, it is removed from the tile and the quest is marked as completed and removed
+          from the player's quest deck. After the turn ends, a new quest is revealed (if available).
+        </li>
+          </div>
+          <!-- END -->
+          <!-- BEGIN level3 -->
+          <div style="color: #7cc576;
+        background-color: rgba(124, 197, 118,.1);
+        padding: 2px; display:inline-block;">
+        <li>
+            For this league, each player has <const>12</const> quests to complete. At most <const>3</const> quests are revealed. They can be collected in any order.
+          </li>
+          <li>
+          A player can complete multiple quests in one turn.
+        </li>
+          </div>
+          <!-- END -->
+          <!-- BEGIN level4 -->
+          <li>
+            For this league, each player has <const>12</const> quests to complete. At most <const>3</const> quests are revealed. They can be collected in any order.
+          </li>
+          <li>
+          A player can complete multiple quests in one turn.
+        </li>
+          <!-- END -->
+        <!-- BEGIN level3 level4 -->
+        <li>
+          When an item is collected, it is removed from the tile and the quest is marked as completed and removed
+          from the player's quest deck. After the turn ends, a new quest is revealed (if available).
+        </li>
+        <!-- END -->
+        <!-- BEGIN level3 -->
+        <!-- END -->
       </ul>
       <p>
         <b>The game turns</b>
       </p>
       <p>
         Each game turn alternates between a <const>PUSH</const> turn and a <const>MOVE</const> turn.
-        The first turn is always <const>PUSH</const> turn.
+        The first turn is always a <const>PUSH</const> turn.
       </p>
       <p>
         <b>Rules for pushing</b>
@@ -98,11 +148,14 @@
           (<const>UP</const> or <const>DOWN</const>).
         </li>
         <li>
-          If both players push the same row or column, no matter the direction, nothing will happen.
+          If both players push the same row or column, no matter the direction, nothing happens.
         </li>
         <li>
-          If push commands intersect (one is horizontal and the other one vertical), rows will get pushed first,
-          followed by columns. Otherwise they get pushed simultaneously.
+          If push commands intersect (one is horizontal and the other one vertical), the row is pushed first,
+          followed by the column. Otherwise, they get pushed simultaneously.
+        </li>
+        <li>
+          If a player is on a tile which gets pushed out of the map, the player is wrapped on the other end of the line.
         </li>
       </ul>
       <p>
@@ -110,15 +163,10 @@
       </p>
       <ul style="padding-top: 0;padding-bottom: 0;">
         <li>
-          Each player can move at most <const>20</const> steps during this turn via connected paths. They can't move if
-          a path is not connected with another one.
+          To allow a player to move between two adjacent tiles, the tiles respective paths must connect to form a longer path. Moving to an adjacent tile counts for <const>1</const> step.
         </li>
         <li>
-          If a player lands on a tile with an item that is also visible in their cards deck, they complete that card and
-          they can continue moving.
-        </li>
-        <li>
-          If a player is on a tile which gets pushed out of the map, the player will wrap on the other end of the line.
+          Each player can move at most <const>20</const> steps during this turn via connected paths.
         </li>
       </ul>
       <p>
@@ -139,60 +187,13 @@
           <action>LEFT</action>, <action>RIGHT</action>, <action>UP</action> or <action>DOWN</action>.
         </li>
         <li>
-          <action>PASS</action>: to skip moving this turn.
+          <action>PASS</action>: to do nothing.
         </li>
       </ul>
       <p>
         A <action>MOVE</action> can contain up to <const>20</const> <var>directions</var>, each direction separated by a
         space <action>&nbsp;</action>.
       </p>
-      <p>
-        <b>Quest cards</b>
-      </p>
-      <ul style="padding-top: 0;padding-bottom: 0;">
-        <!-- BEGIN level1 -->
-        <li>
-          For this league, each player will have to collect one item on the board corresponding to their quest card (the
-          item must match exactly the one on the quest card).
-        </li>
-        <!-- END -->
-        <!-- BEGIN level2 -->
-        <li>
-          For this league, each player will have to collect 6 items on the board corresponding to their quest cards (the
-          item must match exactly the one on their visible quest card). Players have only 1 visible quest card that can
-          be collected at a time.
-        </li>
-        <!-- END -->
-        <!-- BEGIN level3 level4 -->
-        <li>
-          For this league, each player will have to collect 12 items on the board corresponding to their quest cards
-          (the items must match exactly the ones on their visible quest cards). Players have 3 visible quest cards that
-          can be collected in any order.
-        </li>
-        <!-- END -->
-        <!-- BEGIN level2 level3 level4 -->
-        <li>
-          When an item is collected, it is removed from the tile and the quest card is marked as completed and removed
-          from the player's quest deck. After the turn ends, a new quest card will be flipped (if available).
-        </li>
-        <!-- END -->
-        <!-- BEGIN level3 level4 -->
-        <li>
-          Players will be able to collect multiple items in the same turn if there are paths available to them (within
-          <const>20</const> move steps).
-        </li>
-        <!-- END -->
-        <!-- BEGIN level1 -->
-        <li>
-          Hidden quest cards will have a <const>0</const> on them in the viewer indicating there are none available.
-        </li>
-        <!-- END -->
-        <!-- BEGIN level2 level3 level4 -->
-        <li>
-          Hidden quest cards will have a number on them in the viewer indicating how many are left in the deck.
-        </li>
-        <!-- END -->
-      </ul>
     </div>
   </div>
 
@@ -204,10 +205,10 @@
       <div class="text">
         <ul style="padding-top: 0;padding-bottom: 0;">
           <li>
-            You complete all your quest cards.
+            You complete all your quests before your opponent.
           </li>
           <li>
-            After <const>150</const> turns, you complete more quest cards than your opponent.
+            After <const>150</const> turns, you complete more quests than your opponent.
           </li>
         </ul>
       </div>
@@ -228,7 +229,7 @@
             Your program provides invalid output for the active turn type.
           </li>
           <li>
-            You completed fewer quest cards than your opponent.
+            You complete fewer quests than your opponent.
           </li>
         </ul>
       </div>
@@ -243,11 +244,22 @@
       <span>Advanced Details</span>
     </h2>
     <div class="statement-expert-rules-content">
-      <div style="color: #7cc576;
-        background-color: rgba(124, 197, 118,.1);
-        padding: 2px; display:inline-block;">
-        You can see the game's source code <a href="https://github.com/CodinGameCommunity/team-6">here</a>.
-      </div>
+      <p>
+        You can see the game's source code <a href="https://github.com/CodinGameCommunity/team-6">@todo</a>.
+      </p>
+      <p>
+        <ul style="padding-top: 0;padding-bottom: 0;">
+          <li>
+            Players don't need to finish their turn on an item to collect it. Moving over it during a movement is sufficient to complete revealed quests.
+          </li>
+          <li>
+            An invalid move ends the current movement. Moving to a direction without a connected path in that direction is considered as invalid.
+          </li>
+          <li>
+            It is possible to complete a quest during a push turn. If a push command warps a player onto a quest item, the quest, if revealed, is completed and another one is revealed at the end of the turn.
+          </li>
+        </ul>
+      </p>
     </div>
   </div>
   <!-- PROTOCOL -->
@@ -277,7 +289,7 @@
         <var>playerX</var>, <var>playerY</var>, <var>playerTile</var>:
         <ul style="margin-top: 0;padding-bottom: 0;">
           <li>
-            Integer <var>numPlayerCards</var>: the total number of quest cards for a player (hidden and visible).
+            Integer <var>numPlayerCards</var>: the total number of quests for a player (hidden and revealed).
           </li>
           <li>
             Integer <var>playerX</var>: the player's <const>x</const> position on the board (the column).
@@ -289,8 +301,9 @@
             String <var>playerTile</var>: the player's tile in 4 digit format.
           </li>
         </ul>
+        <b>Note</b>: The player's input always comes <b>first</b>, the opponent's input comes <b>second</b>.
         <span class="statement-lineno">Next line</span>: Integer <var>numItems</var>: the total number of items
-        available on board and on player tiles (does not include quest cards).<br>
+        available on board and on player tiles.<br>
         <span class="statement-lineno">Next <var>numItems</var> lines</span>: <var>itemName</var>, <var>itemX</var>,
         <var>itemY</var>, <var>itemPlayerId</var>:
         <ul style="margin-top: 0;padding-bottom: 0;">
@@ -318,20 +331,19 @@
             <const>1</const>: a <const>MOVE</const> turn.
           </li>
         </ul>
-        <span class="statement-lineno">Next line</span>: Integer <var>numQuests</var>: the total number of visible quest
-        cards for both players.<br>
+        <span class="statement-lineno">Next line</span>: Integer <var>numQuests</var>: the total number of revealed quests
+       for both players.<br>
         <span class="statement-lineno">Next <var>numQuests</var> lines</span>: <var>questItemName</var>,
         <var>questPlayerId</var>:
         <ul style="margin-top: 0;padding-bottom: 0;">
           <li>
-            <const>questItemName</const>: the item's name.
+            <var>questItemName</var>: the item's name.
           </li>
           <li>
-            <const>questPlayerId</const>: the id of the player the card belongs to.
+            <var>questPlayerId</var>: the id of the player the quest belongs to.
           </li>
         </ul>
-        <b>Note</b>: The player's input always comes <b>first</b>, the opponent's input comes <b>second</b>. Therefore,
-        the player's input will always have id <b>0</b> and the opponent's <b>1</b>.
+        <b>Note</b>: The player's id is always <const>0</const> and the opponent's <const>1</const>.
       </div>
     </div>
 
@@ -341,13 +353,12 @@
       <div class="text">
         <ul style="margin-top: 0;margin-bottom: 0;padding-bottom: 0;">
           <li>
-            <action>PUSH</action> <var>id</var> <var>direction</var> where <const>id</const> can be <action>0</action>,
-            <action>1</action>, <action>2</action>, <action>3</action>, <action>4</action>, <action>5</action> or
-            <action>6</action> and <const>direction</const> <action>UP</action>, <action>DOWN</action>,
+            <action>PUSH</action> <var>id</var> <var>direction</var> where <const>id</const> is between <action>0</action> 
+            and <action>6</action>, and <const>direction</const> can be <action>UP</action>, <action>DOWN</action>,
             <action>LEFT</action> or <action>RIGHT</action>.
           </li>
         </ul>
-        Example: <action>PUSH 3 UP</action>.
+        Example: <action>PUSH 3 UP</action> will push the third column upwards.
       </div>
       <div class="title" style="padding-bottom: 0;">Output for one MOVE game turn</div>
 	  <div class="text">
@@ -362,7 +373,7 @@
         </ul>
         A <action>MOVE</action> can contain up to <const>20</const> <var>directions</var>, each direction separated by a
         space <action>&nbsp;</action>.<br>
-        Example: <action>MOVE DOWN</action> or <action>MOVE LEFT UP RIGHT</action> or <action>PASS</action>.
+        Example: <action>MOVE LEFT UP RIGHT</action> will make the player move left, then up, then right.
       </div>
     </div>
 
@@ -378,15 +389,29 @@
         <const>0</const> ≤ <var>numQuests</var> ≤ <const>2</const><br>
         <!-- END -->
         <!-- BEGIN level2 -->
-        <const>0</const> ≤ <var>numPlayerCards</var> ≤ <const>6</const><br>
-        <const>0</const> ≤ <var>numItems</var> ≤ <const>12</const><br>
-        <const>0</const> ≤ <var>numQuests</var> ≤ <const>2</const><br>
+        <div style="color: #7cc576;
+        background-color: rgba(124, 197, 118,.1);
+        padding: 2px; display:inline-block;">
+          <const>0</const> ≤ <var>numPlayerCards</var> ≤ <const>6</const><br>
+          <const>0</const> ≤ <var>numItems</var> ≤ <const>12</const><br>
+          <const>0</const> ≤ <var>numQuests</var> ≤ <const>2</const><br>
+        </div>
         <!-- END -->
-        <!-- BEGIN level3 level4 -->
+        <!-- BEGIN level3 -->
+        <div style="color: #7cc576;
+        background-color: rgba(124, 197, 118,.1);
+        padding: 2px; display:inline-block;">
+          <const>0</const> ≤ <var>numPlayerCards</var> ≤ <const>12</const><br>
+          <const>0</const> ≤ <var>numItems</var> ≤ <const>24</const><br>
+          <const>0</const> ≤ <var>numQuests</var> ≤ <const>6</const><br>
+        </div>
+        <!-- END -->
+        <!-- BEGIN level4 -->
         <const>0</const> ≤ <var>numPlayerCards</var> ≤ <const>12</const><br>
         <const>0</const> ≤ <var>numItems</var> ≤ <const>24</const><br>
         <const>0</const> ≤ <var>numQuests</var> ≤ <const>6</const><br>
         <!-- END -->
+
         <br>
         Response time per turn ≤ <const>100</const>ms<br>
       </div>
@@ -408,10 +433,10 @@
       The extra rules available in higher leagues are:
       <ul style="margin-top: 0;padding-bottom: 0;" class="statement-next-rules">
         <!-- BEGIN level1 -->
-        <li>In Wood 1, players will have 6 quest cards with 1 visible one.</li>
+        <li>In Wood 1, players must complete 6 quests. At most <const>1</const> quest is revealed.</li>
         <!-- END -->
         <!-- BEGIN level1 level2 -->
-        <li>In Bronze, players will have 12 quest cards with 3 visible ones.</li>
+        <li>In Bronze, players must complete 12 quests. At most <const>3</const> quests are revealed.</li>
         <!-- END -->
       </ul>
     </p>
