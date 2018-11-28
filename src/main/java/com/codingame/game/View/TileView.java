@@ -41,13 +41,13 @@ public class TileView extends MovingView {
 
     private void createTileView() {
         decors = entityModule.createSprite()
-                .setImage(String.format("decors_%s.png", model.getPattern()))
+                .setImage(String.format("decors_%s", model.getPattern()))
                 .setBaseWidth(Constants.TILE_SIZE)
                 .setBaseHeight(Constants.TILE_SIZE)
                 .setAnchor(0.5)
                 .setZIndex(1);
         directions = entityModule.createSprite()
-                .setImage(String.format("paths_%s.png", model.getPattern()))
+                .setImage(String.format("paths_%s", model.getPattern()))
                 .setBaseWidth(Constants.TILE_SIZE)
                 .setBaseHeight(Constants.TILE_SIZE)
                 .setAnchor(0.5)

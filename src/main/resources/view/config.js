@@ -11,6 +11,6 @@ export const modules = [
 
 // Setting players' colors
 export const playerColors = [
-    '#ff1d5c', // player 1
+    '#d90000', // player 1
     '#41a200' // player 2
 ];
