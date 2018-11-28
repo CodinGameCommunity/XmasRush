@@ -47,13 +47,13 @@ public class Referee extends AbstractReferee {
     private boolean passActions = false;
 
     //Score
-    private final int POINTS_PER_ITEM = 1;
+    private static final int POINTS_PER_ITEM = 1;
     //Game turns
-    public static int gameTurnsLeft = Constants.MAX_GAME_TURNS;
+    public static int gameTurnsLeft;
     //Number of turns required to accommodate the worst case scenario:
     //max move step frames per MOVE turn + (1 row frame + 1 push frame) per PUSH turn
     //+ 1 extra frame to return "Max turns reached!", if required
-    private int maxNumTurns = (Constants.MAX_MOVE_STEPS + 2) * Constants.MAX_GAME_TURNS / 2 + 1;
+    private static final int MAX_NUM_TURNS = (Constants.MAX_MOVE_STEPS + 2) * Constants.MAX_GAME_TURNS / 2 + 1;
 
     //League stuff
     private static int leagueLevel;
@@ -66,7 +66,9 @@ public class Referee extends AbstractReferee {
         Properties params = gameManager.getGameParameters();
         Constants.random = new Random(getSeed(params));
 
+        gameTurnsLeft = Constants.MAX_GAME_TURNS;
         leagueLevel = gameManager.getLeagueLevel();
+        gameManager.setMaxTurns(MAX_NUM_TURNS);
 
         switch (leagueLevel) {
             //numCardsPerPlayer and numVisibleCards <= 12!!!
@@ -97,17 +99,6 @@ public class Referee extends AbstractReferee {
                 break;
         }
 
-        entityModule.createSpriteSheetLoader()
-                .setSourceImage("items.png")
-                .setImageCount(12)
-                .setWidth(48)
-                .setHeight(48)
-                .setOrigRow(0)
-                .setOrigCol(0)
-                .setImagesPerRow(5)
-                .setName("items")
-                .load();
-
         // align the cards based on league data
         int cardsPosX = (Constants.MAP_POS_X - Constants.TILE_SIZE / 2
                 - Math.max(0, numVisibleCards - 1) * (Constants.CARD_SIZE + Constants.CARDS_OFFSET_X)) / 2;
@@ -116,8 +107,7 @@ public class Referee extends AbstractReferee {
         Constants.DECK_POSITIONS.get(0).setX(cardsPosX);
         Constants.DECK_POSITIONS.get(1).setX(Constants.SCREEN_WIDTH - cardsPosX);
 
-        gameManager.setMaxTurns(maxNumTurns);
-
+        loadSpriteSheets();
         createBoard();
         createPlayers();
         createView();
@@ -134,6 +124,39 @@ public class Referee extends AbstractReferee {
         } catch(NumberFormatException nfe) {
             return 0L;
         }
+    }
+
+    private void loadSpriteSheets() {
+        entityModule.createSpriteSheetLoader()
+                .setSourceImage("items.png")
+                .setImageCount(12)
+                .setWidth(48)
+                .setHeight(48)
+                .setOrigRow(0)
+                .setOrigCol(0)
+                .setImagesPerRow(5)
+                .setName("items")
+                .load();
+        entityModule.createSpriteSheetLoader()
+                .setSourceImage("tile_decorators.png")
+                .setImageCount(12)
+                .setWidth(312)
+                .setHeight(312)
+                .setOrigRow(0)
+                .setOrigCol(0)
+                .setImagesPerRow(3)
+                .setName("tile_decorators")
+                .load();
+        entityModule.createSpriteSheetLoader()
+                .setSourceImage("tile_paths.png")
+                .setImageCount(12)
+                .setWidth(312)
+                .setHeight(312)
+                .setOrigRow(0)
+                .setOrigCol(0)
+                .setImagesPerRow(3)
+                .setName("tile_paths")
+                .load();
     }
 
     //Models
