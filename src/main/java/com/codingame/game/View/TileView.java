@@ -21,7 +21,7 @@ public class TileView extends MovingView {
     private Sprite directions;
     private Sprite background;
     private Sprite frame;
-    private Group item;
+    private Group itemGroup;
 
     private boolean showFrame = false;
 
@@ -75,25 +75,25 @@ public class TileView extends MovingView {
 
     private void addItem() {
         if (tileItem != null) {
-            item = entityModule.createGroup().setZIndex(2);
-            item.add(
+            itemGroup = entityModule.createGroup().setZIndex(2);
+            itemGroup.add(
                 entityModule.createCircle()
                     .setZIndex(0)
                     .setScale(0.3)
                     .setAlpha(0.7)
                 );
             String spritePath = String.format("item_%s_%d", tileItem.getName(), tileItem.getPlayerId());
-            item.add(entityModule.createSprite()
+            itemGroup.add(entityModule.createSprite()
                 .setImage(spritePath)
                 .setAnchor(0.5)
                 .setZIndex(1));
-            group.add(item);
+            group.add(itemGroup);
         }
     }
 
     private void removeItem() {
-        this.item.setVisible(false);
-        group.remove(this.item);
+        this.itemGroup.setVisible(false);
+        group.remove(this.itemGroup);
     }
 
     public void updateView(){
