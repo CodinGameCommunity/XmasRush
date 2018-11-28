@@ -1,14 +1,13 @@
 package com.codingame.game.Model;
 
-import com.codingame.game.Model.StateUpdates.CardPositionUpdate;
-import com.codingame.game.Model.StateUpdates.CardZIndexUpdate;
 import com.codingame.game.Model.StateUpdates.FlipCardUpdate;
 import com.codingame.game.Model.StateUpdates.RemoveCardUpdate;
 import com.codingame.game.Utils.Constants;
 import com.codingame.game.Utils.Vector2;
 
-public class CardModel extends AbstractModel {
+public class CardModel extends MovingModel {
     private final Item item;
+    public int cardLayer = -1;
 
     private void checkRep() {
         assert getPos().getX() >= 0 && getPos().getX() < Constants.SCREEN_WIDTH;
@@ -29,12 +28,8 @@ public class CardModel extends AbstractModel {
         updateState(new FlipCardUpdate());
     }
 
-    public void updatePosition() {
-        updateState(new CardPositionUpdate());
-    }
-
-    public void updateZIndex(int zIndex) {
-        updateState(new CardZIndexUpdate(zIndex));
+    public void setCardLayer(int layer) {
+        cardLayer = layer;
     }
 
     public void remove() {

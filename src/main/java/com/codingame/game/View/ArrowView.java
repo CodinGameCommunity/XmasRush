@@ -18,6 +18,7 @@ public class ArrowView extends AbstractView {
         super(entityModule);
         this.pos = pos;
         this.rotation = rotation;
+
         createArrowView();
     }
 
@@ -29,9 +30,9 @@ public class ArrowView extends AbstractView {
                 .setBaseWidth(Constants.TILE_SIZE)
                 .setBaseHeight(Constants.TILE_SIZE / 2)
                 .setAnchor(0.5)
+                .setZIndex(0)
                 .setRotation(rotation)
-                .setVisible(false)
-                .setZIndex(0);
+                .setVisible(false);
     }
 
     public void updateView() {}
