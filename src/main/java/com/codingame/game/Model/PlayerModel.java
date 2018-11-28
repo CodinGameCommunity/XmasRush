@@ -17,8 +17,6 @@ public class PlayerModel extends MovingModel {
     private int numVisibleCards;
     private final Vector2 deckPosition;
     private final Vector2 cardPosition;
-    //cards overlapping each other
-    private int verticalOffset = (int)(Constants.CARD_HEIGHT / 1.45);
 
     private TileModel tile;
 
@@ -54,9 +52,8 @@ public class PlayerModel extends MovingModel {
         assert itemList.size() == new HashSet<>(itemList).size();
 
         Vector2 cardPos = new Vector2(deckPosition);
-
         for (Item item : itemList) {
-             CardModel card = new CardModel(item, cardPos);
+            CardModel card = new CardModel(item, cardPos);
             //check if item belongs to the player
             assert card.getItem().getPlayerId() == id;
             hiddenCards.add(card);
@@ -71,14 +68,20 @@ public class PlayerModel extends MovingModel {
         this.numVisibleCards = (numVisibleCards <= maxNumCards) ? numVisibleCards : maxNumCards;
     }
 
-    private void adjustCardPosition() {
+    private void adjustCardsPosition() {
+        if (visibleCards.isEmpty()) {
+            return;
+        }
+        int orientation = (id == 0) ? 1 : -1;
         Vector2 cardPos = new Vector2(cardPosition);
         int layer = 0;
-        for (CardModel card : visibleCards) {
+        for (int i = 0; i < visibleCards.size(); i++) {
+            CardModel card = visibleCards.get(i);
             card.move(cardPos);
+            card.updatePosition();
             layer++;
             card.setCardLayer(layer);
-            cardPos.setY(cardPos.getY() + orientation * verticalOffset);
+            cardPos.setX(cardPos.getX() + orientation * (Constants.CARD_SIZE + Constants.CARDS_OFFSET_X));
         }
     }
 
@@ -99,7 +102,7 @@ public class PlayerModel extends MovingModel {
             if (item.equals(card.getItem())) {
                 card.remove();
                 visibleCards.remove(card);
-                adjustCardPosition();
+                adjustCardsPosition();
                 return true;
             }
         }
@@ -111,7 +114,7 @@ public class PlayerModel extends MovingModel {
             CardModel card = hiddenCards.pop();
             card.flip();
             visibleCards.add(card);
-            adjustCardPosition();
+            adjustCardsPosition();
         }
     }
 

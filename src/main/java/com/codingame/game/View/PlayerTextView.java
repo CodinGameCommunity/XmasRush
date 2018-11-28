@@ -14,13 +14,12 @@ import java.util.List;
 public class PlayerTextView extends AbstractView {
     private final int AVATAR_SIZE = Constants.TILE_SIZE;
 
-    private final int PLAYER_INFO_POS_Y = Constants.PLAYER_TILE_POS_Y + Constants.TILE_SIZE + 40;
+    private final int PLAYER_INFO_POS_Y = Constants.SCREEN_HEIGHT - 230;
     private final int OPPONENT_INFO_POS_Y = Constants.SCREEN_HEIGHT - PLAYER_INFO_POS_Y;
 
     private List<Vector2> INFO_POS = Arrays.asList(new Vector2(Constants.PLAYER_DECK_POS_X, PLAYER_INFO_POS_Y),
             new Vector2(Constants.OPPONENT_DECK_POS_X, OPPONENT_INFO_POS_Y));
 
-    private final int NAME_HORIZONTAL_OFFSET = 10;
     private final int NAME_VERTICAL_OFFSET = 110;
     private List<Integer> BACKGROUND_HORIZONTAL_OFFSET = Arrays.asList(-15, -5);
     private int BACKGROUND_VERTICAL_OFFSET = 120;
@@ -57,7 +56,7 @@ public class PlayerTextView extends AbstractView {
                 .setAnchor(0.5);
         //reconsider the length param when changing font family or font size
         name = entityModule.createText(reducePlayerName(player.getNicknameToken(),11))
-                .setX(NAME_HORIZONTAL_OFFSET)
+                .setX(0)
                 .setY(NAME_VERTICAL_OFFSET * orientation)
                 .setZIndex(1)
                 .setFillColor(player.getColorToken())

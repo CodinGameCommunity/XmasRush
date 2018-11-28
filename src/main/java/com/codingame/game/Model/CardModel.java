@@ -1,5 +1,6 @@
 package com.codingame.game.Model;
 
+import com.codingame.game.Model.StateUpdates.CardPositionUpdate;
 import com.codingame.game.Model.StateUpdates.FlipCardUpdate;
 import com.codingame.game.Model.StateUpdates.RemoveCardUpdate;
 import com.codingame.game.Utils.Constants;
@@ -26,6 +27,10 @@ public class CardModel extends MovingModel {
 
     public void flip() {
         updateState(new FlipCardUpdate());
+    }
+
+    public void updatePosition() {
+        updateState(new CardPositionUpdate());
     }
 
     public void setCardLayer(int layer) {

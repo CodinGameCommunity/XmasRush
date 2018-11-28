@@ -25,20 +25,23 @@ public class Constants {
             + TILE_SIZE / 2 - TILES_OFFSET / 2 * MAP_WIDTH;
 
     public static final int DECK_OFFSET = 13;
-    public static final int CARD_WIDTH = 116;
-    public static final int CARD_HEIGHT = (int) (CARD_WIDTH * 1.2);
+    public static final int CARD_SIZE = 100;
+    public static final int CARDS_OFFSET_X = 5;
 
     //horizontal coordinates for players' stuff
-    public static final int PLAYER_DECK_POS_X = (MAP_POS_X - CARD_WIDTH) / 2;
-    public static final int OPPONENT_DECK_POS_X = SCREEN_WIDTH - PLAYER_DECK_POS_X;
+    public static final int PLAYER_CARD_POS_X = (MAP_POS_X - TILE_SIZE / 2) / 2;
+    public static final int OPPONENT_CARD_POS_X = SCREEN_WIDTH - PLAYER_CARD_POS_X;
 
-    public static final int PLAYER_DECK_POS_Y = MAP_POS_Y;
-    public static final int OPPONENT_DECK_POS_Y = SCREEN_HEIGHT - PLAYER_DECK_POS_Y;
-
-    public static final int PLAYER_CARD_POS_Y = PLAYER_DECK_POS_Y + CARD_HEIGHT + DECK_OFFSET;
+    public static final int PLAYER_CARD_POS_Y = MAP_POS_Y;
     public static final int OPPONENT_CARD_POS_Y = SCREEN_HEIGHT - PLAYER_CARD_POS_Y;
 
-    public static final int PLAYER_TILE_POS_Y = PLAYER_CARD_POS_Y + DECK_OFFSET + (int)(CARD_HEIGHT * 2.5);
+    public static final int PLAYER_DECK_POS_X = (MAP_POS_X - TILE_SIZE / 2) / 2;
+    public static final int OPPONENT_DECK_POS_X = SCREEN_WIDTH - PLAYER_DECK_POS_X;
+
+    public static final int PLAYER_DECK_POS_Y = PLAYER_CARD_POS_Y + CARD_SIZE + DECK_OFFSET;
+    public static final int OPPONENT_DECK_POS_Y = SCREEN_HEIGHT - PLAYER_DECK_POS_Y;
+
+    public static final int PLAYER_TILE_POS_Y = SCREEN_HEIGHT / 2;
     public static final int OPPONENT_TILE_POS_Y = SCREEN_HEIGHT - PLAYER_TILE_POS_Y;
 
     public static final List<String> ITEM_NAMES = Arrays.asList(
@@ -71,8 +74,8 @@ public class Constants {
     );
 
     public static final List<Vector2> CARD_POSITIONS = Arrays.asList(
-            new Vector2(PLAYER_DECK_POS_X, PLAYER_CARD_POS_Y),
-            new Vector2(OPPONENT_DECK_POS_X, OPPONENT_CARD_POS_Y)
+            new Vector2(PLAYER_CARD_POS_X, PLAYER_CARD_POS_Y),
+            new Vector2(OPPONENT_CARD_POS_X, OPPONENT_CARD_POS_Y)
     );
 
     public static final List<Vector2> TILE_POSITIONS = Arrays.asList(
