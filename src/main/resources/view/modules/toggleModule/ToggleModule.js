@@ -31,13 +31,17 @@ export class ToggleModule {
   updateScene (previousData, currentData, progress) {
     this.currentFrame = currentData
     this.currentProgress = progress
+    if (this.reinit) {
+      options.refreshDecor()
+      this.reinit = false
+    }
   }
 
   handleFrameData (frameInfo, data) {
   }
 
   reinitScene (container, canvasData) {
-    options.refreshDecor()
+    this.reinit = true
   }
 
   animateScene (delta) {
