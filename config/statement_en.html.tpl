@@ -92,31 +92,31 @@
         </li>
           <!-- END -->
           <!-- BEGIN level2 -->
-          <div style="color: #7cc576;
+        <li style="color: #7cc576;
         background-color: rgba(124, 197, 118,.1);
-        padding: 2px; display:inline-block;">
-        <li>
+        padding: 2px;">
             For this league, each player has <const>6</const> quests to complete. At most <const>1</const> quest is
             revealed.
           </li>
-            <li>
+            <li style="color: #7cc576;
+        background-color: rgba(124, 197, 118,.1);
+        padding: 2px;">
           When an item is collected, it is removed from the tile and the quest is marked as completed and removed
           from the player's quest deck. After the turn ends, a new quest is revealed (if available).
         </li>
-          </div>
           <!-- END -->
           <!-- BEGIN level3 -->
-          <div style="color: #7cc576;
+        <li style="color: #7cc576;
         background-color: rgba(124, 197, 118,.1);
-        padding: 2px; display:inline-block;">
-        <li>
+        padding: 2px;">
             For this league, each player has <const>12</const> quests to complete. At most <const>3</const> quests are
             revealed. They can be collected in any order.
           </li>
-          <li>
+          <li style="color: #7cc576;
+        background-color: rgba(124, 197, 118,.1);
+        padding: 2px;">
           A player can complete multiple quests in one turn.
         </li>
-          </div>
           <!-- END -->
           <!-- BEGIN level4 -->
           <li>
@@ -370,7 +370,7 @@
         Example: <action>PUSH 3 UP</action> will push the third column upwards.
       </div>
       <div class="title" style="padding-bottom: 0;">Output for one MOVE game turn</div>
-	  <div class="text">
+    <div class="text">
         <ul style="margin-top: 0;margin-bottom: 0;padding-bottom: 0;">
           <li>
             <action>MOVE</action> <var>direction</var> where <const>direction</const> can be <action>UP</action>,
@@ -400,7 +400,7 @@
         <!-- BEGIN level2 -->
         <div style="color: #7cc576;
         background-color: rgba(124, 197, 118,.1);
-        padding: 2px; display:inline-block;">
+        padding: 2px;">
           <const>0</const> ≤ <var>numPlayerCards</var> ≤ <const>6</const><br>
           <const>0</const> ≤ <var>numItems</var> ≤ <const>12</const><br>
           <const>0</const> ≤ <var>numQuests</var> ≤ <const>2</const><br>
@@ -409,7 +409,7 @@
         <!-- BEGIN level3 -->
         <div style="color: #7cc576;
         background-color: rgba(124, 197, 118,.1);
-        padding: 2px; display:inline-block;">
+        padding: 2px;">
           <const>0</const> ≤ <var>numPlayerCards</var> ≤ <const>12</const><br>
           <const>0</const> ≤ <var>numItems</var> ≤ <const>24</const><br>
           <const>0</const> ≤ <var>numQuests</var> ≤ <const>6</const><br>
