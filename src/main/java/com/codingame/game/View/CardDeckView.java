@@ -28,8 +28,8 @@ public class CardDeckView extends AbstractView {
     private void createCardDeckView() {
         back = entityModule.createSprite()
                 .setImage(String.format("cardBack_%d.png", player.id))
-                .setBaseWidth(Constants.CARD_WIDTH)
-                .setBaseHeight(Constants.CARD_HEIGHT)
+                .setBaseWidth(Constants.CARD_SIZE)
+                .setBaseHeight(Constants.CARD_SIZE)
                 .setAnchor(0.5)
                 .setZIndex(0);
         numCards = entityModule.createText("")

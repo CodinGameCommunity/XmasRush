@@ -2,6 +2,7 @@ package com.codingame.game.View;
 
 import com.codingame.game.Model.CardModel;
 import com.codingame.game.Model.Item;
+import com.codingame.game.Model.StateUpdates.CardPositionUpdate;
 import com.codingame.game.Model.StateUpdates.FlipCardUpdate;
 import com.codingame.game.Model.StateUpdates.RemoveCardUpdate;
 import com.codingame.game.Utils.Constants;
@@ -31,9 +32,9 @@ public class CardView extends MovingView {
 
     private void createCardView() {
         front = entityModule.createSprite()
-                .setImage("cardFront.png")
-                .setBaseWidth(Constants.CARD_WIDTH)
-                .setBaseHeight(Constants.CARD_HEIGHT)
+                .setImage(String.format("cardFront_%d.png", cardItem.getPlayerId()))
+                .setBaseWidth(Constants.CARD_SIZE)
+                .setBaseHeight(Constants.CARD_SIZE)
                 .setAnchor(0.5)
                 .setZIndex(0);
         item = entityModule.createSprite()
@@ -60,16 +61,25 @@ public class CardView extends MovingView {
         entityModule.commitEntityState(0, group);
     }
 
+    private void updatePosition() {
+        group.setX(model.getPos().getX()).setY(model.getPos().getY());
+        entityModule.commitEntityState(1, group);
+    }
+
     private void removeCardView() {
-        group.setVisible(false);
+        group.setAlpha(0);
+        group.setZIndex(group.getZIndex() - 1);
         entityModule.commitEntityState(1, group);
         doDispose();
     }
 
     public void update(Observable observable, Object update) {
         super.update(model, update);
-        if (update instanceof FlipCardUpdate) flip();
-        else if (update instanceof RemoveCardUpdate){
+        if (update instanceof FlipCardUpdate) {
+            flip();
+        } else if (update instanceof CardPositionUpdate) {
+            updatePosition();
+        } else if (update instanceof RemoveCardUpdate){
             removeCardView();
         }
     }
