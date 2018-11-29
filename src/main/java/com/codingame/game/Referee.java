@@ -26,6 +26,7 @@ import com.codingame.gameengine.core.GameManager;
 import com.codingame.gameengine.core.MultiplayerGameManager;
 import com.codingame.gameengine.module.entities.GraphicEntityModule;
 import com.codingame.view.endscreen.EndScreenModule;
+import com.codingame.view.nicknameshandler.NicknamesHandlerModule;
 import com.codingame.view.tooltip.TooltipModule;
 import com.codingame.game.View.BoardView;
 
@@ -34,7 +35,8 @@ public class Referee extends AbstractReferee {
     @Inject private GraphicEntityModule entityModule;
     @Inject private TooltipModule tooltipModule;
     @Inject private EndScreenModule endScreenModule;
-
+    @Inject private NicknamesHandlerModule nicknamesHandlerModule;
+    public static NicknamesHandlerModule nicksModule;
     public static Action.Type turnType;
     private GameBoard gameBoard;
 
@@ -63,6 +65,7 @@ public class Referee extends AbstractReferee {
     private static boolean threeWayTiles; //place items on 3+ tiles only
 
     public void init() {
+        nicksModule = nicknamesHandlerModule;
         Properties params = gameManager.getGameParameters();
         Constants.random = new Random(getSeed(params));
 

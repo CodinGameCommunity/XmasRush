@@ -1,6 +1,7 @@
 package com.codingame.game.View;
 
 import com.codingame.game.Player;
+import com.codingame.game.Referee;
 import com.codingame.game.Utils.Constants;
 import com.codingame.game.Utils.Vector2;
 import com.codingame.gameengine.module.entities.GraphicEntityModule;
@@ -10,6 +11,7 @@ import com.codingame.gameengine.module.entities.Text;
 
 import java.util.Arrays;
 import java.util.List;
+
 
 public class PlayerTextView extends AbstractView {
     private final int AVATAR_SIZE = Constants.TILE_SIZE;
@@ -60,9 +62,10 @@ public class PlayerTextView extends AbstractView {
                 .setY(NAME_VERTICAL_OFFSET * orientation)
                 .setZIndex(1)
                 .setFillColor(player.getColorToken())
-                .setFontSize(30)
+                .setFontSize(40)
                 .setFontFamily("Arial Black")
                 .setAnchor(0.5);
+        Referee.nicksModule.registerNickname(name);
         background = entityModule.createSprite()
                 .setImage(String.format("background_name_%d.png", id))
                 .setX(BACKGROUND_HORIZONTAL_OFFSET.get(id))
