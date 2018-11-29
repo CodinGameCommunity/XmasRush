@@ -76,4 +76,14 @@ public class Vector2 {
         Vector2 other = (Vector2) obj;
         return this.x == other.x && this.y == other.y;
     }
+    public static Vector2 fromMapSpaceToViewSpace(Vector2 pos) {
+        int x = Constants.MAP_POS_X + pos.getX() * (Constants.TILE_SIZE + Constants.TILES_OFFSET);
+        int y = Constants.MAP_POS_Y + pos.getY() * (Constants.TILE_SIZE + Constants.TILES_OFFSET);
+        return new Vector2(x,y);
+    }
+    public static Vector2 fromViewSpaceToMapSpace(Vector2 pos) {
+        int x = (pos.getX() - Constants.MAP_POS_X) / (Constants.TILE_SIZE + Constants.TILES_OFFSET);
+        int y = (pos.getY() - Constants.MAP_POS_Y) / (Constants.TILE_SIZE + Constants.TILES_OFFSET);
+        return new Vector2(x,y);
+    }
 }
