@@ -23,8 +23,7 @@ public class PlayerTextView extends AbstractView {
             new Vector2(Constants.OPPONENT_DECK_POS_X, OPPONENT_INFO_POS_Y));
 
     private final int NAME_VERTICAL_OFFSET = 110;
-    private List<Integer> BACKGROUND_HORIZONTAL_OFFSET = Arrays.asList(-15, -5);
-    private int BACKGROUND_VERTICAL_OFFSET = 120;
+    private int BACKGROUND_VERTICAL_OFFSET = 123;
 
     private Group group;
     private Text name;
@@ -68,7 +67,7 @@ public class PlayerTextView extends AbstractView {
         Referee.nicksModule.registerNickname(name);
         background = entityModule.createSprite()
                 .setImage(String.format("background_name_%d.png", id))
-                .setX(BACKGROUND_HORIZONTAL_OFFSET.get(id))
+                .setX(0)
                 .setY(BACKGROUND_VERTICAL_OFFSET * orientation)
                 .setZIndex(0)
                 .setAnchor(0.5);
