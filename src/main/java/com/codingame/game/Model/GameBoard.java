@@ -115,10 +115,14 @@ public class GameBoard {
 
     //Pushing methods
     public TileModel pushLine(TileModel pushedTile, int lineId, Constants.Direction dir) {
-        if (dir == Constants.Direction.UP) return pushUp(pushedTile, lineId);
-        else if (dir == Constants.Direction.RIGHT) return pushRight(pushedTile, lineId);
-        else if (dir == Constants.Direction.DOWN) return pushDown(pushedTile, lineId);
-        else return pushLeft(pushedTile, lineId);
+        pushedTile.push(dir);
+        TileModel popped;
+        if (dir == Constants.Direction.UP) popped = pushUp(pushedTile, lineId);
+        else if (dir == Constants.Direction.RIGHT) popped = pushRight(pushedTile, lineId);
+        else if (dir == Constants.Direction.DOWN) popped = pushDown(pushedTile, lineId);
+        else popped = pushLeft(pushedTile, lineId);
+        popped.pop(dir);
+        return popped;
     }
 
     private TileModel pushUp(TileModel pushedTile, int col) {
