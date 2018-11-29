@@ -29,8 +29,8 @@ public class CardModel extends MovingModel {
         updateState(new FlipCardUpdate());
     }
 
-    public void updatePosition() {
-        updateState(new CardPositionUpdate());
+    public void updatePosition(double time) {
+        updateState(new CardPositionUpdate(time));
     }
 
     public void setCardLayer(int layer) {

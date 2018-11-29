@@ -61,9 +61,9 @@ public class CardView extends MovingView {
         entityModule.commitEntityState(0, group);
     }
 
-    private void updatePosition() {
+    private void updatePosition(double time) {
         group.setX(model.getPos().getX()).setY(model.getPos().getY());
-        entityModule.commitEntityState(1, group);
+        entityModule.commitEntityState(time, group);
     }
 
     private void removeCardView() {
@@ -78,7 +78,7 @@ public class CardView extends MovingView {
         if (update instanceof FlipCardUpdate) {
             flip();
         } else if (update instanceof CardPositionUpdate) {
-            updatePosition();
+            updatePosition(((CardPositionUpdate)update).getTime());
         } else if (update instanceof RemoveCardUpdate){
             removeCardView();
         }

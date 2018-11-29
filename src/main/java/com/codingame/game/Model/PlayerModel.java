@@ -15,6 +15,7 @@ public class PlayerModel extends MovingModel {
 
     private final int maxNumCards = 3; //max number of cards to show
     private int numVisibleCards;
+    private int numTotalCards;
     private final Vector2 deckPosition;
     private final Vector2 cardPosition;
 
@@ -51,6 +52,7 @@ public class PlayerModel extends MovingModel {
         //check if all items are unique
         assert itemList.size() == new HashSet<>(itemList).size();
 
+        numTotalCards = itemList.size();
         Vector2 cardPos = new Vector2(deckPosition);
         for (Item item : itemList) {
             CardModel card = new CardModel(item, cardPos);
@@ -68,7 +70,7 @@ public class PlayerModel extends MovingModel {
         this.numVisibleCards = (numVisibleCards <= maxNumCards) ? numVisibleCards : maxNumCards;
     }
 
-    private void adjustCardsPosition() {
+    private void adjustCardsPosition(boolean isFirstFlip) {
         if (visibleCards.isEmpty()) {
             return;
         }
@@ -78,7 +80,7 @@ public class PlayerModel extends MovingModel {
         for (int i = 0; i < visibleCards.size(); i++) {
             CardModel card = visibleCards.get(i);
             card.move(cardPos);
-            card.updatePosition();
+            card.updatePosition(isFirstFlip ? 0 : 1);
             layer++;
             card.setCardLayer(layer);
             cardPos.setX(cardPos.getX() + orientation * (Constants.CARD_SIZE + Constants.CARDS_OFFSET_X));
@@ -102,7 +104,7 @@ public class PlayerModel extends MovingModel {
             if (item.equals(card.getItem())) {
                 card.remove();
                 visibleCards.remove(card);
-                adjustCardsPosition();
+                adjustCardsPosition(false);
                 return true;
             }
         }
@@ -114,15 +116,20 @@ public class PlayerModel extends MovingModel {
             CardModel card = hiddenCards.pop();
             card.flip();
             visibleCards.add(card);
-            adjustCardsPosition();
         }
     }
 
     //Flip the number of cards required to have the specified number of visible cards
     public void flipCards() {
+        boolean isFirstFlip = (hiddenCards.size() == numTotalCards);
         if (visibleCards.size() < numVisibleCards) {
             int availableCards = Math.min(numVisibleCards - visibleCards.size(), hiddenCards.size());
-            for (int i = 0; i < availableCards; i++) flipCard();
+            if (availableCards > 0) {
+                for (int i = 0; i < availableCards; i++) {
+                    flipCard();
+                }
+                adjustCardsPosition(isFirstFlip);
+            }
         }
     }
 
