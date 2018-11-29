@@ -1,6 +1,7 @@
 import { GraphicEntityModule } from './entity-module/GraphicEntityModule.js';
 import { EndScreenModule } from './modules/endScreen/EndScreenModule.js';
 import { TooltipModule } from './modules/tooltip/TooltipModule.js';
+import { NicknamesHandlerModule } from './modules/nicknamesHandlerModule/NicknamesHandlerModule.js';
 import { options as viewOptions, ToggleModule } from './modules/toggleModule/ToggleModule.js';
 
 // List of viewer modules that you want to use in your game
@@ -9,6 +10,7 @@ export const modules = [
 	EndScreenModule,
 	TooltipModule,
 	ToggleModule,
+	NicknamesHandlerModule
 ];
 
 // Setting players' colors
