@@ -1,12 +1,10 @@
 package com.codingame.game.View;
 
-
 import com.codingame.game.Utils.Constants;
 import com.codingame.game.Utils.Vector2;
 import com.codingame.gameengine.module.entities.Entity;
 import com.codingame.gameengine.module.entities.GraphicEntityModule;
 import com.codingame.gameengine.module.entities.Sprite;
-
 
 public class ArrowView extends AbstractView {
     private final Vector2 pos;

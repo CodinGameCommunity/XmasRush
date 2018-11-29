@@ -2,7 +2,8 @@ package com.codingame.game.InputActions;
 
 import com.codingame.game.Utils.Constants;
 
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.Deque;
 
 public class MoveAction extends Action {
     private Deque<Constants.Direction> steps;

@@ -2,10 +2,8 @@ package com.codingame.game.View;
 
 import com.codingame.game.Referee;
 import com.codingame.game.Utils.Constants;
-import com.codingame.gameengine.module.entities.Entity;
 import com.codingame.gameengine.module.entities.GraphicEntityModule;
 import com.codingame.gameengine.module.entities.Text;
-
 
 public class TurnTextView extends AbstractView {
     private final int TURN_TEXT_POS_X = Constants.SCREEN_WIDTH - 490;
