@@ -1,10 +1,13 @@
 package com.codingame.game.View;
 
 import com.codingame.game.Model.Item;
+import com.codingame.game.Model.StateUpdates.PoppedUpdate;
+import com.codingame.game.Model.StateUpdates.PushedUpdate;
 import com.codingame.game.Model.StateUpdates.RemoveItemUpdate;
 import com.codingame.game.Model.StateUpdates.ShowFrameUpdate;
 import com.codingame.game.Model.TileModel;
 import com.codingame.game.Utils.Constants;
+import com.codingame.game.Utils.Constants.Direction;
 import com.codingame.game.Utils.Vector2;
 import com.codingame.gameengine.module.entities.*;
 import com.codingame.view.tooltip.TooltipModule;
@@ -27,6 +30,16 @@ public class TileView extends MovingView {
 
     private Item tileItem;
     private TileModel model;
+    private TileState state = TileState.STILL;
+    
+    private enum TileState{
+        STILL,
+        MOVED,
+        POPPED,
+        PUSHED;
+    }
+    
+    private Direction tempDirection;
 
     public TileView(GraphicEntityModule entityModule, TooltipModule tooltipModule, TileModel tile) {
         super(entityModule);
@@ -98,12 +111,21 @@ public class TileView extends MovingView {
 
     public void updateView(){
         if (model.getPlayerId() != null) {
-            //player tile is always on top of everything
-            group.setZIndex(4);
             //always show frame for player's tiles
             frame.setVisible(true);
             entityModule.commitEntityState(0, frame);
 
+            
+            if (this.state == TileState.POPPED) {
+                entityModule.commitEntityState(0.3, group);
+                Vector2 nextPos = Vector2.fromViewSpaceToMapSpace(new Vector2(group.getX(),group.getY()));
+                nextPos.add(tempDirection.asVector());
+                setMapPos(group, nextPos);
+              //player tile is on top of everything
+                group.setZIndex(4);
+                entityModule.commitEntityState(0.6, group);
+                
+            }
             Vector2 pos = Constants.TILE_POSITIONS.get(model.getPlayerId());
             group.setX(pos.getX()).setY(pos.getY());
         } else {
@@ -111,13 +133,31 @@ public class TileView extends MovingView {
             if (showFrame) {
                 frame.setVisible(true);
                 entityModule.commitEntityState(0, frame);
-                //get pushed tile zIndex back
-                group.setZIndex(1);
                 frame.setVisible(false);
                 showFrame = false;
+            }            
+            if (this.state == TileState.PUSHED) {
+              //player tile is on top of everything
+                group.setZIndex(4);
+                entityModule.commitEntityState(0, group);
+                Vector2 nextPos = new Vector2(model.getPos());
+                nextPos.add(tempDirection.getOpposite().asVector());
+                setMapPos(group, nextPos);
+                entityModule.commitEntityState(0.3, group);
+              //get pushed tile zIndex back
+                group.setZIndex(1);
+                setMapPos(group, model.getPos());
+                entityModule.commitEntityState(0.6, group);
+            } else if (this.state == TileState.MOVED) {
+                entityModule.commitEntityState(0.3, group);
+                setMapPos(group, model.getPos());
+                entityModule.commitEntityState(0.6, group);
             }
             setMapPos(group, model.getPos());
+            
         }
+        
+        this.state = TileState.STILL;
         tooltipModule.updateExtraTooltipText(group, model.getPos().toTooltip());
     }
 
@@ -125,8 +165,19 @@ public class TileView extends MovingView {
         super.update(model, update);
         if (update instanceof RemoveItemUpdate)
             removeItem();
-        else if (update instanceof ShowFrameUpdate)
+        else if (update instanceof ShowFrameUpdate) {
             showFrame = true;
+            if(this.state == TileState.STILL) {
+                this.state = TileState.MOVED;
+            }
+        } else if(update instanceof PushedUpdate) {
+            this.state = TileState.PUSHED;
+            this.tempDirection = ((PushedUpdate) update).getDirection();
+        }else if(update instanceof PoppedUpdate) {
+            
+            this.state = TileState.POPPED;
+            this.tempDirection = ((PoppedUpdate) update).getDirection();
+        }
     }
 
     public Entity getEntity() {
