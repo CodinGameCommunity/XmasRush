@@ -55,7 +55,7 @@ public class PlayerTextView extends AbstractView {
                 .setBaseHeight(AVATAR_SIZE)
                 .setAnchor(0.5);
         //reconsider the length param when changing font family or font size
-        name = entityModule.createText(reducePlayerName(player.getNicknameToken(),11))
+        name = entityModule.createText(player.getNicknameToken())
                 .setX(0)
                 .setY(NAME_VERTICAL_OFFSET * orientation)
                 .setZIndex(1)
@@ -74,10 +74,6 @@ public class PlayerTextView extends AbstractView {
                 .setY(pos.getY())
                 .setScale(1);
         group.add(avatar, name, background);
-    }
-
-    private String reducePlayerName(String name, int length) {
-        return (name.length() <= length) ? name : name.substring(0, length) + "...";
     }
 
     public void updateView() {}
