@@ -18,7 +18,7 @@ export const playerColors = [
 ];
 
 export const options = [{
-	title: 'TILE DECOR',
+	title: 'TILE DECORATORS',
 	get: function () {
 	  return viewOptions.decor
 	},
