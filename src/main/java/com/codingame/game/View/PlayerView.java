@@ -2,6 +2,8 @@ package com.codingame.game.View;
 
 import com.codingame.game.Model.PlayerModel;
 import com.codingame.game.Player;
+import com.codingame.game.Referee;
+import com.codingame.game.InputActions.Action;
 import com.codingame.gameengine.module.entities.Entity;
 import com.codingame.gameengine.module.entities.GraphicEntityModule;
 import com.codingame.gameengine.module.entities.Sprite;
@@ -28,6 +30,11 @@ public class PlayerView extends MovingView{
     }
 
     public void updateView(){
+        if(Referee.turnType == Action.Type.PUSH) {
+            entityModule.commitEntityState(0.3, sprite);
+            setMapPos(sprite, model.getPos());
+            entityModule.commitEntityState(0.6, sprite);
+        }
         setMapPos(sprite, model.getPos());
     }
 

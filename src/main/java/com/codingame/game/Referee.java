@@ -287,6 +287,11 @@ public class Referee extends AbstractReferee {
             }
             hasWinner();
             turnType = (turnType == Action.Type.PUSH) ? Action.Type.MOVE : Action.Type.PUSH;
+            if (turnType == Action.Type.PUSH) {
+                gameManager.setFrameDuration(2000);
+            } else {
+                gameManager.setFrameDuration(700);
+            }
             gameTurnsLeft--;
             forceGameFrame();
             flipCards();
