@@ -14,9 +14,9 @@ loop numQuests
 write PUSH 3 RIGHT
 
 INPUT
-numItems: the total number of items available on board and on player tiles (does not include quest cards)
-numPlayerCards: the number of cards in the stack for each player
-numQuests: the total number of available quest cards for both players
+numPlayerCards: the total number of quests for a player (hidden and revealed)
+numItems: the total number of items available on board and on player tiles
+numQuests: the total number of revealed quests for both players
 
 STATEMENT
 Help the Christmas elves fetch presents in a magical labyrinth!

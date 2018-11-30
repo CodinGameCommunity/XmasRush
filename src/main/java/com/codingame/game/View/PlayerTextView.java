@@ -1,54 +1,81 @@
 package com.codingame.game.View;
 
 import com.codingame.game.Player;
+import com.codingame.game.Referee;
 import com.codingame.game.Utils.Constants;
 import com.codingame.game.Utils.Vector2;
 import com.codingame.gameengine.module.entities.GraphicEntityModule;
+import com.codingame.gameengine.module.entities.Group;
+import com.codingame.gameengine.module.entities.Sprite;
+import com.codingame.gameengine.module.entities.Text;
 
 import java.util.Arrays;
 import java.util.List;
 
-public class PlayerTextView extends AbstractView{
-    //todo
-    private final int PLAYER_AVATAR_POS_X = 100;
-    private final int PLAYER_AVATAR_POS_Y = 880;
-    private final int OPPONENT_AVATAR_POS_X = Constants.SCREEN_WIDTH - PLAYER_AVATAR_POS_X;
-    private final int OPPONENT_AVATAR_POS_Y = Constants.SCREEN_HEIGHT - PLAYER_AVATAR_POS_Y + 50;
-    private List<Vector2> AVATAR_POS = Arrays.asList(new Vector2(PLAYER_AVATAR_POS_X, PLAYER_AVATAR_POS_Y),
-            new Vector2(OPPONENT_AVATAR_POS_X, OPPONENT_AVATAR_POS_Y));
-    private final int AVATAR_SIZE = 128;
-    private final int PLAYER_NAME_OFFSET = 40;
+
+public class PlayerTextView extends AbstractView {
+    private final int AVATAR_SIZE = Constants.TILE_SIZE;
+
+    private final int PLAYER_INFO_POS_Y = Constants.SCREEN_HEIGHT - 230;
+    private final int OPPONENT_INFO_POS_Y = Constants.SCREEN_HEIGHT - PLAYER_INFO_POS_Y;
+
+    private List<Vector2> INFO_POS = Arrays.asList(new Vector2(Constants.PLAYER_DECK_POS_X, PLAYER_INFO_POS_Y),
+            new Vector2(Constants.OPPONENT_DECK_POS_X, OPPONENT_INFO_POS_Y));
+
+    private final int NAME_VERTICAL_OFFSET = 110;
+    private int BACKGROUND_VERTICAL_OFFSET = 123;
+
+    private Group group;
+    private Text name;
+    private Sprite avatar;
+    private Sprite background;
 
     private Player player;
     private Vector2 pos;
+    private int id;
+    private int orientation;
+
 
     public PlayerTextView(GraphicEntityModule entityModule, Player player){
         super(entityModule);
         this.player = player;
-        this.pos = AVATAR_POS.get(player.getIndex());
+        id = player.getIndex();
+        pos = INFO_POS.get(id);
+        orientation = this.player.getPlayer().orientation;
 
         createPlayerText();
     }
 
     private void createPlayerText() {
-        entityModule.createSprite()
-                .setX(pos.getX())
-                .setY(pos.getY())
+        avatar = entityModule.createSprite()
+                .setX(0)
+                .setY(0)
                 .setZIndex(1)
                 .setImage(player.getAvatarToken())
                 .setBaseWidth(AVATAR_SIZE)
                 .setBaseHeight(AVATAR_SIZE)
-                .setAnchorX(player.getIndex())
-                .setAnchorY(1);
-
-        entityModule.createText(player.getNicknameToken())
-                .setX(pos.getX())
-                .setY(pos.getY() + PLAYER_NAME_OFFSET)
+                .setAnchor(0.5);
+        //reconsider the length param when changing font family or font size
+        name = entityModule.createText(player.getNicknameToken())
+                .setX(0)
+                .setY(NAME_VERTICAL_OFFSET * orientation)
+                .setZIndex(1)
                 .setFillColor(player.getColorToken())
                 .setFontSize(40)
                 .setFontFamily("Arial Black")
-                .setAnchorX(player.getIndex())
-                .setAnchorY(0.5);
+                .setAnchor(0.5);
+        Referee.nicksModule.registerNickname(name);
+        background = entityModule.createSprite()
+                .setImage(String.format("background_name_%d.png", id))
+                .setX(0)
+                .setY(BACKGROUND_VERTICAL_OFFSET * orientation)
+                .setZIndex(0)
+                .setAnchor(0.5);
+        group = entityModule.createGroup()
+                .setX(pos.getX())
+                .setY(pos.getY())
+                .setScale(1);
+        group.add(avatar, name, background);
     }
 
     public void updateView() {}

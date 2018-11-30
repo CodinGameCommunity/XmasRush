@@ -13,9 +13,7 @@ public class Main {
 
             gameRunner.addAgent(PlayerAI.class);
             gameRunner.addAgent(EmptyAI.class);
-
-            //required leagueLevel = 0
-            System.setProperty("league.level", "0");
+	        System.setProperty("league.level", "0");
             gameRunner.setSeed(20L);
             GameResult result = gameRunner.simulate();
             System.out.println(String.format("Match %d (%d): %d - %d", i, result.views.size(), result.scores.get(0), result.scores.get(1)));
@@ -35,5 +33,6 @@ public class Main {
         System.setProperty("league.level", "0");
         gameRunner.setSeed(20L);
         gameRunner.start();*/
+
     }
 }

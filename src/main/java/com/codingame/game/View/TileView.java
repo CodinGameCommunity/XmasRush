@@ -1,14 +1,15 @@
 package com.codingame.game.View;
 
 import com.codingame.game.Model.Item;
+import com.codingame.game.Model.StateUpdates.PoppedUpdate;
+import com.codingame.game.Model.StateUpdates.PushedUpdate;
 import com.codingame.game.Model.StateUpdates.RemoveItemUpdate;
+import com.codingame.game.Model.StateUpdates.ShowFrameUpdate;
 import com.codingame.game.Model.TileModel;
 import com.codingame.game.Utils.Constants;
+import com.codingame.game.Utils.Constants.Direction;
 import com.codingame.game.Utils.Vector2;
-import com.codingame.gameengine.module.entities.Entity;
-import com.codingame.gameengine.module.entities.GraphicEntityModule;
-import com.codingame.gameengine.module.entities.Group;
-import com.codingame.gameengine.module.entities.Sprite;
+import com.codingame.gameengine.module.entities.*;
 import com.codingame.view.tooltip.TooltipModule;
 
 import java.util.HashMap;
@@ -19,15 +20,26 @@ public class TileView extends MovingView {
 
     private Group group;
 
+    private Sprite decors;
+    private Sprite directions;
     private Sprite background;
-    private Sprite up;
-    private Sprite right;
-    private Sprite down;
-    private Sprite left;
-    private Sprite item;
+    private Sprite frame;
+    private Group itemGroup;
+
+    private boolean showFrame = false;
 
     private Item tileItem;
     private TileModel model;
+    private TileState state = TileState.STILL;
+    
+    private enum TileState{
+        STILL,
+        MOVED,
+        POPPED,
+        PUSHED;
+    }
+    
+    private Direction tempDirection;
 
     public TileView(GraphicEntityModule entityModule, TooltipModule tooltipModule, TileModel tile) {
         super(entityModule);
@@ -35,94 +47,117 @@ public class TileView extends MovingView {
         this.model = tile;
         this.tileItem = model.getItem();
         tile.addObserver(this);
+
         createTileView();
         tooltipModule.registerEntity(group.getId(), new HashMap<>());
     }
 
     private void createTileView() {
+        decors = entityModule.createSprite()
+                .setImage(String.format("decors_%s", model.getPattern()))
+                .setBaseWidth(Constants.TILE_SIZE)
+                .setBaseHeight(Constants.TILE_SIZE)
+                .setAnchor(0.5)
+                .setZIndex(1);
+        directions = entityModule.createSprite()
+                .setImage(String.format("paths_%s", model.getPattern()))
+                .setBaseWidth(Constants.TILE_SIZE)
+                .setBaseHeight(Constants.TILE_SIZE)
+                .setAnchor(0.5)
+                .setZIndex(2);
+        frame = entityModule.createSprite()
+                .setImage("frame.png")
+                .setBaseWidth(Constants.TILE_SIZE)
+                .setBaseHeight(Constants.TILE_SIZE)
+                .setAnchor(0.5)
+                .setZIndex(2)
+                .setVisible(false);
         background = entityModule.createSprite()
                 .setImage("tile_background.png")
+                .setBaseWidth(Constants.TILE_SIZE)
+                .setBaseHeight(Constants.TILE_SIZE)
+                .setAlpha(0.3)
                 .setAnchor(0.5)
                 .setZIndex(0);
         group = entityModule.createGroup()
                 .setScale(1);
-        group.add(background);
+        group.add(decors, directions, frame, background);
 
-        addDirections();
         addItem();
-    }
-
-    private void addDirections() {
-        if (model.hasDirection(Constants.Direction.UP))
-            addUp();
-        if (model.hasDirection(Constants.Direction.RIGHT))
-            addRight();
-        if (model.hasDirection(Constants.Direction.DOWN))
-            addDown();
-        if (model.hasDirection(Constants.Direction.LEFT))
-            addLeft();
-    }
-
-    private void addUp() {
-        up = entityModule.createSprite()
-                .setImage("tile_path.png")
-                .setAnchor(0.5)
-                .setRotation(Math.toRadians(0))
-                .setZIndex(1);
-        group.add(up);
-    }
-
-    private void addRight() {
-        right = entityModule.createSprite()
-                .setImage("tile_path.png")
-                .setAnchor(0.5)
-                .setRotation(Math.toRadians(90))
-                .setZIndex(1);
-        group.add(right);
-    }
-
-    private void addDown() {
-        down = entityModule.createSprite()
-                .setImage("tile_path.png")
-                .setAnchor(0.5)
-                .setRotation(Math.toRadians(180))
-                .setZIndex(1);
-        group.add(down);
-    }
-
-    private void addLeft() {
-        left = entityModule.createSprite()
-                .setImage("tile_path.png")
-                .setAnchor(0.5)
-                .setRotation(Math.toRadians(270))
-                .setZIndex(1);
-        group.add(left);
     }
 
     private void addItem() {
         if (tileItem != null) {
-            String itemsPath = "items" + System.getProperty("file.separator") + "item_%s_%d.png";
-            String spritePath = String.format(itemsPath, tileItem.getName(), tileItem.getPlayerId());
-            item = entityModule.createSprite()
+            itemGroup = entityModule.createGroup().setZIndex(2);
+            itemGroup.add(
+                entityModule.createCircle()
+                    .setZIndex(0)
+                    .setScale(0.3)
+                    .setAlpha(0.7)
+                );
+            String spritePath = String.format("item_%s_%d", tileItem.getName(), tileItem.getPlayerId());
+            itemGroup.add(entityModule.createSprite()
                 .setImage(spritePath)
                 .setAnchor(0.5)
-                .setZIndex(2);
-            group.add(item);
+                .setZIndex(1));
+            group.add(itemGroup);
         }
     }
 
     private void removeItem() {
-        this.item.setVisible(false);
-        group.remove(this.item);
+        this.itemGroup.setVisible(false);
+        group.remove(this.itemGroup);
     }
 
     public void updateView(){
         if (model.getPlayerId() != null) {
+            //always show frame for player's tiles
+            frame.setVisible(true);
+            entityModule.commitEntityState(0, frame);
+
+            
+            if (this.state == TileState.POPPED) {
+                entityModule.commitEntityState(0.3, group);
+                Vector2 nextPos = Vector2.fromViewSpaceToMapSpace(new Vector2(group.getX(),group.getY()));
+                nextPos.add(tempDirection.asVector());
+                setMapPos(group, nextPos);
+              //player tile is on top of everything
+                group.setZIndex(4);
+                entityModule.commitEntityState(0.6, group);
+                
+            }
             Vector2 pos = Constants.TILE_POSITIONS.get(model.getPlayerId());
             group.setX(pos.getX()).setY(pos.getY());
         } else {
+            //only show frames for moving map tiles
+            if (showFrame) {
+                frame.setVisible(true);
+                entityModule.commitEntityState(0, frame);
+                frame.setVisible(false);
+                showFrame = false;
+            }            
+            if (this.state == TileState.PUSHED) {
+              //player tile is on top of everything
+                group.setZIndex(4);
+                entityModule.commitEntityState(0, group);
+                Vector2 nextPos = new Vector2(model.getPos());
+                nextPos.add(tempDirection.getOpposite().asVector());
+                setMapPos(group, nextPos);
+                entityModule.commitEntityState(0.3, group);
+              //get pushed tile zIndex back
+                group.setZIndex(1);
+                setMapPos(group, model.getPos());
+                entityModule.commitEntityState(0.6, group);
+            } else if (this.state == TileState.MOVED) {
+                entityModule.commitEntityState(0.3, group);
+                setMapPos(group, model.getPos());
+                entityModule.commitEntityState(0.6, group);
+            }
             setMapPos(group, model.getPos());
+            
         }
+        
+        this.state = TileState.STILL;
         tooltipModule.updateExtraTooltipText(group, model.getPos().toTooltip());
     }
 
@@ -130,6 +165,19 @@ public class TileView extends MovingView {
         super.update(model, update);
         if (update instanceof RemoveItemUpdate)
             removeItem();
+        else if (update instanceof ShowFrameUpdate) {
+            showFrame = true;
+            if(this.state == TileState.STILL) {
+                this.state = TileState.MOVED;
+            }
+        } else if(update instanceof PushedUpdate) {
+            this.state = TileState.PUSHED;
+            this.tempDirection = ((PushedUpdate) update).getDirection();
+        }else if(update instanceof PoppedUpdate) {
+            
+            this.state = TileState.POPPED;
+            this.tempDirection = ((PoppedUpdate) update).getDirection();
+        }
     }
 
     public Entity getEntity() {

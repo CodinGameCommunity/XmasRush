@@ -1,11 +1,15 @@
 package com.codingame.game.Model;
 
+import com.codingame.game.Model.StateUpdates.PoppedUpdate;
+import com.codingame.game.Model.StateUpdates.PushedUpdate;
 import com.codingame.game.Model.StateUpdates.RemoveItemUpdate;
+import com.codingame.game.Model.StateUpdates.ShowFrameUpdate;
 import com.codingame.game.Utils.Constants;
+import com.codingame.game.Utils.Constants.Direction;
 import com.codingame.game.Utils.Vector2;
 
 public class TileModel extends MovingModel{
-    public static final int PATTERN_LENGTH = 4;
+    private static final int PATTERN_LENGTH = 4;
 
     private String pattern;
     private Item item;
@@ -13,7 +17,7 @@ public class TileModel extends MovingModel{
     private Integer playerId;
 
     //pattern represents path directions (up, right, down, left) as 4 binary digits (1 for path, 0 for no path)
-    public void checkRep() {
+    private void checkRep() {
         assert pattern != null && pattern.matches("[0-1]{" + PATTERN_LENGTH + "}");
     }
 
@@ -96,5 +100,17 @@ public class TileModel extends MovingModel{
         if (playerId != null)
             return Constants.TILE_MODEL_POSITIONS.get(playerId);
         return this.getPos();
+    }
+
+    @Override
+    public void move(Vector2 pos) {
+        super.setPos(pos);
+        updateState(new ShowFrameUpdate());
+    }
+    public void push(Direction direction) {
+        updateState(new PushedUpdate(direction));
+    }
+    public void pop(Direction direction) {
+        updateState(new PoppedUpdate(direction));
     }
 }

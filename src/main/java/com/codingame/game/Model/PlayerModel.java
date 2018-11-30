@@ -8,15 +8,24 @@ import java.util.*;
 
 public class PlayerModel extends MovingModel {
     public final int id;
+    public final int orientation;
     private final Vector2 tilePos;
     private final Stack<CardModel> hiddenCards = new Stack<>();
     private final List<CardModel> visibleCards = new ArrayList<>();
+
+    private final int maxNumCards = 3; //max number of cards to show
+    private int numVisibleCards;
+    private final Vector2 deckPosition;
+    private final Vector2 cardPosition;
 
     private TileModel tile;
 
     public PlayerModel(int id) {
         super(Constants.PLAYER_POSITIONS.get(id));
         this.id = id;
+        orientation = (id == 0) ? 1 : -1;
+        deckPosition = new Vector2(Constants.DECK_POSITIONS.get(id));
+        cardPosition = new Vector2(Constants.CARD_POSITIONS.get(id));
         tilePos = Constants.TILE_MODEL_POSITIONS.get(id);
     }
 
@@ -42,13 +51,9 @@ public class PlayerModel extends MovingModel {
         //check if all items are unique
         assert itemList.size() == new HashSet<>(itemList).size();
 
-        int orientation = (id == 0) ? 1 : -1;
-        Vector2 cardPos = new Vector2(Constants.CARD_POSITIONS.get(id));
-
-        for (int i = 0; i < itemList.size(); i++) {
-            Vector2 newCardPos = new Vector2(cardPos.getX(),
-                    cardPos.getY() + orientation * i * Constants.CARDS_OFFSET);
-            CardModel card = new CardModel(itemList.get(i), newCardPos);
+        Vector2 cardPos = new Vector2(deckPosition);
+        for (Item item : itemList) {
+            CardModel card = new CardModel(item, cardPos);
             //check if item belongs to the player
             assert card.getItem().getPlayerId() == id;
             hiddenCards.add(card);
@@ -59,24 +64,45 @@ public class PlayerModel extends MovingModel {
         return Collections.unmodifiableList(hiddenCards);
     }
 
-    private void removeCard(CardModel card) {
-        assert visibleCards.contains(card);
-        card.remove();
-        visibleCards.remove(card);
+    public void setNumVisibleCards(int numVisibleCards) {
+        this.numVisibleCards = (numVisibleCards <= maxNumCards) ? numVisibleCards : maxNumCards;
+    }
+
+    private void adjustCardsPosition() {
+        if (visibleCards.isEmpty()) {
+            return;
+        }
+        int orientation = (id == 0) ? 1 : -1;
+        Vector2 cardPos = new Vector2(cardPosition);
+        int layer = 0;
+        for (int i = 0; i < visibleCards.size(); i++) {
+            CardModel card = visibleCards.get(i);
+            card.move(cardPos);
+            card.updatePosition();
+            layer++;
+            card.setCardLayer(layer);
+            cardPos.setX(cardPos.getX() + orientation * (Constants.CARD_SIZE + Constants.CARDS_OFFSET_X));
+        }
     }
 
     private int getNumCards() {
         return hiddenCards.size() + visibleCards.size();
     }
 
+    public int getNumDeckCards() {
+        return hiddenCards.size();
+    }
+
     public int getNumQuestCards() {
         return visibleCards.size();
     }
 
-    public boolean removeItemCard(Item item){
+    public boolean removeCard(Item item){
         for (CardModel card : visibleCards) {
             if (item.equals(card.getItem())) {
-                removeCard(card);
+                card.remove();
+                visibleCards.remove(card);
+                adjustCardsPosition();
                 return true;
             }
         }
@@ -88,13 +114,14 @@ public class PlayerModel extends MovingModel {
             CardModel card = hiddenCards.pop();
             card.flip();
             visibleCards.add(card);
+            adjustCardsPosition();
         }
     }
 
-    //Flip the number of cards required to have the specified number of visible cards (numCards)
-    public void flipCards(int numCards) {
-        if (visibleCards.size() < numCards) {
-            int availableCards = Math.min(numCards - visibleCards.size(), hiddenCards.size());
+    //Flip the number of cards required to have the specified number of visible cards
+    public void flipCards() {
+        if (visibleCards.size() < numVisibleCards) {
+            int availableCards = Math.min(numVisibleCards - visibleCards.size(), hiddenCards.size());
             for (int i = 0; i < availableCards; i++) flipCard();
         }
     }

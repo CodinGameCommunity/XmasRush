@@ -1,6 +1,6 @@
 package com.codingame.game.View;
 
-
+import com.codingame.game.Model.CardModel;
 import com.codingame.game.Model.TileModel;
 import com.codingame.game.Player;
 import com.codingame.game.Utils.Constants;
@@ -9,14 +9,13 @@ import com.codingame.gameengine.module.entities.GraphicEntityModule;
 import com.codingame.view.tooltip.TooltipModule;
 import com.codingame.gameengine.module.entities.Group;
 
-
 import java.util.*;
 
 public class BoardView extends AbstractView{
     private TooltipModule tooltipModule;
 
     //distance from arrows to tiles
-    private final int arrowOffset = 85;
+    private final int arrowOffset = 100;
     //distance between arrows
     private final int arrowSpacing = Constants.TILE_SIZE + Constants.TILES_OFFSET;
 
@@ -24,9 +23,10 @@ public class BoardView extends AbstractView{
 
     List<TileView> tiles;
     List<PlayerView> players;
+    List<CardView> cards;
     Map<String, ArrowView> arrows;
 
-    Set<AbstractMap.SimpleEntry<String, Integer>> arrowsToShow = new HashSet<>();
+    List<AbstractMap.SimpleEntry<String, Integer>> arrowsToShow = new ArrayList<>();
     List<ArrowView> arrowsToHide = new ArrayList<>();
 
     public BoardView(GraphicEntityModule entityModule, TooltipModule tooltipModule){
@@ -35,6 +35,7 @@ public class BoardView extends AbstractView{
 
         tiles = new ArrayList<>();
         players = new ArrayList<>();
+        cards = new ArrayList<>();
         arrows = new HashMap<>();
 
         this.group = this.entityModule.createGroup()
@@ -49,16 +50,24 @@ public class BoardView extends AbstractView{
 
     public TileView createTileView(TileModel tile) {
         TileView tileView = new TileView(entityModule, tooltipModule, tile);
-        group.add(tileView.getEntity().setZIndex(0));
+        group.add(tileView.getEntity().setZIndex(1));
         tiles.add(tileView);
         return tileView;
     }
 
     public PlayerView createPlayerView(Player player) {
         PlayerView playerView = new PlayerView(entityModule, player, player.getPlayer());
-        group.add(playerView.getEntity().setZIndex(1));
+        group.add(playerView.getEntity().setZIndex(2));
         players.add(playerView);
         return playerView;
+    }
+
+    public CardView createCardView(CardModel card) {
+        CardView cardView = new CardView(entityModule, card);
+        //cards are always below tiles
+        group.add(cardView.getEntity().setZIndex(0));
+        cards.add(cardView);
+        return cardView;
     }
 
     public void updateView() {
@@ -66,71 +75,80 @@ public class BoardView extends AbstractView{
             arrow.hideArrow();
         arrowsToHide.clear();
 
-        for (AbstractMap.SimpleEntry<String, Integer> arrow : arrowsToShow){
-            String arrowId = arrow.getKey();
-            Integer arrowType = arrow.getValue();
-            //sets arrow type to WARNING in case of invalid push action
-            arrowType = (arrowType == null)? 2 : arrowType;
-            ArrowView arrowView = arrows.get(arrowId);
-            arrowView.showArrow(arrowType);
-            arrowsToHide.add(arrowView);
-        }
+        if (arrowsToShow.size() == 2 && isSamePushAction())
+            //show two arrows pushing the same line
+            showArrow(new AbstractMap.SimpleEntry<>(arrowsToShow.get(0).getKey(), 2));
+        else
+            arrowsToShow.stream().forEach(arrow -> showArrow(arrow));
         arrowsToShow.clear();
+    }
+
+    private boolean isSamePushAction() {
+        return arrowsToShow.stream()
+                .map(arrow -> arrow.getKey())
+                .distinct()
+                .count() == 1;
+    }
+
+    private void showArrow(AbstractMap.SimpleEntry<String, Integer> arrow) {
+        String arrowId = arrow.getKey();
+        Integer arrowType = arrow.getValue();
+        ArrowView arrowView = arrows.get(arrowId);
+        arrowView.showArrow(arrowType);
+        arrowsToHide.add(arrowView);
     }
 
     public void update(AbstractMap.SimpleEntry<String, Integer> action) {
         arrowsToShow.add(action);
     }
 
-    public void createArrows() {
+    private void createArrows() {
         createUpArrows();
         createRightArrows();
         createDownArrows();
         createLeftArrows();
     }
 
-    public void createUpArrows() {
-        Vector2 pos = new Vector2(Constants.MAP_POS_X - Constants.TILE_SIZE / 4,
+    private void createUpArrows() {
+        Vector2 pos = new Vector2(Constants.MAP_POS_X,
                 Constants.MAP_POS_Y + arrowSpacing * (Constants.MAP_HEIGHT - 1) + arrowOffset);
         for (int x = 0; x < Constants.MAP_WIDTH; x++) {
             String id = x + "" + Constants.Direction.UP.asValue();
-            ArrowView view = new ArrowView(entityModule, pos, Math.toRadians(0), id);
+            ArrowView view = new ArrowView(entityModule, pos, Math.toRadians(0));
             group.add(view.getEntity().setZIndex(0));
             arrows.put(id, view);
             pos.setX(pos.getX() + arrowSpacing);
         }
     }
 
-    public void createRightArrows(){
-        Vector2 pos = new Vector2(Constants.MAP_POS_X  - arrowOffset,
-                Constants.MAP_POS_Y - Constants.TILE_SIZE / 4);
+    private void createRightArrows(){
+        Vector2 pos = new Vector2(Constants.MAP_POS_X  - arrowOffset, Constants.MAP_POS_Y);
         for (int y = 0; y < Constants.MAP_HEIGHT; y++){
             String id = y + "" + Constants.Direction.RIGHT.asValue();
-            ArrowView view = new ArrowView(entityModule, pos, Math.toRadians(90),id);
+            ArrowView view = new ArrowView(entityModule, pos, Math.toRadians(90));
             group.add(view.getEntity().setZIndex(0));
             arrows.put(id, view);
             pos.setY(pos.getY() + arrowSpacing);
         }
     }
 
-    public void createDownArrows() {
-        Vector2 pos = new Vector2(Constants.MAP_POS_X + Constants.TILE_SIZE / 4,
-                Constants.MAP_POS_Y - arrowOffset);
+    private void createDownArrows() {
+        Vector2 pos = new Vector2(Constants.MAP_POS_X, Constants.MAP_POS_Y - arrowOffset);
         for (int x = 0; x < Constants.MAP_WIDTH; x++) {
             String id = x + "" + Constants.Direction.DOWN.asValue();
-            ArrowView view = new ArrowView(entityModule, pos, Math.toRadians(180), id);
+            ArrowView view = new ArrowView(entityModule, pos, Math.toRadians(180));
             group.add(view.getEntity().setZIndex(0));
             arrows.put(id, view);
             pos.setX(pos.getX() + arrowSpacing);
         }
     }
 
-    public void createLeftArrows(){
+    private void createLeftArrows(){
         Vector2 pos = new Vector2(Constants.MAP_POS_X + arrowSpacing * (Constants.MAP_WIDTH - 1) + arrowOffset,
-                Constants.MAP_POS_Y + Constants.TILE_SIZE / 4);
+                Constants.MAP_POS_Y);
         for (int y = 0; y < Constants.MAP_HEIGHT; y++){
             String id = y + "" + Constants.Direction.LEFT.asValue();
-            ArrowView view = new ArrowView(entityModule, pos, Math.toRadians(270), id);
+            ArrowView view = new ArrowView(entityModule, pos, Math.toRadians(270));
             group.add(view.getEntity().setZIndex(0));
             arrows.put(id, view);
             pos.setY(pos.getY() + arrowSpacing);

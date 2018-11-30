@@ -24,18 +24,25 @@ public class Constants {
     public static final int MAP_POS_Y = SCREEN_HEIGHT / 2 - (MAP_WIDTH * TILE_SIZE) / 2
             + TILE_SIZE / 2 - TILES_OFFSET / 2 * MAP_WIDTH;
 
-    public static final int PLAYER_TILE_POS_X = 164;
-    public static final int PLAYER_TILE_POS_Y = SCREEN_HEIGHT / 2;
-    public static final int OPPONENT_TILE_POS_X = SCREEN_WIDTH - PLAYER_TILE_POS_X;
-    public static final int OPPONENT_TILE_POS_Y = SCREEN_HEIGHT - PLAYER_TILE_POS_Y;
+    public static final int DECK_OFFSET = 13;
+    public static final int CARD_SIZE = 100;
+    public static final int CARDS_OFFSET_X = 5;
 
-    public static final int CARD_WIDTH = 128;
-    public static final int CARD_HEIGHT = 256;
-    public static final int CARDS_OFFSET = 15;
-    public static final int PLAYER_CARDS_POS_X = 100 + CARD_WIDTH / 2;
-    public static final int PLAYER_CARDS_POS_Y = 25 + CARD_HEIGHT / 2;
-    public static final int OPPONENT_CARDS_POS_X = SCREEN_WIDTH - PLAYER_CARDS_POS_X;
-    public static final int OPPONENT_CARDS_POS_Y = SCREEN_HEIGHT - PLAYER_CARDS_POS_Y;
+    //horizontal coordinates for players' stuff
+    public static final int PLAYER_CARD_POS_X = (MAP_POS_X - TILE_SIZE / 2) / 2;
+    public static final int OPPONENT_CARD_POS_X = SCREEN_WIDTH - PLAYER_CARD_POS_X;
+
+    public static final int PLAYER_CARD_POS_Y = MAP_POS_Y;
+    public static final int OPPONENT_CARD_POS_Y = SCREEN_HEIGHT - PLAYER_CARD_POS_Y;
+
+    public static final int PLAYER_DECK_POS_X = (MAP_POS_X - TILE_SIZE / 2) / 2;
+    public static final int OPPONENT_DECK_POS_X = SCREEN_WIDTH - PLAYER_DECK_POS_X;
+
+    public static final int PLAYER_DECK_POS_Y = PLAYER_CARD_POS_Y + CARD_SIZE + DECK_OFFSET;
+    public static final int OPPONENT_DECK_POS_Y = SCREEN_HEIGHT - PLAYER_DECK_POS_Y;
+
+    public static final int PLAYER_TILE_POS_Y = SCREEN_HEIGHT / 2;
+    public static final int OPPONENT_TILE_POS_Y = SCREEN_HEIGHT - PLAYER_TILE_POS_Y;
 
     public static final List<String> ITEM_NAMES = Arrays.asList(
             "ARROW", "BOOK", "CANE", "CANDY", "DIAMOND", "FISH", "MASK", "KEY", "POTION", "SCROLL", "SHIELD", "SWORD"
@@ -61,14 +68,19 @@ public class Constants {
             new Vector2(MAP_WIDTH - 1, MAP_HEIGHT - 1)
     );
 
+    public static final List<Vector2> DECK_POSITIONS = Arrays.asList(
+            new Vector2(PLAYER_DECK_POS_X, PLAYER_DECK_POS_Y),
+            new Vector2(OPPONENT_DECK_POS_X, OPPONENT_DECK_POS_Y)
+    );
+
     public static final List<Vector2> CARD_POSITIONS = Arrays.asList(
-            new Vector2(PLAYER_CARDS_POS_X, PLAYER_CARDS_POS_Y),
-            new Vector2(OPPONENT_CARDS_POS_X, OPPONENT_CARDS_POS_Y)
+            new Vector2(PLAYER_CARD_POS_X, PLAYER_CARD_POS_Y),
+            new Vector2(OPPONENT_CARD_POS_X, OPPONENT_CARD_POS_Y)
     );
 
     public static final List<Vector2> TILE_POSITIONS = Arrays.asList(
-            new Vector2(PLAYER_TILE_POS_X, PLAYER_TILE_POS_Y),
-            new Vector2(OPPONENT_TILE_POS_X, OPPONENT_TILE_POS_Y)
+            new Vector2(PLAYER_DECK_POS_X, PLAYER_TILE_POS_Y),
+            new Vector2(OPPONENT_DECK_POS_X, OPPONENT_TILE_POS_Y)
     );
 
     public static final List<Vector2> TILE_MODEL_POSITIONS = Arrays.asList(

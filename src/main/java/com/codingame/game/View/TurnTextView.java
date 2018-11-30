@@ -5,12 +5,11 @@ import com.codingame.game.Utils.Constants;
 import com.codingame.gameengine.module.entities.GraphicEntityModule;
 import com.codingame.gameengine.module.entities.Text;
 
-
 public class TurnTextView extends AbstractView {
     private final int TURN_TEXT_POS_X = Constants.SCREEN_WIDTH - 490;
     private final int NUM_TURNS_TEXT_POS_X = Constants.SCREEN_WIDTH - 180;
     private final int TYPE_TEXT_POS_X = Constants.SCREEN_WIDTH - 160;
-    private final int TURN_TEXT_POS_Y = 100;
+    private final int TURN_TEXT_POS_Y = 70;
 
     //import it once
     private final int maxTurns = Constants.MAX_GAME_TURNS;
@@ -31,27 +30,25 @@ public class TurnTextView extends AbstractView {
                 .setX(TURN_TEXT_POS_X)
                 .setY(TURN_TEXT_POS_Y)
                 .setFontSize(50)
-                .setFillColor(0x000000)
+                .setFillColor(0xF0EFEF)
                 .setFontFamily("Arial")
                 //aligned to the left
                 .setAnchorX(0)
                 .setAnchorY(1);
-
         numTurnsText = entityModule.createText("")
                 .setX(NUM_TURNS_TEXT_POS_X)
                 .setY(TURN_TEXT_POS_Y)
                 .setFontSize(50)
-                .setFillColor(0x000000)
+                .setFillColor(0xF0EFEF)
                 .setFontFamily("Arial")
                 //aligned to the right
                 .setAnchorX(1)
                 .setAnchorY(1);
-
         typeText = entityModule.createText("")
                 .setX(TYPE_TEXT_POS_X)
                 .setY(TURN_TEXT_POS_Y)
                 .setFontSize(50)
-                .setFillColor(0x000000)
+                .setFillColor(0xF0EFEF)
                 .setFontFamily("Arial")
                 //aligned to the left
                 .setAnchorX(0)
