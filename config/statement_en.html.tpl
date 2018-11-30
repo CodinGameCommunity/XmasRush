@@ -442,10 +442,10 @@
       The extra rules available in higher leagues are:
       <ul style="margin-top: 0;padding-bottom: 0;" class="statement-next-rules">
         <!-- BEGIN level1 -->
-        <li>In Wood 1, players must complete 6 quests. At most <const>1</const> quest is revealed.</li>
+        <li>In Wood 1, players must complete <const>6</const> quests. At most <const>1</const> quest is revealed.</li>
         <!-- END -->
         <!-- BEGIN level1 level2 -->
-        <li>In Bronze, players must complete 12 quests. At most <const>3</const> quests are revealed.</li>
+        <li>In Bronze, players must complete <const>12</const> quests. At most <const>3</const> quests are revealed.</li>
         <!-- END -->
       </ul>
     </p>
