@@ -121,7 +121,6 @@ public class Vector2Test {
     @Test
     public void testVectorToTooltip() {
         Vector2 vector = new Vector2(3, 5);
-        assertEquals("(3, 5)", vector.toTooltip());
+        assertEquals("pos: (3, 5)", vector.toTooltip());
     }
-
 }
