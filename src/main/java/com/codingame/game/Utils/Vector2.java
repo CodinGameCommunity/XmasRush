@@ -67,7 +67,7 @@ public class Vector2 {
     }
 
     public String toTooltip() {
-        return "(" + x + ", " + y + ")";
+        return "pos: (" + x + ", " + y + ")";
     }
 
     public boolean equals(Object obj) {

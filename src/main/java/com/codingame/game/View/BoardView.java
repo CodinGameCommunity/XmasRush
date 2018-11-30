@@ -63,7 +63,7 @@ public class BoardView extends AbstractView{
     }
 
     public CardView createCardView(CardModel card) {
-        CardView cardView = new CardView(entityModule, card);
+        CardView cardView = new CardView(entityModule, tooltipModule, card);
         //cards are always below tiles
         group.add(cardView.getEntity().setZIndex(0));
         cards.add(cardView);

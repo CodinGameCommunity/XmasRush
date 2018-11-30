@@ -10,10 +10,13 @@ import com.codingame.gameengine.module.entities.Entity;
 import com.codingame.gameengine.module.entities.GraphicEntityModule;
 import com.codingame.gameengine.module.entities.Group;
 import com.codingame.gameengine.module.entities.Sprite;
+import com.codingame.view.tooltip.TooltipModule;
 
 import java.util.Observable;
 
 public class CardView extends MovingView {
+    private TooltipModule tooltipModule;
+
     private Group group;
     private Sprite front;
     private Sprite item;
@@ -21,13 +24,15 @@ public class CardView extends MovingView {
     private Item cardItem;
     private CardModel model;
 
-    public CardView(GraphicEntityModule entityModule, CardModel card) {
+    public CardView(GraphicEntityModule entityModule, TooltipModule tooltipModule, CardModel card) {
         super(entityModule);
+        this.tooltipModule = tooltipModule;
         this.model = card;
         this.cardItem = model.getItem();
         card.addObserver(this);
 
         createCardView();
+        tooltipModule.registerEntity(group);
     }
 
     private void createCardView() {
@@ -54,6 +59,8 @@ public class CardView extends MovingView {
         entityModule.commitEntityState(0, group);
         group.setX(model.getPos().getX()).setY(model.getPos().getY());
         entityModule.commitEntityState(0.5, group);
+
+        tooltipModule.updateExtraTooltipText(group, model.getItem().toTooltip());
     }
 
     private void flip() {

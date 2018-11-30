@@ -54,6 +54,10 @@ public class Item {
         return name + " " + playerId;
     }
 
+    public String toTooltip() {
+        return "item: " + itemToString();
+    }
+
     public String opponentItemToString() {
         return name + " " + getOpponentId();
     }
