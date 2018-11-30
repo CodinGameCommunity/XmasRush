@@ -131,14 +131,14 @@ public class Referee extends AbstractReferee {
 
     private void loadSpriteSheets() {
         entityModule.createSpriteSheetLoader()
-                .setSourceImage("items.png")
+                .setSourceImage("items_sheet.png")
                 .setImageCount(12)
                 .setWidth(48)
                 .setHeight(48)
                 .setOrigRow(0)
                 .setOrigCol(0)
                 .setImagesPerRow(5)
-                .setName("items")
+                .setName("items_sheet")
                 .load();
         entityModule.createSpriteSheetLoader()
                 .setSourceImage("tile_decorators.png")
