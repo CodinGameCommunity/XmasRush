@@ -114,7 +114,6 @@ public class PlayerModel extends MovingModel {
             CardModel card = hiddenCards.pop();
             card.flip();
             visibleCards.add(card);
-            adjustCardsPosition();
         }
     }
 
@@ -122,7 +121,10 @@ public class PlayerModel extends MovingModel {
     public void flipCards() {
         if (visibleCards.size() < numVisibleCards) {
             int availableCards = Math.min(numVisibleCards - visibleCards.size(), hiddenCards.size());
-            for (int i = 0; i < availableCards; i++) flipCard();
+            for (int i = 0; i < availableCards; i++) {
+                flipCard();
+            }
+            adjustCardsPosition();
         }
     }
 

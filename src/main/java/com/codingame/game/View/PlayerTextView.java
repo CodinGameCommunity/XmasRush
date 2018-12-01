@@ -24,6 +24,7 @@ public class PlayerTextView extends AbstractView {
 
     private final int NAME_VERTICAL_OFFSET = 110;
     private int BACKGROUND_VERTICAL_OFFSET = 123;
+    private List<Integer> BACKGROUND_HORIZONTAL_OFFSET = Arrays.asList(-15, 0);
 
     private Group group;
     private Text name;
@@ -67,7 +68,7 @@ public class PlayerTextView extends AbstractView {
         Referee.nicksModule.registerNickname(name);
         background = entityModule.createSprite()
                 .setImage(String.format("background_name_%d.png", id))
-                .setX(0)
+                .setX(BACKGROUND_HORIZONTAL_OFFSET.get(player.getIndex()))
                 .setY(BACKGROUND_VERTICAL_OFFSET * orientation)
                 .setZIndex(0)
                 .setAnchor(0.5);

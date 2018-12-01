@@ -94,7 +94,9 @@ public class Constants {
             .compile("(?<pushAction>\\bPUSH\\b) (?<id>[ 0-" + (MAP_SIZE - 1) + "]) (?<direction>(\\bUP\\b|\\bRIGHT\\b|\\bDOWN\\b|\\bLEFT\\b))");
     public static final Pattern PLAYER_INPUT_MOVE_PATTERN = Pattern
             .compile(String.format("(?:\\bMOVE\\b)((?: )(?<direction>(\\bUP\\b|\\bRIGHT\\b|\\bDOWN\\b|\\bLEFT\\b))){1,%d}", MAX_MOVE_STEPS));
-    public static final Pattern PLAYER_INPUT_MOVE_TOKENS_PATTERN = Pattern
+    public static final Pattern PLAYER_INPUT_MOVE_MAX_STEPS_PATTERN = Pattern
+            .compile(String.format("(?:\\bMOVE\\b)((?: )(?<direction>(\\bUP\\b|\\bRIGHT\\b|\\bDOWN\\b|\\bLEFT\\b))){%d,}", MAX_MOVE_STEPS));
+    public static final Pattern PLAYER_INPUT_MOVE_STEPS_PATTERN = Pattern
             .compile("(?<direction>(?:\\bUP\\b|\\bRIGHT\\b|\\bDOWN\\b|\\bLEFT\\b))");
     public static final Pattern PLAYER_INPUT_PASS_PATTERN = Pattern
             .compile("PASS");

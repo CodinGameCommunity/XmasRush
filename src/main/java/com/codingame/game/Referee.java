@@ -131,14 +131,14 @@ public class Referee extends AbstractReferee {
 
     private void loadSpriteSheets() {
         entityModule.createSpriteSheetLoader()
-                .setSourceImage("items.png")
+                .setSourceImage("items_sheet.png")
                 .setImageCount(12)
                 .setWidth(48)
                 .setHeight(48)
                 .setOrigRow(0)
                 .setOrigCol(0)
                 .setImagesPerRow(5)
-                .setName("items")
+                .setName("items_sheet")
                 .load();
         entityModule.createSpriteSheetLoader()
                 .setSourceImage("tile_decorators.png")
@@ -288,7 +288,13 @@ public class Referee extends AbstractReferee {
                 gameManager.addToGameSummary(GameManager.formatErrorMessage("Max turns reached!"));
                 forceGameEnd();
             }
-            hasWinner();
+            checkForWinner();
+
+            if (gameManager.getActivePlayers().isEmpty()) {
+                gameManager.setFrameDuration(1);
+                return;
+            }
+
             turnType = (turnType == Action.Type.PUSH) ? Action.Type.MOVE : Action.Type.PUSH;
             if (turnType == Action.Type.PUSH) {
                 gameManager.setFrameDuration(2000);
@@ -407,19 +413,22 @@ public class Referee extends AbstractReferee {
     private Action parseAction(String action) throws InvalidAction {
         Matcher matchPush = Constants.PLAYER_INPUT_PUSH_PATTERN.matcher(action);
         Matcher matchMove = Constants.PLAYER_INPUT_MOVE_PATTERN.matcher(action);
+        Matcher matchMaxSteps = Constants.PLAYER_INPUT_MOVE_MAX_STEPS_PATTERN.matcher(action);
         Matcher matchPass = Constants.PLAYER_INPUT_PASS_PATTERN.matcher(action);
         if (matchPush.matches()) {
             return new PushAction(Integer.parseInt(matchPush.group("id")),
                     Constants.Direction.valueOf(matchPush.group("direction")), Action.Type.PUSH);
         } else if (matchMove.matches()) {
-            Matcher tokensMatcher = Constants.PLAYER_INPUT_MOVE_TOKENS_PATTERN.matcher(action);
+            Matcher matchSteps = Constants.PLAYER_INPUT_MOVE_STEPS_PATTERN.matcher(action);
             MoveAction moveAction = new MoveAction(Action.Type.MOVE);
-            while (tokensMatcher.find()) {
-                moveAction.addStep(Constants.Direction.valueOf(tokensMatcher.group("direction")));
+            while (matchSteps.find()) {
+                moveAction.addStep(Constants.Direction.valueOf(matchSteps.group("direction")));
             }
             return moveAction;
         } else if (matchPass.matches()) {
             return new PassAction(Action.Type.PASS);
+        } else if (matchMaxSteps.matches()) {
+            throw new InvalidAction(String.format("max %d steps - %s", Constants.MAX_MOVE_STEPS, action));
         } else {
             throw new InvalidAction(action);
         }
@@ -536,7 +545,7 @@ public class Referee extends AbstractReferee {
     }
 
     private void checkForFinishedItems() {
-        for (Player player : gameManager.getActivePlayers()) {
+        for (Player player : gameManager.getPlayers()) {
             PlayerModel playerModel = players.get(player.getIndex());
             TileModel tile = gameBoard.getTile(playerModel.getPos());
             if (tile.hasItem() && playerModel.removeCard(tile.getItem())) {
@@ -547,7 +556,7 @@ public class Referee extends AbstractReferee {
         }
     }
 
-    private void hasWinner() {
+    private void checkForWinner() {
         boolean win = gameManager.getActivePlayers().stream()
                 .anyMatch(player -> player.getScore() == numCardsPerPlayer);
         if (win) {
@@ -557,7 +566,7 @@ public class Referee extends AbstractReferee {
         }
     }
 
-    private void checkForWinner() {
+    private void checkOutcome() {
         List<Integer> score = gameManager.getPlayers().stream()
                 .map(player -> player.getScore())
                 .collect(Collectors.toList());
@@ -585,6 +594,6 @@ public class Referee extends AbstractReferee {
                         .stream()
                         .mapToInt(player -> player.getScore())
                         .toArray());
-        checkForWinner();
+        checkOutcome();
     }
 }
