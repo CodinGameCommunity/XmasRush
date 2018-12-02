@@ -1,4 +1,3 @@
-import java.util.Random;
 import java.util.Scanner;
 
 public class PlayerAI {
@@ -133,16 +132,6 @@ public class PlayerAI {
             }
             return null;
         }
-
-        public static Direction fromInt(int value) {
-            switch(value) {
-                case 0: return UP;
-                case 1: return RIGHT;
-                case 2: return DOWN;
-                case 3: return LEFT;
-            }
-            return null;
-        }
     }
 
     private static int boardWidth;
@@ -151,7 +140,6 @@ public class PlayerAI {
         Scanner in = new Scanner(System.in);
         boardWidth = in.nextInt();
         boardHeight = in.nextInt();
-        Random random = new Random();
 
         // game loop
         while (true) {
@@ -214,37 +202,26 @@ public class PlayerAI {
                 //PrintDebug(questItemName + questPlayerId);
             }
 
-            PrintDebug("Debug Map");
+            //PrintDebug("Debug Map");
             for (int i = 0; i < tiles.length; i++) {
                 for (int j = 0; j < tiles[i].length; j++) {
-                    System.err.print(tiles[j][i] + " ");
+                    //PrintDebug(tiles[j][i] + " ");
                 }
-                PrintDebug("");
+                //PrintDebug("");
             }
 
-            Vector2 myQuestCardPos = null;
-            if (myTile.hasItem(myCard.item)) {
-                myQuestCardPos = myTile.pos;
-            } else if (oppTile.hasItem(myCard.item)) {
-                myQuestCardPos = oppTile.pos;
-            } else {
-                for (int i = 0; i < tiles.length; i++) {
-                    for (int j = 0; j < tiles[i].length; j++) {
-                        if (tiles[i][j].item != null
-                                && tiles[i][j].item.playerId == 0
-                                && tiles[i][j].item.name.equals(myCard.item.name)) {
-                            myQuestCardPos = tiles[i][j].pos;
-                            break;
-                        }
-                    }
-                }
-            }
+            Vector2 myQuestCardPos = getItemPos(tiles, myTile, oppTile, myCard);
+            Vector2 oppQuestCardPos = getItemPos(tiles, oppTile, myTile, oppCard);
             PrintDebug("Item is at pos " + myQuestCardPos);
             if (myQuestCardPos.equals(Vector2.MINUS_ONE) || myQuestCardPos.equals(Vector2.MINUS_TWO)) {
                 PrintDebug("Item is inaccessible! :(");
                 if (turnType == TurnType.PUSH.asValue()) {
-                    // push random row
-                    PrintPush(random.nextInt(boardWidth), Direction.fromInt(random.nextInt(Direction.values().length)));
+                    // push opponent item row
+                    if (isValidPush(oppQuestCardPos.y)) {
+                        PrintPush(oppQuestCardPos.y, Direction.RIGHT);
+                    } else {
+                        PrintPush(0, Direction.RIGHT);
+                    }
                 } else {
                     PrintPass();
                 }
@@ -259,19 +236,33 @@ public class PlayerAI {
             if (turnType == TurnType.PUSH.asValue()) {
                 if (xDiff != 0) {
                     if (yDiff == 0) {
-                        // push random row
-                        Direction[] directions  = {Direction.LEFT, Direction.RIGHT};
-                        PrintPush(random.nextInt(boardWidth), Direction.fromInt(random.nextInt(directions.length)));
+                        // push opponent item row
+                        if (isValidPush(oppQuestCardPos.y)) {
+                            PrintPush(oppQuestCardPos.y, Direction.RIGHT);
+                        } else {
+                            PrintPush(0, Direction.RIGHT);
+                        }
                     } else {
-                        PrintPush(myQuestCardPos.y, xDiff > 0 ? Direction.LEFT : Direction.RIGHT);
+                        if (isValidPush(myQuestCardPos.y)) {
+                            PrintPush(myQuestCardPos.y, xDiff > 0 ? Direction.LEFT : Direction.RIGHT);
+                        } else {
+                            PrintPush(0, Direction.RIGHT);
+                        }
                     }
                 } else if (yDiff != 0) {
                     if (xDiff == 0) {
-                        // push random col
-                        Direction[] directions  = {Direction.UP, Direction.DOWN};
-                        PrintPush(random.nextInt(boardHeight), Direction.fromInt(random.nextInt(directions.length)));
+                        // push opponent item col
+                        if (isValidPush(oppQuestCardPos.x)) {
+                            PrintPush(oppQuestCardPos.x, Direction.DOWN);
+                        } else {
+                            PrintPush(0, Direction.DOWN);
+                        }
                     } else {
-                        PrintPush(myQuestCardPos.x, yDiff > 0 ? Direction.UP : Direction.DOWN);
+                        if (isValidPush(myQuestCardPos.x)) {
+                            PrintPush(myQuestCardPos.x, yDiff > 0 ? Direction.UP : Direction.DOWN);
+                        } else {
+                            PrintPush(0, Direction.DOWN);
+                        }
                     }
                 }
             } else if (turnType == TurnType.MOVE.asValue()) {
@@ -286,6 +277,31 @@ public class PlayerAI {
                 }
             }
         }
+    }
+
+    private static Vector2 getItemPos(Tile[][] tiles, Tile myTile, Tile oppTile, Card myCard) {
+        Vector2 myQuestCardPos = Vector2.MINUS_ONE;
+        if (myTile.hasItem(myCard.item)) {
+            myQuestCardPos = myTile.pos;
+        } else if (oppTile.hasItem(myCard.item)) {
+            myQuestCardPos = oppTile.pos;
+        } else {
+            for (int i = 0; i < tiles.length; i++) {
+                for (int j = 0; j < tiles[i].length; j++) {
+                    if (tiles[i][j].item != null
+                            && tiles[i][j].item.playerId == 0
+                            && tiles[i][j].item.name.equals(myCard.item.name)) {
+                        myQuestCardPos = tiles[i][j].pos;
+                        break;
+                    }
+                }
+            }
+        }
+        return myQuestCardPos;
+    }
+
+    private static boolean isValidPush(int id) {
+        return id >= 0 && id < boardWidth;
     }
 
     private static boolean isValidMove(Tile[][] tiles, Vector2 pos, Direction direction) {
@@ -315,6 +331,9 @@ public class PlayerAI {
     }
 
     private static void PrintPush(int id, Direction dir) {
+        if (!isValidPush(id)) {
+            throw new RuntimeException("trying to push at id " + id);
+        }
         Print(String.format("PUSH %d %s", id, dir));
     }
 
