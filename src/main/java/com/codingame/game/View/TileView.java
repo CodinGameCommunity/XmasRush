@@ -9,10 +9,12 @@ import com.codingame.game.Model.TileModel;
 import com.codingame.game.Utils.Constants;
 import com.codingame.game.Utils.Constants.Direction;
 import com.codingame.game.Utils.Vector2;
-import com.codingame.gameengine.module.entities.*;
+import com.codingame.gameengine.module.entities.Entity;
+import com.codingame.gameengine.module.entities.GraphicEntityModule;
+import com.codingame.gameengine.module.entities.Group;
+import com.codingame.gameengine.module.entities.Sprite;
 import com.codingame.view.tooltip.TooltipModule;
 
-import java.util.HashMap;
 import java.util.Observable;
 
 public class TileView extends MovingView {
@@ -49,7 +51,7 @@ public class TileView extends MovingView {
         tile.addObserver(this);
 
         createTileView();
-        tooltipModule.registerEntity(group.getId(), new HashMap<>());
+        tooltipModule.registerEntity(group);
     }
 
     private void createTileView() {
@@ -105,7 +107,8 @@ public class TileView extends MovingView {
     }
 
     private void removeItem() {
-        this.itemGroup.setVisible(false);
+        itemGroup.setScale(0);
+        entityModule.commitEntityState(1, itemGroup);
         group.remove(this.itemGroup);
     }
 
@@ -158,7 +161,12 @@ public class TileView extends MovingView {
         }
         
         this.state = TileState.STILL;
-        tooltipModule.updateExtraTooltipText(group, model.getPos().toTooltip());
+
+        String tooltipText = model.getPos().toTooltip();
+        if (model.hasItem()) {
+            tooltipText += '\n' + model.getItem().toTooltip();
+        }
+        tooltipModule.updateExtraTooltipText(group, tooltipText);
     }
 
     public void update(Observable observable, Object update) {
