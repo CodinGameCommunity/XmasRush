@@ -83,9 +83,9 @@ public class PlayerAI {
         }
     }
 
-    static class Player {
+    static class Agent {
         public Vector2 pos;
-        Player(Vector2 pos) {
+        Agent(Vector2 pos) {
             this.pos = pos;
         }
     }
@@ -144,8 +144,8 @@ public class PlayerAI {
         // game loop
         while (true) {
             Tile[][] tiles = new Tile[boardWidth][boardHeight];
-            Player myPlayer = null;
-            Player oppPlayer = null;
+            Agent myAgent = null;
+            Agent oppAgent = null;
             Tile myTile = null;
             Tile oppTile = null;
             Card myCard = null;
@@ -165,10 +165,10 @@ public class PlayerAI {
                 int playerY = in.nextInt();
                 String playerTile = in.next();
                 if (i == 0) {
-                    myPlayer = new Player(new Vector2(playerX, playerY));
+                    myAgent = new Agent(new Vector2(playerX, playerY));
                     myTile = new Tile(playerTile);
                 } else if (i == 1) {
-                    oppPlayer = new Player(new Vector2(playerX, playerY));
+                    oppAgent = new Agent(new Vector2(playerX, playerY));
                     oppTile = new Tile(playerTile);
                 }
                 //PrintDebug(numPlayerCards + " " + playerX + "," + playerY + " " + playerTile);
@@ -227,10 +227,10 @@ public class PlayerAI {
                 }
                 continue;
             }
-            PrintDebug("Dist to item is " + myPlayer.pos.getManhattanDist(myQuestCardPos));
+            PrintDebug("Dist to item is " + myAgent.pos.getManhattanDist(myQuestCardPos));
 
-            int xDiff = myQuestCardPos.x - myPlayer.pos.x;
-            int yDiff = myQuestCardPos.y - myPlayer.pos.y;
+            int xDiff = myQuestCardPos.x - myAgent.pos.x;
+            int yDiff = myQuestCardPos.y - myAgent.pos.y;
             PrintDebug("x diff " + xDiff);
             PrintDebug("y diff " + yDiff);
             if (turnType == TurnType.PUSH.asValue()) {
@@ -268,9 +268,9 @@ public class PlayerAI {
             } else if (turnType == TurnType.MOVE.asValue()) {
                 Direction xDir = xDiff > 0 ? Direction.RIGHT : Direction.LEFT;
                 Direction yDir = yDiff > 0 ? Direction.DOWN : Direction.UP;
-                if (xDiff != 0 && isValidMove(tiles, myPlayer.pos, xDir)) {
+                if (xDiff != 0 && isValidMove(tiles, myAgent.pos, xDir)) {
                     PrintMove(xDir);
-                } else if (yDiff != 0 && isValidMove(tiles, myPlayer.pos, yDir)) {
+                } else if (yDiff != 0 && isValidMove(tiles, myAgent.pos, yDir)) {
                     PrintMove(yDir);
                 } else {
                     PrintPass();
