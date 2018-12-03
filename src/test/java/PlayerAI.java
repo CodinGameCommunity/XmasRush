@@ -27,7 +27,7 @@ public class PlayerAI {
             return this.item != null && this.item.name.equals(item.name);
         }
         public boolean hasDirection(Direction direction) {
-            return pattern.charAt(direction.asValue()) == '1';
+            return pattern.charAt(direction.asIndex()) == '1';
         }
         @Override
         public String toString() {
@@ -109,18 +109,18 @@ public class PlayerAI {
         LEFT(Vector2.LEFT, 3);
 
         private final Vector2 vector;
-        private final int value;
+        private final int index;
 
-        Direction(Vector2 vector, int value) {
+        Direction(Vector2 vector, int index) {
             this.vector = vector;
-            this.value = value;
+            this.index = index;
         }
         public Vector2 asVector() {
             return vector;
         }
 
-        public int asValue() {
-            return value;
+        public int asIndex() {
+            return index;
         }
 
         public Direction getOpposite() {
@@ -160,7 +160,7 @@ public class PlayerAI {
                 //PrintDebug("");
             }
             for (int i = 0; i < 2; i++) {
-                int numPlayerCards = in.nextInt(); // the number of cards in the stack for each player
+                int numPlayerCards = in.nextInt(); // the total number of quests for a player (hidden and revealed)
                 int playerX = in.nextInt();
                 int playerY = in.nextInt();
                 String playerTile = in.next();
@@ -173,7 +173,7 @@ public class PlayerAI {
                 }
                 //PrintDebug(numPlayerCards + " " + playerX + "," + playerY + " " + playerTile);
             }
-            int numItems = in.nextInt(); // the total number of items available on board and on player tiles (does not include quest cards)
+            int numItems = in.nextInt(); // the total number of items available on board and on player tiles
             for (int i = 0; i < numItems; i++) {
                 String itemName = in.next();
                 int itemX = in.nextInt();
@@ -190,7 +190,7 @@ public class PlayerAI {
                 //PrintDebug(itemName + itemPlayerId + " " + itemX + "," + itemY);
             }
             int turnType = in.nextInt();
-            int numQuests = in.nextInt(); // the total number of available quest cards for both players
+            int numQuests = in.nextInt(); // the total number of revealed quests for both players
             for (int i = 0; i < numQuests; i++) {
                 String questItemName = in.next();
                 int questPlayerId = in.nextInt();
@@ -202,13 +202,13 @@ public class PlayerAI {
                 //PrintDebug(questItemName + questPlayerId);
             }
 
-            //PrintDebug("Debug Map");
+            /*PrintDebug("Debug Map");
             for (int i = 0; i < tiles.length; i++) {
                 for (int j = 0; j < tiles[i].length; j++) {
-                    //PrintDebug(tiles[j][i] + " ");
+                    PrintDebug(tiles[j][i] + " ");
                 }
-                //PrintDebug("");
-            }
+                PrintDebug("");
+            }*/
 
             Vector2 myQuestCardPos = getItemPos(tiles, myTile, oppTile, myCard);
             Vector2 oppQuestCardPos = getItemPos(tiles, oppTile, myTile, oppCard);
