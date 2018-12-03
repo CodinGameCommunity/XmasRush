@@ -1,24 +1,10 @@
 package com.codingame.game;
 
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
-import javax.inject.Inject;
-
-import com.codingame.game.InputActions.Action;
-import com.codingame.game.InputActions.InvalidAction;
-import com.codingame.game.InputActions.MoveAction;
-import com.codingame.game.InputActions.PassAction;
-import com.codingame.game.InputActions.PushAction;
-import com.codingame.game.Model.CardModel;
-import com.codingame.game.Model.GameBoard;
-import com.codingame.game.Model.Item;
-import com.codingame.game.Model.PlayerModel;
-import com.codingame.game.Model.TileModel;
+import com.codingame.game.InputActions.*;
+import com.codingame.game.Model.*;
 import com.codingame.game.Utils.Constants;
 import com.codingame.game.Utils.Vector2;
+import com.codingame.game.View.BoardView;
 import com.codingame.game.View.ViewController;
 import com.codingame.gameengine.core.AbstractPlayer;
 import com.codingame.gameengine.core.AbstractReferee;
@@ -28,7 +14,12 @@ import com.codingame.gameengine.module.entities.GraphicEntityModule;
 import com.codingame.view.endscreen.EndScreenModule;
 import com.codingame.view.nicknameshandler.NicknamesHandlerModule;
 import com.codingame.view.tooltip.TooltipModule;
-import com.codingame.game.View.BoardView;
+
+import javax.inject.Inject;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class Referee extends AbstractReferee {
     @Inject private MultiplayerGameManager<Player> gameManager;
@@ -580,7 +571,7 @@ public class Referee extends AbstractReferee {
     }
 
     private void declareWinner(Player player) {
-        gameManager.addToGameSummary(GameManager.formatSuccessMessage(player.getNicknameToken() + " is a winner!"));
+        gameManager.addToGameSummary(GameManager.formatSuccessMessage(player.getNicknameToken() + " won!"));
     }
 
     private void declareDraw() {
