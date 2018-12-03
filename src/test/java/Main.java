@@ -5,9 +5,10 @@ public class Main {
     public static void main(String[] args) {
 
         String league = "1";
+        boolean useSeed = true;
 
-        runBatch(league, 100);
-        //runNormal(league, 6469653652862993400L);
+        //runBatch(league, 100);
+        runOnce(league, useSeed, -6296244641747843088L);
     }
 
     private static void runBatch(String league, int numRounds) {
@@ -18,7 +19,7 @@ public class Main {
         for (int i = 0; i < numRounds; i++) {
             MultiplayerGameRunner gameRunner = new MultiplayerGameRunner();
 
-            gameRunner.addAgent(PlayerAI.class);
+            gameRunner.addAgent(PlayerAStar.class);
             //gameRunner.addAgent("C:\\Users\\Tzupy\\AppData\\Local\\Programs\\Python\\Python37-32\\python.exe config\\level1\\Boss.py3");
             gameRunner.addAgent(EmptyAI.class);
 
@@ -34,23 +35,26 @@ public class Main {
                 case 3: score3++; break;
             }
             if (result.scores.get(0) < 0) {
-                System.out.println("whaa?");
+                throw new RuntimeException("something fishy with score 0");
             }
             if (result.scores.get(1) < 0) {
-                System.out.println("whaa?");
+                throw new RuntimeException("something fishy with score 1");
             }
         }
         System.out.println(String.format("0-0: %d, 1-0: %d, 2-0: %d, 3-0: %d", score0, score1, score2, score3));
     }
 
-    private static void runNormal(String league, long seed) {
+    private static void runOnce(String league, boolean useSeed, long seed) {
         MultiplayerGameRunner gameRunner = new MultiplayerGameRunner();
 
-        gameRunner.addAgent(PlayerAI.class);
+        gameRunner.addAgent(PlayerAStar.class);
+        //gameRunner.addAgent("C:\\Users\\Tzupy\\AppData\\Local\\Programs\\Python\\Python37-32\\python.exe config\\level1\\Boss.py3");
         gameRunner.addAgent(EmptyAI.class);
 
         System.setProperty("league.level", league);
-        gameRunner.setSeed(seed);
+        if (useSeed) {
+            gameRunner.setSeed(seed);
+        }
 
         gameRunner.start();
     }
