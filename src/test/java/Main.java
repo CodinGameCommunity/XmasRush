@@ -8,7 +8,7 @@ public class Main {
         boolean useSeed = true;
 
         //runBatch(league, 100);
-        runOnce(league, useSeed, -6296244641747843088L);
+        runOnce(league, useSeed, -4277586949332252956L);
     }
 
     private static void runBatch(String league, int numRounds) {
@@ -20,7 +20,7 @@ public class Main {
             MultiplayerGameRunner gameRunner = new MultiplayerGameRunner();
 
             gameRunner.addAgent(PlayerAStar.class);
-            //gameRunner.addAgent("C:\\Users\\Tzupy\\AppData\\Local\\Programs\\Python\\Python37-32\\python.exe config\\level1\\Boss.py3");
+            //gameRunner.addAgent("python.exe config/level1/Boss.py3");
             gameRunner.addAgent(EmptyAI.class);
 
             System.setProperty("league.level", league);
@@ -48,7 +48,7 @@ public class Main {
         MultiplayerGameRunner gameRunner = new MultiplayerGameRunner();
 
         gameRunner.addAgent(PlayerAStar.class);
-        //gameRunner.addAgent("C:\\Users\\Tzupy\\AppData\\Local\\Programs\\Python\\Python37-32\\python.exe config\\level1\\Boss.py3");
+        //gameRunner.addAgent("python.exe config/level1/Boss.py3");
         gameRunner.addAgent(EmptyAI.class);
 
         System.setProperty("league.level", league);

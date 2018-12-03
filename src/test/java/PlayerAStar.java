@@ -1,10 +1,6 @@
-import java.io.File;
-import java.io.IOException;
 import java.util.*;
 
 public class PlayerAStar {
-    private static final boolean useInputFile = false;
-
     static class Item {
         public String name;
         public int playerId;
@@ -155,13 +151,8 @@ public class PlayerAStar {
 
     private static int boardWidth;
     private static int boardHeight;
-    public static void main(String args[]) throws IOException {
-        Scanner in;
-        if (useInputFile) {
-            in = new Scanner(new File("C:\\Users\\Tzupy\\Documents\\CodinGame\\team-6\\src\\test\\java\\input.txt"));
-        } else {
-            in = new Scanner(System.in);
-        }
+    public static void main(String args[]) {
+        Scanner in = new Scanner(System.in);
         boardWidth = in.nextInt();
         boardHeight = in.nextInt();
 
