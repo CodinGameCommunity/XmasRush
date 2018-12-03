@@ -200,6 +200,8 @@
         A <action>MOVE</action> can contain up to <const>20</const> <var>directions</var>, each direction separated by a
         space <action>&nbsp;</action>.
       </p>
+      <br>
+      Note: You may toggle tile scenery on/off in the settings panel (<img style="opacity:.8;background:#20252a;" height="18" src="https://www.codingame.com/servlet/fileservlet?id=3463235186409" width="18">).
     </div>
   </div>
 
@@ -422,6 +424,7 @@
         <!-- END -->
 
         <br>
+        Response time for the first turn ≤ <const>1</const>s<br>
         Response time per turn ≤ <const>50</const>ms<br>
       </div>
     </div>
