@@ -424,6 +424,7 @@
         <!-- END -->
 
         <br>
+        Response time for the first turn ≤ <const>1</const>s<br>
         Response time per turn ≤ <const>50</const>ms<br>
       </div>
     </div>
