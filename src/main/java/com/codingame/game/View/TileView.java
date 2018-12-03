@@ -107,7 +107,8 @@ public class TileView extends MovingView {
     }
 
     private void removeItem() {
-        this.itemGroup.setVisible(false);
+        itemGroup.setAlpha(0);
+        entityModule.commitEntityState(1, itemGroup);
         group.remove(this.itemGroup);
     }
 
