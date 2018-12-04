@@ -540,9 +540,10 @@ public class Referee extends AbstractReferee {
             PlayerModel playerModel = players.get(player.getIndex());
             TileModel tile = gameBoard.getTile(playerModel.getPos());
             if (tile.hasItem() && playerModel.removeCard(tile.getItem())) {
-                gameBoard.removeItem(tile);
                 player.setScore(player.getScore() + POINTS_PER_ITEM);
                 gameManager.addToGameSummary(GameManager.formatSuccessMessage(String.format("%s completed a quest", player.getNicknameToken())));
+                gameManager.addTooltip(player,String.format("%s got the %s", player.getNicknameToken(),tile.getItem().getName()));
+                gameBoard.removeItem(tile);
             }
         }
     }

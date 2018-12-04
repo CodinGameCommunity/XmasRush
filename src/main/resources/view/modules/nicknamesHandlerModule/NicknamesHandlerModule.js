@@ -44,7 +44,6 @@ export class NicknamesHandlerModule {
   }
 
   handleGlobalData (players, nicknameIds) {
-    console.log(nicknameIds)
     this.nicknameIds = nicknameIds || []
   }
 }

@@ -52,6 +52,7 @@ while True:
             player_y = y
     print(x, y, file=sys.stderr)
     # the total number of items available on board and on player tiles (does not include quest cards)
+    items = {}
     num_items = int(input())
     for i in range(num_items):
         item_name, item_x, item_y, item_player_id = input().split()
@@ -59,15 +60,17 @@ while True:
         item_x = int(item_x)
         item_y = int(item_y)
         item_player_id = int(item_player_id)
-        if item_player_id == 0:
-            target_x = item_x
-            target_y = item_y
+        items[item_name + str(item_player_id)] = (item_x, item_y)
+
     turn_type = int(input())
     # the total number of available quest cards for both players
     num_quests = int(input())
     for i in range(num_quests):
         quest_item_name, quest_player_id = input().split()
         quest_player_id = int(quest_player_id)
+        if quest_player_id == 0:
+            target_x = items[quest_item_name + str(quest_player_id)][0]
+            target_y = items[quest_item_name + str(quest_player_id)][1]
 
     if turn_type == 0:
         if target_x < 0:
