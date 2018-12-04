@@ -1,5 +1,6 @@
 package com.codingame.game.View;
 
+import com.codingame.game.Referee;
 import com.codingame.game.Model.CardModel;
 import com.codingame.game.Model.Item;
 import com.codingame.game.Model.StateUpdates.CardPositionUpdate;
@@ -58,8 +59,7 @@ public class CardView extends MovingView {
         group.setZIndex(model.cardLayer);
         entityModule.commitEntityState(0, group);
         group.setX(model.getPos().getX()).setY(model.getPos().getY());
-        entityModule.commitEntityState(0.5, group);
-
+        entityModule.commitEntityState(350. / Referee.myGameManager.getFrameDuration(), group);
         tooltipModule.updateExtraTooltipText(group, model.getItem().toTooltip());
     }
 
