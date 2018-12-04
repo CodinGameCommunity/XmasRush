@@ -1,7 +1,7 @@
 import { api as entityModule } from '../../entity-module/GraphicEntityModule.js'
 
 export const options = {
-  decor: true,
+  decor: false,
   refreshDecor: () => {}
 }
 
