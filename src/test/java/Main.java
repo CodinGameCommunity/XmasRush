@@ -5,10 +5,9 @@ public class Main {
     public static void main(String[] args) {
 
         String league = "3";
-        boolean useSeed = false;
 
-        runBatch(league, 100);
-        //runOnce(league, useSeed, -4277586949332252956L);
+        runBatch(league, 1000);
+        //runOnce(league, 7577249279199645558L);
     }
 
     private static void runBatch(String league, int numRounds) {
@@ -38,16 +37,20 @@ public class Main {
             }
 
             if (result.scores.get(0) < 0) {
+                int numSummaries = result.summaries.size();
+                System.out.println(String.format("summary %d: %s\nsummary %d: %s", numSummaries - 2, result.summaries.get(numSummaries - 2), numSummaries - 1, result.summaries.get(numSummaries - 1)));
                 throw new RuntimeException("something fishy with score 0");
             }
             if (result.scores.get(1) < 0) {
+                int numSummaries = result.summaries.size();
+                System.out.println(String.format("summary %d: %s\nsummary %d: %s", numSummaries - 2, result.summaries.get(numSummaries - 2), numSummaries - 1, result.summaries.get(numSummaries - 1)));
                 throw new RuntimeException("something fishy with score 1");
             }
         }
         System.out.println(String.format("User 0 won %d times, user 1 won %d times, %d draws", wins0, wins1, draws));
     }
 
-    private static void runOnce(String league, boolean useSeed, long seed) {
+    private static void runOnce(String league, long seed) {
         MultiplayerGameRunner gameRunner = new MultiplayerGameRunner();
 
         //gameRunner.addAgent(PlayerAStar.class);
@@ -56,9 +59,7 @@ public class Main {
         gameRunner.addAgent("python.exe config/level2/Boss.py3");
 
         System.setProperty("league.level", league);
-        if (useSeed) {
-            gameRunner.setSeed(seed);
-        }
+        gameRunner.setSeed(seed);
 
         gameRunner.start();
     }

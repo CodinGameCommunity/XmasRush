@@ -155,6 +155,9 @@ public class PlayerAStar {
         Scanner in = new Scanner(System.in);
         boardWidth = in.nextInt();
         boardHeight = in.nextInt();
+        boolean toggle = true;
+        int row = 0;
+        int column = 0;
 
         // game loop
         while (true) {
@@ -230,56 +233,17 @@ public class PlayerAStar {
             Vector2 myQuestCardPos = myCards.get(myCards.size() - 1).item.pos;
             Vector2 oppQuestCardPos = oppCards.get(oppCards.size() - 1).item.pos;
             PrintDebug("Item is at pos " + myQuestCardPos);
-            if (myQuestCardPos.equals(Vector2.MINUS_ONE) || myQuestCardPos.equals(Vector2.MINUS_TWO)) {
-                PrintDebug("Item is inaccessible! :(");
-                if (turnType == TurnType.PUSH.asValue()) {
-                    // push opponent item row
-                    if (isValidPush(oppQuestCardPos.y)) {
-                        PrintPush(oppQuestCardPos.y, Direction.RIGHT);
-                    } else {
-                        PrintPush(0, Direction.RIGHT);
-                    }
-                } else {
-                    PrintPass();
-                }
-                continue;
-            }
             PrintDebug("Dist to item is " + myAgent.pos.getManhattanDist(myQuestCardPos));
 
-            int xDiff = myQuestCardPos.x - myAgent.pos.x;
-            int yDiff = myQuestCardPos.y - myAgent.pos.y;
             if (turnType == TurnType.PUSH.asValue()) {
-                if (xDiff != 0) {
-                    if (yDiff == 0) {
-                        // push opponent item row
-                        if (isValidPush(oppQuestCardPos.y)) {
-                            PrintPush(oppQuestCardPos.y, Direction.RIGHT);
-                        } else {
-                            PrintPush(0, Direction.RIGHT);
-                        }
-                    } else {
-                        if (isValidPush(myQuestCardPos.y)) {
-                            PrintPush(myQuestCardPos.y, xDiff > 0 ? Direction.LEFT : Direction.RIGHT);
-                        } else {
-                            PrintPush(0, Direction.RIGHT);
-                        }
-                    }
-                } else if (yDiff != 0) {
-                    if (xDiff == 0) {
-                        // push opponent item col
-                        if (isValidPush(oppQuestCardPos.x)) {
-                            PrintPush(oppQuestCardPos.x, Direction.DOWN);
-                        } else {
-                            PrintPush(0, Direction.DOWN);
-                        }
-                    } else {
-                        if (isValidPush(myQuestCardPos.x)) {
-                            PrintPush(myQuestCardPos.x, yDiff > 0 ? Direction.UP : Direction.DOWN);
-                        } else {
-                            PrintPush(0, Direction.DOWN);
-                        }
-                    }
+                if (toggle) {
+                    PrintPush(column, Direction.RIGHT);
+                    column = (column + 1) % boardHeight;
+                } else {
+                    PrintPush(row, Direction.DOWN);
+                    row = (row + 1) % boardHeight;
                 }
+                toggle = !toggle;
             } else if (turnType == TurnType.MOVE.asValue()) {
                 HashMap<Vector2, Vector2> visitable = aStar(tiles, myAgent.pos, myQuestCardPos);
                 PrintDebug("aStar size " + visitable.size());
