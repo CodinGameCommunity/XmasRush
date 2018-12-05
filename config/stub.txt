@@ -1,4 +1,5 @@
 gameloop
+read turnType:int
 loop boardHeight
     loopline boardWidth tile:word(4)
 loop 2
@@ -6,7 +7,6 @@ loop 2
 read numItems:int
 loop numItems
     read itemName:word(10) itemX:int itemY:int itemPlayerId:int
-read turnType:int
 read numQuests:int
 loop numQuests
     read questItemName:word(10) questPlayerId:int

@@ -9,6 +9,7 @@ class Player {
         int turn = 0;
         // game loop
         while (true) {
+            int turnType = in.nextInt();
             for (int i = 0; i < boardHeight; i++) {
                 for (int j = 0; j < boardWidth; j++) {
                     String tile = in.next();
@@ -31,7 +32,6 @@ class Player {
                 int itemPlayerId = in.nextInt();
                 System.err.println(itemName + itemPlayerId + " " + itemX + "," + itemY);
             }
-            int turnType = in.nextInt();
             int numQuests = in.nextInt(); // the total number of available quest cards for both players
             for (int i = 0; i < numQuests; i++) {
                 String questItemName = in.next();

@@ -38,6 +38,8 @@ while True:
     player_x = 0
     player_y = 0
 
+    turn_type = int(input())
+
     for i in range(board_height):
         for tile in input().split():
             pass
@@ -62,7 +64,6 @@ while True:
         item_player_id = int(item_player_id)
         items[item_name + str(item_player_id)] = (item_x, item_y)
 
-    turn_type = int(input())
     # the total number of available quest cards for both players
     num_quests = int(input())
     for i in range(num_quests):

@@ -315,6 +315,9 @@ public class Referee extends AbstractReferee {
 
     private void sendPlayerInputs() {
         for (Player player : gameManager.getActivePlayers()) {
+            // Turn type
+            player.sendInputLine(Integer.toString(turnType.getValue()));
+
             // Game gameBoard
             gameBoard.sendMapToPlayer(player);
 
@@ -330,9 +333,6 @@ public class Referee extends AbstractReferee {
 
             // Items
             gameBoard.sendItemsToPlayer(player);
-
-            // Turn type
-            player.sendInputLine(Integer.toString(turnType.getValue()));
 
             // Cards
             int numQuests = players.get(firstPlayerIndex).getNumQuestCards()
