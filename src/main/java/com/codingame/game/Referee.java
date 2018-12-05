@@ -28,6 +28,7 @@ public class Referee extends AbstractReferee {
     @Inject private EndScreenModule endScreenModule;
     @Inject private NicknamesHandlerModule nicknamesHandlerModule;
     public static NicknamesHandlerModule nicksModule;
+    public static MultiplayerGameManager<Player> myGameManager;
     public static Action.Type turnType;
     private GameBoard gameBoard;
 
@@ -57,6 +58,7 @@ public class Referee extends AbstractReferee {
 
     public void init() {
         nicksModule = nicknamesHandlerModule;
+        myGameManager = gameManager;
         Properties params = gameManager.getGameParameters();
         Constants.random = new Random(getSeed(params));
 
