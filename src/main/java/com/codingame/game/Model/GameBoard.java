@@ -6,6 +6,7 @@ import com.codingame.game.Utils.Vector2;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class GameBoard {
@@ -212,6 +213,8 @@ public class GameBoard {
 
     public void sendItemsToPlayer(Player player) {
         int numItems = tilesWithItems.size();
+        Collections.shuffle(tilesWithItems, Constants.random);
+
         player.sendInputLine(Integer.toString(numItems));
         for (TileModel tile : tilesWithItems) {
             if (player.getIndex() == Constants.PLAYER_INDEX)
