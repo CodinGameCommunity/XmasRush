@@ -19,7 +19,7 @@ public class CardDeckView extends AbstractView {
     public CardDeckView(GraphicEntityModule entityModule, PlayerModel player) {
         super(entityModule);
         this.player = player;
-        pos = new Vector2(Constants.DECK_POSITIONS.get(player.id));
+        pos = player.getDeckPosition();
         player.addObserver(this);
 
         createCardDeckView();

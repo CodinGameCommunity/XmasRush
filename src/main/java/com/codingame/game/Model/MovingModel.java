@@ -1,6 +1,6 @@
 package com.codingame.game.Model;
 
-import com.codingame.game.Utils.Constants;
+import com.codingame.game.Utils.Constants.Direction;
 import com.codingame.game.Utils.Vector2;
 
 public abstract class MovingModel extends AbstractModel{
@@ -15,9 +15,8 @@ public abstract class MovingModel extends AbstractModel{
     }
 
     //move in the specified direction
-    public void move(Constants.Direction direction) {
+    public void move(Direction direction) {
         Vector2 pos = getPos();
-        pos.add(direction.asVector());
-        move(pos);
+        move(pos.add(direction.asVector()));
     }
 }

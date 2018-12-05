@@ -28,11 +28,11 @@ public class Referee extends AbstractReferee {
     @Inject private EndScreenModule endScreenModule;
     @Inject private NicknamesHandlerModule nicknamesHandlerModule;
     public static NicknamesHandlerModule nicksModule;
-    public static Action.Type turnType;
+    private static Action.Type turnType;
     private GameBoard gameBoard;
 
     private ViewController view;
-    public static BoardView observer;
+    private static BoardView observer;
 
     private List<PlayerModel> players = new ArrayList<>();
     private List<Map<Player, PushAction>> pushActions = new ArrayList<>();
@@ -42,11 +42,14 @@ public class Referee extends AbstractReferee {
     //Score
     private static final int POINTS_PER_ITEM = 1;
     //Game turns
-    public static int gameTurnsLeft;
+    private static int gameTurnsLeft = Constants.MAX_GAME_TURNS;
     //Number of turns required to accommodate the worst case scenario:
     //max move step frames per MOVE turn + (1 row frame + 1 push frame) per PUSH turn
     //+ 1 extra frame to return "Max turns reached!", if required
     private static final int MAX_NUM_TURNS = (Constants.MAX_MOVE_STEPS + 2) * Constants.MAX_GAME_TURNS / 2 + 1;
+    private static final int PUSH_TURN_DURATION = 2000;
+    private static final int MOVE_TURN_DURATION = 700;
+    private static int turnDuration;
 
     //League stuff
     private static int leagueLevel;
@@ -59,8 +62,8 @@ public class Referee extends AbstractReferee {
         nicksModule = nicknamesHandlerModule;
         Properties params = gameManager.getGameParameters();
         Constants.random = new Random(getSeed(params));
+        turnDuration = gameManager.getFrameDuration();
 
-        gameTurnsLeft = Constants.MAX_GAME_TURNS;
         leagueLevel = gameManager.getLeagueLevel();
         gameManager.setMaxTurns(MAX_NUM_TURNS);
 
@@ -92,14 +95,6 @@ public class Referee extends AbstractReferee {
                 threeWayTiles = false;
                 break;
         }
-
-        // align the cards based on league data
-        int cardsPosX = (Constants.MAP_POS_X - Constants.TILE_SIZE / 2
-                - Math.max(0, numVisibleCards - 1) * (Constants.CARD_SIZE + Constants.CARDS_OFFSET_X)) / 2;
-        Constants.CARD_POSITIONS.get(0).setX(cardsPosX);
-        Constants.CARD_POSITIONS.get(1).setX(Constants.SCREEN_WIDTH - cardsPosX);
-        Constants.DECK_POSITIONS.get(0).setX(cardsPosX);
-        Constants.DECK_POSITIONS.get(1).setX(Constants.SCREEN_WIDTH - cardsPosX);
 
         loadSpriteSheets();
         createBoard();
@@ -151,6 +146,19 @@ public class Referee extends AbstractReferee {
                 .setImagesPerRow(3)
                 .setName("tile_paths")
                 .load();
+    }
+
+    //Getters
+    public static Action.Type getTurnType() {
+        return turnType;
+    }
+
+    public static int getTurnDuration() {
+        return turnDuration;
+    }
+
+    public static int getGameTurnsLeft() {
+        return gameTurnsLeft;
     }
 
     //Models
@@ -286,12 +294,15 @@ public class Referee extends AbstractReferee {
                 return;
             }
 
-            turnType = (turnType == Action.Type.PUSH) ? Action.Type.MOVE : Action.Type.PUSH;
             if (turnType == Action.Type.PUSH) {
-                gameManager.setFrameDuration(2000);
+                turnType = Action.Type.MOVE;
+                turnDuration = MOVE_TURN_DURATION;
             } else {
-                gameManager.setFrameDuration(700);
+                turnType = Action.Type.PUSH;
+                turnDuration = PUSH_TURN_DURATION;
             }
+            gameManager.setFrameDuration(turnDuration);
+
             gameTurnsLeft--;
             forceGameFrame();
             flipCards();

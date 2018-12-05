@@ -1,11 +1,9 @@
 package com.codingame.game.Model;
 
-import com.codingame.game.Model.StateUpdates.PoppedUpdate;
-import com.codingame.game.Model.StateUpdates.PushedUpdate;
+import com.codingame.game.Model.StateUpdates.PlayerTilePosUpdate;
 import com.codingame.game.Model.StateUpdates.RemoveItemUpdate;
 import com.codingame.game.Model.StateUpdates.ShowFrameUpdate;
 import com.codingame.game.Utils.Constants;
-import com.codingame.game.Utils.Constants.Direction;
 import com.codingame.game.Utils.Vector2;
 
 public class TileModel extends MovingModel{
@@ -104,13 +102,11 @@ public class TileModel extends MovingModel{
 
     @Override
     public void move(Vector2 pos) {
-        super.setPos(pos);
+        super.move(pos);
         updateState(new ShowFrameUpdate());
     }
-    public void push(Direction direction) {
-        updateState(new PushedUpdate(direction));
-    }
-    public void pop(Direction direction) {
-        updateState(new PoppedUpdate(direction));
+
+    public void updateView(Vector2 pos) {
+        updateState(new PlayerTilePosUpdate(pos));
     }
 }

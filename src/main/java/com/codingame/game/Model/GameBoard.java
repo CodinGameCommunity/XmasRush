@@ -115,14 +115,10 @@ public class GameBoard {
 
     //Pushing methods
     public TileModel pushLine(TileModel pushedTile, int lineId, Constants.Direction dir) {
-        pushedTile.push(dir);
-        TileModel popped;
-        if (dir == Constants.Direction.UP) popped = pushUp(pushedTile, lineId);
-        else if (dir == Constants.Direction.RIGHT) popped = pushRight(pushedTile, lineId);
-        else if (dir == Constants.Direction.DOWN) popped = pushDown(pushedTile, lineId);
-        else popped = pushLeft(pushedTile, lineId);
-        popped.pop(dir);
-        return popped;
+        if (dir == Constants.Direction.UP) return pushUp(pushedTile, lineId);
+        else if (dir == Constants.Direction.RIGHT) return pushRight(pushedTile, lineId);
+        else if (dir == Constants.Direction.DOWN) return pushDown(pushedTile, lineId);
+        else return pushLeft(pushedTile, lineId);
     }
 
     private TileModel pushUp(TileModel pushedTile, int col) {
@@ -135,6 +131,10 @@ public class GameBoard {
         }
         setTile(col, maxRow, pushedTile);
         getTile(col, maxRow).move(new Vector2(col, maxRow));
+
+        //update tile views
+        poppedTile.updateView(poppedTile.getPos().add(Vector2.UP));
+        pushedTile.updateView(pushedTile.getPos().add(Vector2.DOWN));
 
         return poppedTile;
     }
@@ -149,6 +149,11 @@ public class GameBoard {
         }
         setTile(0, row, pushedTile);
         getTile(0, row).move(new Vector2(0, row));
+
+        //update tile views
+        poppedTile.updateView(poppedTile.getPos().add(Vector2.RIGHT));
+        pushedTile.updateView(pushedTile.getPos().add(Vector2.LEFT));
+
         return poppedTile;
     }
 
@@ -162,26 +167,36 @@ public class GameBoard {
         }
         setTile(col, 0, pushedTile);
         getTile(col, 0).move(new Vector2(col, 0));
+
+        //update tile views
+        poppedTile.updateView(poppedTile.getPos().add(Vector2.DOWN));
+        pushedTile.updateView(pushedTile.getPos().add(Vector2.UP));
+
         return poppedTile;
     }
 
     private TileModel pushLeft(TileModel pushedTile, int row) {
         int maxCol = Constants.MAP_WIDTH - 1;
         TileModel poppedTile = getTile(0, row);
+
         for (int i = 0; i < maxCol; i++) {
             setTile(i, row, getTile(i + 1, row));
             getTile(i, row).move(Constants.Direction.LEFT);
         }
         setTile(maxCol, row, pushedTile);
         getTile(maxCol, row).move(new Vector2(maxCol, row));
+
+        //update tile views
+        poppedTile.updateView(poppedTile.getPos().add(Vector2.LEFT));
+        pushedTile.updateView(pushedTile.getPos().add(Vector2.RIGHT));
+
         return poppedTile;
     }
 
     //Checkers
     public boolean isValidMove(Vector2 pos, Constants.Direction direction) {
-        Vector2 newPos = new Vector2(pos);
-        if (getTile(newPos).hasDirection(direction)) {
-            newPos.add(direction.asVector());
+        if (getTile(pos).hasDirection(direction)) {
+            Vector2 newPos = pos.add(direction.asVector());
             if (isValidPos(newPos) && getTile(newPos).hasDirection(direction.getOpposite()))
                 return true;
         }

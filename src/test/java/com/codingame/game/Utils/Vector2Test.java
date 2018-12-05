@@ -72,10 +72,9 @@ public class Vector2Test {
     public void testVectorAddition() {
         Vector2 vector1 = new Vector2(3, 5);
         Vector2 vector2 = new Vector2(-4, 2);
-        vector1.add(vector2);
-        assertEquals(-1, vector1.getX());
-        assertEquals(7, vector1.getY());
-
+        Vector2 vector3 = vector1.add(vector2);
+        assertEquals(-1, vector3.getX());
+        assertEquals(7, vector3.getY());
     }
 
     @Test

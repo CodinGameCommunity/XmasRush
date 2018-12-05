@@ -30,12 +30,12 @@ public class PlayerView extends MovingView{
     }
 
     public void updateView(){
-        if(Referee.turnType == Action.Type.PUSH) {
+        if (Referee.getTurnType() == Action.Type.PUSH) {
             entityModule.commitEntityState(0.3, sprite);
             setMapPos(sprite, model.getPos());
             entityModule.commitEntityState(0.6, sprite);
-        }
-        setMapPos(sprite, model.getPos());
+        } else
+            setMapPos(sprite, model.getPos());
     }
 
     public Entity getEntity() {

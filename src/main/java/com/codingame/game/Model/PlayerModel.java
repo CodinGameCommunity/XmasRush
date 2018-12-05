@@ -8,15 +8,16 @@ import java.util.*;
 
 public class PlayerModel extends MovingModel {
     public final int id;
-    public final int orientation;
+    private final int orientation;
     private final Vector2 tilePos;
     private final Stack<CardModel> hiddenCards = new Stack<>();
     private final List<CardModel> visibleCards = new ArrayList<>();
 
     private final int maxNumCards = 3; //max number of cards to show
     private int numVisibleCards;
-    private final Vector2 deckPosition;
-    private final Vector2 cardPosition;
+    private Vector2 deckPosition;
+    private Vector2 cardPosition;
+    private final int horizontalOffset = Constants.CARD_SIZE + Constants.CARDS_OFFSET_X;
 
     private TileModel tile;
 
@@ -64,24 +65,34 @@ public class PlayerModel extends MovingModel {
         return Collections.unmodifiableList(hiddenCards);
     }
 
+    public Vector2 getDeckPosition() {
+        return new Vector2(deckPosition);
+    }
+
+    public int getOrientation() {
+        return orientation;
+    }
+
     public void setNumVisibleCards(int numVisibleCards) {
         this.numVisibleCards = (numVisibleCards <= maxNumCards) ? numVisibleCards : maxNumCards;
+        resetPosition();
+    }
+
+    private void resetPosition() {
+        //move cards and the deck half a card closer to the border for each additional card
+        int newPos = deckPosition.getX() - (numVisibleCards - 1) * orientation * horizontalOffset / 2;
+        deckPosition.setX(newPos);
+        cardPosition.setX(newPos);
     }
 
     private void adjustCardsPosition() {
-        if (visibleCards.isEmpty()) {
-            return;
-        }
-        int orientation = (id == 0) ? 1 : -1;
         Vector2 cardPos = new Vector2(cardPosition);
         int layer = 0;
-        for (int i = 0; i < visibleCards.size(); i++) {
-            CardModel card = visibleCards.get(i);
+        for (CardModel card : visibleCards) {
             card.move(cardPos);
-            card.updatePosition();
             layer++;
             card.setCardLayer(layer);
-            cardPos.setX(cardPos.getX() + orientation * (Constants.CARD_SIZE + Constants.CARDS_OFFSET_X));
+            cardPos.setX(cardPos.getX() + orientation * horizontalOffset);
         }
     }
 

@@ -2,9 +2,9 @@ package com.codingame.game.View;
 
 import com.codingame.game.Model.CardModel;
 import com.codingame.game.Model.Item;
-import com.codingame.game.Model.StateUpdates.CardPositionUpdate;
 import com.codingame.game.Model.StateUpdates.FlipCardUpdate;
 import com.codingame.game.Model.StateUpdates.RemoveCardUpdate;
+import com.codingame.game.Referee;
 import com.codingame.game.Utils.Constants;
 import com.codingame.gameengine.module.entities.Entity;
 import com.codingame.gameengine.module.entities.GraphicEntityModule;
@@ -55,10 +55,10 @@ public class CardView extends MovingView {
     }
 
     public void updateView() {
-        group.setZIndex(model.cardLayer);
+        group.setZIndex(model.getCardLayer());
         entityModule.commitEntityState(0, group);
         group.setX(model.getPos().getX()).setY(model.getPos().getY());
-        entityModule.commitEntityState(0.5, group);
+        entityModule.commitEntityState(350. / Referee.getTurnDuration(), group);
 
         tooltipModule.updateExtraTooltipText(group, model.getItem().toTooltip());
     }
@@ -66,11 +66,6 @@ public class CardView extends MovingView {
     private void flip() {
         group.setVisible(true);
         entityModule.commitEntityState(0, group);
-    }
-
-    private void updatePosition() {
-        group.setX(model.getPos().getX()).setY(model.getPos().getY());
-        entityModule.commitEntityState(1, group);
     }
 
     private void removeCardView() {
@@ -84,8 +79,6 @@ public class CardView extends MovingView {
         super.update(model, update);
         if (update instanceof FlipCardUpdate) {
             flip();
-        } else if (update instanceof CardPositionUpdate) {
-            updatePosition();
         } else if (update instanceof RemoveCardUpdate){
             removeCardView();
         }

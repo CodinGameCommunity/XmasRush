@@ -16,8 +16,8 @@ import java.util.List;
 public class PlayerTextView extends AbstractView {
     private final int AVATAR_SIZE = Constants.TILE_SIZE;
 
-    private final int PLAYER_INFO_POS_Y = Constants.SCREEN_HEIGHT - 230;
-    private final int OPPONENT_INFO_POS_Y = Constants.SCREEN_HEIGHT - PLAYER_INFO_POS_Y;
+    private final int OPPONENT_INFO_POS_Y = 230;
+    private final int PLAYER_INFO_POS_Y = Constants.SCREEN_HEIGHT - OPPONENT_INFO_POS_Y;
 
     private List<Vector2> INFO_POS = Arrays.asList(new Vector2(Constants.PLAYER_DECK_POS_X, PLAYER_INFO_POS_Y),
             new Vector2(Constants.OPPONENT_DECK_POS_X, OPPONENT_INFO_POS_Y));
@@ -42,7 +42,7 @@ public class PlayerTextView extends AbstractView {
         this.player = player;
         id = player.getIndex();
         pos = INFO_POS.get(id);
-        orientation = this.player.getPlayer().orientation;
+        orientation = this.player.getPlayer().getOrientation();
 
         createPlayerText();
     }
@@ -56,7 +56,6 @@ public class PlayerTextView extends AbstractView {
                 .setBaseWidth(AVATAR_SIZE)
                 .setBaseHeight(AVATAR_SIZE)
                 .setAnchor(0.5);
-        //reconsider the length param when changing font family or font size
         name = entityModule.createText(player.getNicknameToken())
                 .setX(0)
                 .setY(NAME_VERTICAL_OFFSET * orientation)
@@ -68,7 +67,7 @@ public class PlayerTextView extends AbstractView {
         Referee.nicksModule.registerNickname(name);
         background = entityModule.createSprite()
                 .setImage(String.format("background_name_%d.png", id))
-                .setX(BACKGROUND_HORIZONTAL_OFFSET.get(player.getIndex()))
+                .setX(BACKGROUND_HORIZONTAL_OFFSET.get(id))
                 .setY(BACKGROUND_VERTICAL_OFFSET * orientation)
                 .setZIndex(0)
                 .setAnchor(0.5);

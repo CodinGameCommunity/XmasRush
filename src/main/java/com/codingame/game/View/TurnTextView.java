@@ -11,7 +11,6 @@ public class TurnTextView extends AbstractView {
     private final int TYPE_TEXT_POS_X = Constants.SCREEN_WIDTH - 160;
     private final int TURN_TEXT_POS_Y = 70;
 
-    //import it once
     private final int maxTurns = Constants.MAX_GAME_TURNS;
 
     private Text turnText;
@@ -56,10 +55,10 @@ public class TurnTextView extends AbstractView {
     }
 
     public void updateView() {
-        if (Referee.turnType != null){
+        if (Referee.getTurnType() != null){
             turnText.setText("Turn:");
-            typeText.setText(Referee.turnType.toString());
-            numTurnsText.setText(String.format("%d/%d", maxTurns - Referee.gameTurnsLeft, maxTurns));
+            typeText.setText(Referee.getTurnType().toString());
+            numTurnsText.setText(String.format("%d/%d", maxTurns - Referee.getGameTurnsLeft(), maxTurns));
         }
         entityModule.commitEntityState(0, turnText, numTurnsText, typeText);
     }
