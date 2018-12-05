@@ -128,10 +128,7 @@ while True:
             quests.append(quest_item_name)
 
     # Write an action using print
-    # To debug: print("Debug messages...", file=sys.stderr)
-    print(playerinfos, file=sys.stderr)
-    print(quests, file=sys.stderr)
-    print(items, file=sys.stderr)
+    ## To debug: print("Debug messages...", file=sys.stderr)
     
     myInfos = playerinfos[0]
     myHeroPos = [myInfos[1],myInfos[2]]
@@ -140,8 +137,6 @@ while True:
     for i in items:
         if(i[0] == quests[0]):
             goalPos = [i[1],i[2]]
-    print(myHeroPos, file=sys.stderr)
-    print(goalPos, file=sys.stderr)
     if(turn_type == 0):
         if(toggle):
             print("PUSH "+str(column) +" RIGHT")
@@ -160,16 +155,12 @@ while True:
                 for direct2,val2 in moves.items():
                     if (myHeroPos[0] + val1[0] + val2[0] == goalPos[0] and myHeroPos[1] + val1[1] + val2[1] == goalPos[1]):
                         action = "MOVE " + direct1 + " " + direct2
-                        print("Gotcha2 " + direct1 + " "+ direct2, file=sys.stderr)
         for direct in myHeroTile.getAccessibleDirections(board):
             if (myHeroTile.getTileInDirection(board,direct).pos == goalPos):
                 action = "MOVE " + direct
-                print("Gotcha " + action + direct, file=sys.stderr)
         paths = myHeroTile.getPathConnectedTiles(board)
-        print(paths, file=sys.stderr)
-        print(getPathTo(board,paths,(goalPos[0],goalPos[1])), file=sys.stderr)
         path = getPathTo(board,paths,(goalPos[0],goalPos[1]))
         if path != False :
-            action = 'MOVE ' + " ".join(path)
+            action = 'MOVE ' + " ".join(path[:20])
         print(action)
         moveType = (moveType+1)%len(moves)
