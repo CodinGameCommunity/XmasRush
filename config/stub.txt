@@ -1,4 +1,3 @@
-read boardWidth:int boardHeight:int
 gameloop
 loop boardHeight
     loopline boardWidth tile:word(4)

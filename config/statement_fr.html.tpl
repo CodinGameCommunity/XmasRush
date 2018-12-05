@@ -271,13 +271,6 @@
       <span class="icon icon-protocol">&nbsp;</span>
       <span>Protocole du jeu</span>
     </h2>
-    <!-- Protocol block -->
-    <div class="blk">
-      <div class="title">Entrée d'initialisation</div>
-      <div class="text">
-        <span class="statement-lineno">Ligne 1</span>: deux entiers <var>boardWidth</var> et <var>boardHeight</var> pour la taille du plateau.
-      </div>
-    </div>
 
     <!-- Protocol block -->
     <div class="blk">

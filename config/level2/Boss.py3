@@ -4,7 +4,7 @@ import random
 
 random.seed('Help the Christmas elves fetch presents in a magical labyrinth!')
 
-board_width, board_height = [int(i) for i in input().split()]
+board_width, board_height = [7,7]
 
 
 def approach(target_x, player_x, target_y, player_y):

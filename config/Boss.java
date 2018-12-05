@@ -3,8 +3,8 @@ import java.util.Scanner;
 class Player {
     public static void main(String args[]) {
         Scanner in = new Scanner(System.in);
-        int boardWidth = in.nextInt();
-        int boardHeight = in.nextInt();
+        int boardWidth = 7;
+        int boardHeight = 7;
 
         int turn = 0;
         // game loop

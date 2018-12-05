@@ -279,14 +279,6 @@
       <span class="icon icon-protocol">&nbsp;</span>
       <span>Game Input</span>
     </h2>
-    <!-- Protocol block -->
-    <div class="blk">
-      <div class="title">Initialization Input</div>
-      <div class="text">
-        <span class="statement-lineno">Line 1</span>: two integers <var>boardWidth</var> and <var>boardHeight</var> for
-        the size of the board.
-      </div>
-    </div>
 
     <!-- Protocol block -->
     <div class="blk">
