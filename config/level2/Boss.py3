@@ -14,10 +14,8 @@ def approach(target_x, player_x, target_y, player_y):
         return 'RIGHT'
     elif target_y < player_y:
         return 'UP'
-    elif target_y > player_y:
-        return 'DOWN'
     else:
-        return 'PASS'
+        return 'DOWN'
 
 
 spinner = {
