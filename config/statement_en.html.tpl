@@ -293,7 +293,7 @@
             <const>1</const>: a <const>MOVE</const> turn.
           </li>
         </ul>
-        <span class="statement-lineno">Next <const>7</const> lines</span>: <const>7</const> strings
+        <span class="statement-lineno">Next <const>7</const> lines</span>: <const>7</const> space-separated strings
         representing each tile on a row, starting from the top. Each tile is represented by a 4 digit group, each digit
         corresponding to a directional path: up, right, down, left. <const>1</const> means the tile has a path for the
         respective direction, <const>0</const> means the tile doesn't.<br>
