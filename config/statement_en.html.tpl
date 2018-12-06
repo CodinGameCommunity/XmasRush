@@ -293,7 +293,7 @@
             <const>1</const>: a <const>MOVE</const> turn.
           </li>
         </ul>
-        <span class="statement-lineno">Next <var>boardHeight</var> lines</span>: <var>boardWidth</var> strings
+        <span class="statement-lineno">Next <const>7</const> lines</span>: <const>7</const> strings
         representing each tile on a row, starting from the top. Each tile is represented by a 4 digit group, each digit
         corresponding to a directional path: up, right, down, left. <const>1</const> means the tile has a path for the
         respective direction, <const>0</const> means the tile doesn't.<br>
@@ -384,8 +384,8 @@
     <div class="blk">
       <div class="title">Constraints</div>
       <div class="text">
-        <var>boardWidth</var> = <const>7</const><br>
-        <var>boardHeight</var> = <const>7</const><br>
+        <var>board width</var> = <const>7</const><br>
+        <var>board height</var> = <const>7</const><br>
         <!-- BEGIN level1 -->
         <var>numPlayerCards</var> = <const>1</const><br>
         <const>0</const> ≤ <var>numItems</var> ≤ <const>2</const><br>
