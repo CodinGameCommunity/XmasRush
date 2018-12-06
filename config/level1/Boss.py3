@@ -3,11 +3,12 @@ import math
 
 # Help the Christmas elves fetch presents in a magical labyrinth!
 
-board_width, board_height = [int(i) for i in input().split()]
+board_width, board_height = [7,7]
 column = 0
 row = 0
 toggle = True
 moveType = 0
+player = -1
 moves = {
     'LEFT': [-1,0],
     'UP':[0,-1],
@@ -98,6 +99,7 @@ while True:
     quests = []
     items = []
     board = {}
+    turn_type = int(input())
     for y in range(board_height):
         x = 0
         for tile in input().split():
@@ -119,7 +121,6 @@ while True:
         item_player_id = int(item_player_id)
         if(item_player_id == 0):
             items.append([item_name, item_x, item_y])
-    turn_type = int(input())
     num_quests = int(input())  # the total number of available quest cards for both players
     for i in range(num_quests):
         quest_item_name, quest_player_id = input().split()
@@ -134,6 +135,12 @@ while True:
     myHeroPos = [myInfos[1],myInfos[2]]
     myHeroTile = board[myHeroPos[0],myHeroPos[1]]
     goalPos = []
+    if (player == -1):
+        if(myHeroPos[0] == 0):
+            player = 0
+        else:
+            player = 1
+        toggle = player
     for i in items:
         if(i[0] == quests[0]):
             goalPos = [i[1],i[2]]

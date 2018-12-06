@@ -4,7 +4,7 @@ import random
 
 random.seed('Help the Christmas elves fetch presents in a magical labyrinth!')
 
-board_width, board_height = [int(i) for i in input().split()]
+board_width, board_height = [7,7]
 
 
 def approach(target_x, player_x, target_y, player_y):
@@ -74,6 +74,8 @@ while True:
     target_y = 0
     player_x = 0
     player_y = 0
+    
+    turn_type = int(input())
     board = {}
     for y in range(board_height):
         x=0
@@ -102,7 +104,6 @@ while True:
         item_player_id = int(item_player_id)
         items[item_name + str(item_player_id)] = (item_x, item_y)
 
-    turn_type = int(input())
     # the total number of available quest cards for both players
     num_quests = int(input())
     for i in range(num_quests):

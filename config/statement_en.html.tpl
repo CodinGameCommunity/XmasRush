@@ -279,19 +279,20 @@
       <span class="icon icon-protocol">&nbsp;</span>
       <span>Game Input</span>
     </h2>
-    <!-- Protocol block -->
-    <div class="blk">
-      <div class="title">Initialization Input</div>
-      <div class="text">
-        <span class="statement-lineno">Line 1</span>: two integers <var>boardWidth</var> and <var>boardHeight</var> for
-        the size of the board.
-      </div>
-    </div>
 
     <!-- Protocol block -->
     <div class="blk">
       <div class="title">Input for one game turn</div>
       <div class="text">
+        <span class="statement-lineno">First line</span>: Integer <var>turnType</var>: the game turn type:
+        <ul style="margin-top: 0;padding-bottom: 0;">
+          <li>
+            <const>0</const>: a <const>PUSH</const> turn.
+          </li>
+          <li>
+            <const>1</const>: a <const>MOVE</const> turn.
+          </li>
+        </ul>
         <span class="statement-lineno">Next <var>boardHeight</var> lines</span>: <var>boardWidth</var> strings
         representing each tile on a row, starting from the top. Each tile is represented by a 4 digit group, each digit
         corresponding to a directional path: up, right, down, left. <const>1</const> means the tile has a path for the
@@ -333,15 +334,6 @@
         </ul>
         <b>Note</b>: If an item is on a player's tile, <var>itemX</var> and <var>itemY</var> will both be
         <const>-1</const> for the player and <const>-2</const> for the opponent.
-        <span class="statement-lineno">Next line</span>: Integer <var>turnType</var>: the game turn type:
-        <ul style="margin-top: 0;padding-bottom: 0;">
-          <li>
-            <const>0</const>: a <const>PUSH</const> turn.
-          </li>
-          <li>
-            <const>1</const>: a <const>MOVE</const> turn.
-          </li>
-        </ul>
         <span class="statement-lineno">Next line</span>: Integer <var>numQuests</var>: the total number of revealed quests
        for both players.<br>
         <span class="statement-lineno">Next <var>numQuests</var> lines</span>: <var>questItemName</var>,
