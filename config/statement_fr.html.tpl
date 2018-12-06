@@ -59,7 +59,7 @@
         Une partie est jouée par 2 joueurs sur un plateau 7x7 de 49 tuiles carrées. Les coordonnées (0,0) correspondent à la tuile dans le coin en haut à gauche.
       </p>
       <p>
-        Chaque joueur possède une tuile qu'ils utilisent pour pousser une ligne ou une colonne du plateau, de façon à créer un chemin vers les objets de leurs quêtes.
+        Chaque joueur possède une tuile qu'il utilise pour pousser une ligne ou une colonne du plateau, de façon à créer un chemin vers les objets de leurs quêtes.
       </p>
       <p>
         <b>Le plateau de jeu</b>
@@ -259,7 +259,7 @@
             Une action de déplacement invalide termine le déplacement en cours. Est considérée comme invalide, une commande de déplacement vers une direction sans connection de chemins.
           </li>
           <li>
-            Il est possible de terminer une quête pendant un tour de modification. Si la commande déplace le jeu hors du jeu puis sur la tuile utilisée qui contient l'objet d'une quête révélée, alors cette quête est terminée et une nouvelle est révélée à la fin du tour.
+            Il est possible de terminer une quête pendant un tour de modification. Si la commande déplace le joueur hors du jeu puis sur la tuile utilisée qui contient l'objet d'une quête révélée, alors cette quête est terminée et une nouvelle est révélée à la fin du tour.
           </li>
         </ul>
       </p>
