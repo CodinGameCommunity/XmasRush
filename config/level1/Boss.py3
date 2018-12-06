@@ -8,6 +8,7 @@ column = 0
 row = 0
 toggle = True
 moveType = 0
+player = -1
 moves = {
     'LEFT': [-1,0],
     'UP':[0,-1],
@@ -134,6 +135,12 @@ while True:
     myHeroPos = [myInfos[1],myInfos[2]]
     myHeroTile = board[myHeroPos[0],myHeroPos[1]]
     goalPos = []
+    if (player == -1):
+        if(myHeroPos[0] == 0):
+            player = 0
+        else:
+            player = 1
+        toggle = player
     for i in items:
         if(i[0] == quests[0]):
             goalPos = [i[1],i[2]]
