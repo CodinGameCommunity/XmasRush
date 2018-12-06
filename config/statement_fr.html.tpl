@@ -271,18 +271,20 @@
       <span class="icon icon-protocol">&nbsp;</span>
       <span>Protocole du jeu</span>
     </h2>
-    <!-- Protocol block -->
-    <div class="blk">
-      <div class="title">Entrée d'initialisation</div>
-      <div class="text">
-        <span class="statement-lineno">Ligne 1</span>: deux entiers <var>boardWidth</var> et <var>boardHeight</var> pour la taille du plateau.
-      </div>
-    </div>
 
     <!-- Protocol block -->
     <div class="blk">
       <div class="title">Entrée pour un tour de jeu</div>
       <div class="text">
+          <span class="statement-lineno">Première ligne</span>: un entier <var>turnType</var> pour le type de tour de jeu
+          <ul style="margin-top: 0;padding-bottom: 0;">
+          <li>
+            <const>0</const>: un tour de modification (<const>PUSH</const>).
+          </li>
+          <li>
+            <const>1</const>: un tour de déplacement (<const>MOVE</const>).
+          </li>
+        </ul>
         <span class="statement-lineno">Les <var>boardHeight</var> lignes suivantes</span>: <var>boardWidth</var> strings
         representant chaque tuile d'une ligne each, en démarrant à partir du haut. Chaque tuile est représentée par 4 chiffres, chaque chiffre représentant une direction :
         en haut, à droite, en bas, à gauche. <const>1</const> signifie que la tuile contient un chemin vers cette direction, <const>0</const> qu'elle n'en contient pas.<br>
@@ -322,15 +324,6 @@
         </ul>
         <b>Note</b>: Si un objet se trouve sur la tuile d'un joueur, <var>itemX</var> et <var>itemY</var> serons égaux à 
         <const>-1</const> pour ce joueur, et  <const>-2</const> pour son adversaire.
-        <span class="statement-lineno">Ligne suivante</span>: un entier <var>turnType</var> pour le type de tour de jeu
-        <ul style="margin-top: 0;padding-bottom: 0;">
-          <li>
-            <const>0</const>: un tour de modification (<const>PUSH</const>).
-          </li>
-          <li>
-            <const>1</const>: un tour de déplacement (<const>MOVE</const>).
-          </li>
-        </ul>
         <span class="statement-lineno">Ligne suivante</span>: un entier <var>numQuests</var> pour le nombre total de quêtes révélées pour les deux joueurs.<br>
         <span class="statement-lineno">Les <var>numQuests</var> lignes suivantes</span>: <var>questItemName</var>,
         <var>questPlayerId</var>:
