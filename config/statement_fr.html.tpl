@@ -247,7 +247,7 @@
     </h2>
     <div class="statement-expert-rules-content">
       <p>
-        Vous pouvez retrouver le code source du jeu ici : <a href="https://github.com/CodinGameCommunity/team-6">@todo</a>.
+        Vous pouvez retrouver le code source du jeu ici&nbsp;: <a href="https://github.com/CodinGameCommunity/XmasRush">https://github.com/CodinGameCommunity/XmasRush</a>.
       </p>
       <p>
         <ul style="padding-top: 0;padding-bottom: 0;">

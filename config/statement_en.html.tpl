@@ -253,7 +253,7 @@
     </h2>
     <div class="statement-expert-rules-content">
       <p>
-        You can see the game's source code <a href="https://github.com/CodinGameCommunity/team-6">@todo</a>.
+        You can see the game's source code here: <a href="https://github.com/CodinGameCommunity/XmasRush">https://github.com/CodinGameCommunity/XmasRush</a>.
       </p>
       <p>
         <ul style="padding-top: 0;padding-bottom: 0;">
