@@ -4,20 +4,18 @@ import random
 
 random.seed('Help the Christmas elves fetch presents in a magical labyrinth!')
 
-board_width, board_height = [int(i) for i in input().split()]
+board_width, board_height = [7,7]
 
 
 def approach(target_x, player_x, target_y, player_y):
     if target_x < player_x:
-        return "MOVE LEFT"
+        return 'LEFT'
     elif target_x > player_x:
-        return "MOVE RIGHT"
+        return 'RIGHT'
     elif target_y < player_y:
-        return "MOVE UP"
-    elif target_y > player_y:
-        return "MOVE DOWN"
+        return 'UP'
     else:
-        return "PASS"
+        return 'DOWN'
 
 
 spinner = {
@@ -30,17 +28,61 @@ spinner = {
     (-1, 1): 'UP',
     (-1, 0): 'UP'
 }
-
+moves = {
+    'LEFT': [-1,0],
+    'UP':[0,-1],
+    'RIGHT':[1,0],
+    'DOWN':[0,1]
+}
+oppositeMove = {
+    'LEFT': 'RIGHT',
+    'UP':'DOWN',
+    'RIGHT':'LEFT',
+    'DOWN':'UP'
+}
+def addPositions(pos1,pos2):
+    return [pos1[0]+pos2[0],pos1[1]+pos2[1]]
+class Tile:
+    def __init__(self, pos, code):
+        self.pos = pos
+        self.availableMoves = self.transcribeCode(code)
+    def transcribeCode(self,code):
+        tilemoves = []
+        if (code[0] == '1'):
+            tilemoves.append('UP')
+        if (code[1] == '1'):
+            tilemoves.append('RIGHT')
+        if (code[2] == '1'):
+            tilemoves.append('DOWN')
+        if (code[3] == '1'):
+            tilemoves.append('LEFT')
+        return tilemoves
+    def getAccessibleDirections(self,board):
+        direc = []
+        for move in self.availableMoves:
+            vect = moves.get(move)
+            dest = addPositions(self.pos,vect)
+            try :
+                if (oppositeMove.get(move) in board[dest[0],dest[1]].availableMoves):
+                    direc.append(move)
+            except KeyError:
+                pass
+        return direc
 # game loop
 while True:
     target_x = 0
     target_y = 0
     player_x = 0
     player_y = 0
-
-    for i in range(board_height):
+    
+    turn_type = int(input())
+    board = {}
+    for y in range(board_height):
+        x=0
         for tile in input().split():
-            pass
+            temp =  Tile([x,y],tile)
+            board[x,y] = Tile([x,y],tile)
+            x += 1
     for i in range(2):
         # num_player_cards: the number of cards in the stack for each player
         num_player_cards, x, y, player_tile = input().split()
@@ -62,7 +104,6 @@ while True:
         item_player_id = int(item_player_id)
         items[item_name + str(item_player_id)] = (item_x, item_y)
 
-    turn_type = int(input())
     # the total number of available quest cards for both players
     num_quests = int(input())
     for i in range(num_quests):
@@ -100,7 +141,9 @@ while True:
     else:
         tcheby = max(abs(target_x - player_x), abs(target_y - player_y))
         manhat = abs(target_x - player_x) + abs(target_y - player_y)
-        if tcheby != 1 or manhat == 1:
-            print(approach(target_x, player_x, target_y, player_y))
+        currTile = board[player_x,player_y]
+        nextMove = approach(target_x, player_x, target_y, player_y)
+        if (tcheby != 1 or manhat == 1) and nextMove in currTile.getAccessibleDirections(board):
+            print("MOVE " + approach(target_x, player_x, target_y, player_y))
         else:
             print("PASS")

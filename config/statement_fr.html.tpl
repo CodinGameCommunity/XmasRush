@@ -59,7 +59,7 @@
         Une partie est jouée par 2 joueurs sur un plateau 7x7 de 49 tuiles carrées. Les coordonnées (0,0) correspondent à la tuile dans le coin en haut à gauche.
       </p>
       <p>
-        Chaque joueur possède une tuile qu'ils utilisent pour pousser une ligne ou une colonne du plateau, de façon à créer un chemin vers les objets de leurs quêtes.
+        Chaque joueur possède une tuile qu'il utilise pour pousser une ligne ou une colonne du plateau, de façon à créer un chemin vers les objets de leurs quêtes.
       </p>
       <p>
         <b>Le plateau de jeu</b>
@@ -247,7 +247,7 @@
     </h2>
     <div class="statement-expert-rules-content">
       <p>
-        Vous pouvez retrouver le code source du jeu ici : <a href="https://github.com/CodinGameCommunity/team-6">@todo</a>.
+        Vous pouvez retrouver le code source du jeu ici&nbsp;: <a href="https://github.com/CodinGameCommunity/XmasRush">https://github.com/CodinGameCommunity/XmasRush</a>.
       </p>
       <p>
         <ul style="padding-top: 0;padding-bottom: 0;">
@@ -259,7 +259,7 @@
             Une action de déplacement invalide termine le déplacement en cours. Est considérée comme invalide, une commande de déplacement vers une direction sans connection de chemins.
           </li>
           <li>
-            Il est possible de terminer une quête pendant un tour de modification. Si la commande déplace le jeu hors du jeu puis sur la tuile utilisée qui contient l'objet d'une quête révélée, alors cette quête est terminée et une nouvelle est révélée à la fin du tour.
+            Il est possible de terminer une quête pendant un tour de modification. Si la commande déplace le joueur hors du jeu puis sur la tuile utilisée qui contient l'objet d'une quête révélée, alors cette quête est terminée et une nouvelle est révélée à la fin du tour.
           </li>
         </ul>
       </p>
@@ -271,19 +271,21 @@
       <span class="icon icon-protocol">&nbsp;</span>
       <span>Protocole du jeu</span>
     </h2>
-    <!-- Protocol block -->
-    <div class="blk">
-      <div class="title">Entrée d'initialisation</div>
-      <div class="text">
-        <span class="statement-lineno">Ligne 1</span>: deux entiers <var>boardWidth</var> et <var>boardHeight</var> pour la taille du plateau.
-      </div>
-    </div>
 
     <!-- Protocol block -->
     <div class="blk">
       <div class="title">Entrée pour un tour de jeu</div>
       <div class="text">
-        <span class="statement-lineno">Les <var>boardHeight</var> lignes suivantes</span>: <var>boardWidth</var> strings
+          <span class="statement-lineno">Première ligne</span>: un entier <var>turnType</var> pour le type de tour de jeu
+          <ul style="margin-top: 0;padding-bottom: 0;">
+          <li>
+            <const>0</const>: un tour de modification (<const>PUSH</const>).
+          </li>
+          <li>
+            <const>1</const>: un tour de déplacement (<const>MOVE</const>).
+          </li>
+        </ul>
+        <span class="statement-lineno">Les <const>7</const> lignes suivantes</span>: <const>7</const> chaînes de caractères
         representant chaque tuile d'une ligne each, en démarrant à partir du haut. Chaque tuile est représentée par 4 chiffres, chaque chiffre représentant une direction :
         en haut, à droite, en bas, à gauche. <const>1</const> signifie que la tuile contient un chemin vers cette direction, <const>0</const> qu'elle n'en contient pas.<br>
         <span class="statement-lineno">Les <const>2</const> lignes suivantes</span>: pour chaque joueur, <var>numPlayerCards</var>,
@@ -299,10 +301,10 @@
             Un entier <var>playerY</var>: la position <const>y</const> du joueur sur le plateau (sa ligne).
           </li>
           <li>
-            Un string <var>playerTile</var>: la tuile du joueur dans le format à 4 chiffres.
+            Une chaîne de caractères <var>playerTile</var>: la tuile du joueur dans le format à 4 chiffres.
           </li>
         </ul>
-        <b>Note</b>: L'entrée du joueur est toujours donnée en <b>premier</b>, celle de son adversaire en <b>second</b>.
+        <b>Note</b>: L'entrée du joueur est toujours donnée en <b>premier</b>, celle de son adversaire en <b>second</b>.<br>
         <span class="statement-lineno">Ligne suivante</span>: un entier <var>numItems</var> pour le nombre total d'objets disponibles sur le plateau et sur les tuiles des joueurs.<br>
         <span class="statement-lineno">Les <var>numItems</var> lignes suivantes</span>: <var>itemName</var>, <var>itemX</var>,
         <var>itemY</var>, <var>itemPlayerId</var>:
@@ -317,20 +319,11 @@
             Un entier <var>itemY</var>: la position <const>y</const> de l'objet sur le plateau (sa ligne).
           </li>
           <li>
-            Un string <var>itemPlayerId</var>: l'identifiant du joueur à qui l'objet appartient.
+            Une chaîne de caractères <var>itemPlayerId</var>: l'identifiant du joueur à qui l'objet appartient.
           </li>
         </ul>
         <b>Note</b>: Si un objet se trouve sur la tuile d'un joueur, <var>itemX</var> et <var>itemY</var> serons égaux à 
-        <const>-1</const> pour ce joueur, et  <const>-2</const> pour son adversaire.
-        <span class="statement-lineno">Ligne suivante</span>: un entier <var>turnType</var> pour le type de tour de jeu
-        <ul style="margin-top: 0;padding-bottom: 0;">
-          <li>
-            <const>0</const>: un tour de modification (<const>PUSH</const>).
-          </li>
-          <li>
-            <const>1</const>: un tour de déplacement (<const>MOVE</const>).
-          </li>
-        </ul>
+        <const>-1</const> pour ce joueur, et <const>-2</const> pour son adversaire.<br>
         <span class="statement-lineno">Ligne suivante</span>: un entier <var>numQuests</var> pour le nombre total de quêtes révélées pour les deux joueurs.<br>
         <span class="statement-lineno">Les <var>numQuests</var> lignes suivantes</span>: <var>questItemName</var>,
         <var>questPlayerId</var>:
@@ -380,8 +373,8 @@
     <div class="blk">
       <div class="title">Contraintes</div>
       <div class="text">
-        <var>boardWidth</var> = <const>7</const><br>
-        <var>boardHeight</var> = <const>7</const><br>
+        <var>largeur du plateau</var> = <const>7</const><br>
+        <var>hauteur du plateau</var> = <const>7</const><br>
         <!-- BEGIN level1 -->
         <var>numPlayerCards</var> = <const>1</const><br>
         <const>0</const> ≤ <var>numItems</var> ≤ <const>2</const><br>

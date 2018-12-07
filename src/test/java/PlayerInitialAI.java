@@ -1,6 +1,6 @@
 import java.util.Scanner;
 
-public class PlayerAI {
+public class PlayerInitialAI {
     static class Item {
         public String name;
         public int playerId;
@@ -138,8 +138,8 @@ public class PlayerAI {
     private static int boardHeight;
     public static void main(String args[]) {
         Scanner in = new Scanner(System.in);
-        boardWidth = in.nextInt();
-        boardHeight = in.nextInt();
+        boardWidth = 7;
+        boardHeight = 7;
 
         // game loop
         while (true) {
@@ -150,6 +150,7 @@ public class PlayerAI {
             Tile oppTile = null;
             Card myCard = null;
             Card oppCard = null;
+            int turnType = in.nextInt();
             for (int i = 0; i < boardHeight; i++) {
                 for (int j = 0; j < boardWidth; j++) {
                     String tile = in.next();
@@ -189,7 +190,6 @@ public class PlayerAI {
                 }
                 //PrintDebug(itemName + itemPlayerId + " " + itemX + "," + itemY);
             }
-            int turnType = in.nextInt();
             int numQuests = in.nextInt(); // the total number of revealed quests for both players
             for (int i = 0; i < numQuests; i++) {
                 String questItemName = in.next();

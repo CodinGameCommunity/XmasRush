@@ -110,8 +110,6 @@ public class Referee extends AbstractReferee {
 
         // make sure the view is initialized at frame 0
         entityModule.commitWorldState(0);
-
-        sendInitialInputs();
     }
 
     private Long getSeed(Properties params) {
@@ -315,17 +313,11 @@ public class Referee extends AbstractReferee {
                         .flipCards());
     }
 
-    //Player Inputs
-    private void sendInitialInputs() {
-        for (Player player : gameManager.getActivePlayers()) {
-            player.sendInputLine(String.format("%d %d",
-                    Constants.MAP_WIDTH,
-                    Constants.MAP_HEIGHT));
-        }
-    }
-
     private void sendPlayerInputs() {
         for (Player player : gameManager.getActivePlayers()) {
+            // Turn type
+            player.sendInputLine(Integer.toString(turnType.getValue()));
+
             // Game gameBoard
             gameBoard.sendMapToPlayer(player);
 
@@ -341,9 +333,6 @@ public class Referee extends AbstractReferee {
 
             // Items
             gameBoard.sendItemsToPlayer(player);
-
-            // Turn type
-            player.sendInputLine(Integer.toString(turnType.getValue()));
 
             // Cards
             int numQuests = players.get(firstPlayerIndex).getNumQuestCards()

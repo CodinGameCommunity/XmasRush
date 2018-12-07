@@ -86,9 +86,9 @@ public class GameBoard {
             TileModel opponentTile = getTile(getOppositeTilePos(playerTile.getPos()));
             playerTile.setItem(itemList.get(Constants.PLAYER_INDEX).get(i));
             opponentTile.setItem(itemList.get(Constants.OPPONENT_INDEX).get(i));
-            //deals with the fact that cards are stored in a stack
-            tilesWithItems.addAll(0, Arrays.asList(playerTile, opponentTile));
+            tilesWithItems.addAll(Arrays.asList(playerTile, opponentTile));
         }
+        Collections.shuffle(tilesWithItems, Constants.random);
     }
 
     public void removeItem(TileModel tile) {
@@ -213,7 +213,6 @@ public class GameBoard {
 
     public void sendItemsToPlayer(Player player) {
         int numItems = tilesWithItems.size();
-        Collections.shuffle(tilesWithItems, Constants.random);
 
         player.sendInputLine(Integer.toString(numItems));
         for (TileModel tile : tilesWithItems) {

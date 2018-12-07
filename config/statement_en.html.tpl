@@ -253,7 +253,7 @@
     </h2>
     <div class="statement-expert-rules-content">
       <p>
-        You can see the game's source code <a href="https://github.com/CodinGameCommunity/team-6">@todo</a>.
+        You can see the game's source code here: <a href="https://github.com/CodinGameCommunity/XmasRush">https://github.com/CodinGameCommunity/XmasRush</a>.
       </p>
       <p>
         <ul style="padding-top: 0;padding-bottom: 0;">
@@ -279,20 +279,21 @@
       <span class="icon icon-protocol">&nbsp;</span>
       <span>Game Input</span>
     </h2>
-    <!-- Protocol block -->
-    <div class="blk">
-      <div class="title">Initialization Input</div>
-      <div class="text">
-        <span class="statement-lineno">Line 1</span>: two integers <var>boardWidth</var> and <var>boardHeight</var> for
-        the size of the board.
-      </div>
-    </div>
 
     <!-- Protocol block -->
     <div class="blk">
       <div class="title">Input for one game turn</div>
       <div class="text">
-        <span class="statement-lineno">Next <var>boardHeight</var> lines</span>: <var>boardWidth</var> strings
+        <span class="statement-lineno">First line</span>: Integer <var>turnType</var>: the game turn type:
+        <ul style="margin-top: 0;padding-bottom: 0;">
+          <li>
+            <const>0</const>: a <const>PUSH</const> turn.
+          </li>
+          <li>
+            <const>1</const>: a <const>MOVE</const> turn.
+          </li>
+        </ul>
+        <span class="statement-lineno">Next <const>7</const> lines</span>: <const>7</const> space-separated strings
         representing each tile on a row, starting from the top. Each tile is represented by a 4 digit group, each digit
         corresponding to a directional path: up, right, down, left. <const>1</const> means the tile has a path for the
         respective direction, <const>0</const> means the tile doesn't.<br>
@@ -312,7 +313,7 @@
             String <var>playerTile</var>: the player's tile in 4 digit format.
           </li>
         </ul>
-        <b>Note</b>: The player's input always comes <b>first</b>, the opponent's input comes <b>second</b>.
+        <b>Note</b>: The player's input always comes <b>first</b>, the opponent's input comes <b>second</b>.<br>
         <span class="statement-lineno">Next line</span>: Integer <var>numItems</var>: the total number of items
         available on board and on player tiles.<br>
         <span class="statement-lineno">Next <var>numItems</var> lines</span>: <var>itemName</var>, <var>itemX</var>,
@@ -332,16 +333,7 @@
           </li>
         </ul>
         <b>Note</b>: If an item is on a player's tile, <var>itemX</var> and <var>itemY</var> will both be
-        <const>-1</const> for the player and <const>-2</const> for the opponent.
-        <span class="statement-lineno">Next line</span>: Integer <var>turnType</var>: the game turn type:
-        <ul style="margin-top: 0;padding-bottom: 0;">
-          <li>
-            <const>0</const>: a <const>PUSH</const> turn.
-          </li>
-          <li>
-            <const>1</const>: a <const>MOVE</const> turn.
-          </li>
-        </ul>
+        <const>-1</const> for the player and <const>-2</const> for the opponent.<br>
         <span class="statement-lineno">Next line</span>: Integer <var>numQuests</var>: the total number of revealed quests
        for both players.<br>
         <span class="statement-lineno">Next <var>numQuests</var> lines</span>: <var>questItemName</var>,
@@ -392,8 +384,8 @@
     <div class="blk">
       <div class="title">Constraints</div>
       <div class="text">
-        <var>boardWidth</var> = <const>7</const><br>
-        <var>boardHeight</var> = <const>7</const><br>
+        <var>board width</var> = <const>7</const><br>
+        <var>board height</var> = <const>7</const><br>
         <!-- BEGIN level1 -->
         <var>numPlayerCards</var> = <const>1</const><br>
         <const>0</const> ≤ <var>numItems</var> ≤ <const>2</const><br>

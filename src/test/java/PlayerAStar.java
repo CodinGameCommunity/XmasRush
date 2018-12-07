@@ -153,8 +153,8 @@ public class PlayerAStar {
     private static int boardHeight;
     public static void main(String args[]) {
         Scanner in = new Scanner(System.in);
-        boardWidth = in.nextInt();
-        boardHeight = in.nextInt();
+        boardWidth = 7;
+        boardHeight = 7;
 
         // game loop
         while (true) {
@@ -166,6 +166,8 @@ public class PlayerAStar {
             Vector<Card> myCards = new Vector<>();
             Vector<Card> oppCards = new Vector<>();
             Vector<Item> allItems = new Vector<>();
+            int turnType = in.nextInt();
+            PrintDebug(Integer.toString(turnType));
             for (int i = 0; i < boardHeight; i++) {
                 for (int j = 0; j < boardWidth; j++) {
                     String tile = in.next();
@@ -206,8 +208,6 @@ public class PlayerAStar {
                 }
                 PrintDebug(itemName + " " + itemX + " " + itemY + " " + itemPlayerId);
             }
-            int turnType = in.nextInt();
-            PrintDebug(Integer.toString(turnType));
             int numQuests = in.nextInt(); // the total number of revealed quests for both players
             PrintDebug(Integer.toString(numQuests));
             for (int i = 0; i < numQuests; i++) {
