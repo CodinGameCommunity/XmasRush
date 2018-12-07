@@ -340,10 +340,10 @@
         <var>questPlayerId</var>:
         <ul style="margin-top: 0;padding-bottom: 0;">
           <li>
-            <var>questItemName</var>: the item's name.
+            String <var>questItemName</var>: the item's name.
           </li>
           <li>
-            <var>questPlayerId</var>: the id of the player the quest belongs to.
+            Integer <var>questPlayerId</var>: the id of the player the quest belongs to.
           </li>
         </ul>
         <b>Note</b>: The player's id is always <const>0</const> and the opponent's <const>1</const>.
