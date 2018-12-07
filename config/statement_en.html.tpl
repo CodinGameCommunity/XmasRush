@@ -320,7 +320,7 @@
         <var>itemY</var>, <var>itemPlayerId</var>:
         <ul style="margin-top: 0;padding-bottom: 0;">
           <li>
-            Integer <var>itemName</var>: the item's name.
+            String <var>itemName</var>: the item's name.
           </li>
           <li>
             Integer <var>itemX</var>: the item's <const>x</const> position on the board (the column).
@@ -329,7 +329,7 @@
             Integer <var>itemY</var>: the item's <const>y</const> position on the board (the row).
           </li>
           <li>
-            String <var>itemPlayerId</var>: the id of the player the item belongs to.
+            Integer <var>itemPlayerId</var>: the id of the player the item belongs to.
           </li>
         </ul>
         <b>Note</b>: If an item is on a player's tile, <var>itemX</var> and <var>itemY</var> will both be
