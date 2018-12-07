@@ -304,7 +304,7 @@
             Une chaîne de caractères <var>playerTile</var>: la tuile du joueur dans le format à 4 chiffres.
           </li>
         </ul>
-        <b>Note</b>: L'entrée du joueur est toujours donnée en <b>premier</b>, celle de son adversaire en <b>second</b>.
+        <b>Note</b>: L'entrée du joueur est toujours donnée en <b>premier</b>, celle de son adversaire en <b>second</b>.<br>
         <span class="statement-lineno">Ligne suivante</span>: un entier <var>numItems</var> pour le nombre total d'objets disponibles sur le plateau et sur les tuiles des joueurs.<br>
         <span class="statement-lineno">Les <var>numItems</var> lignes suivantes</span>: <var>itemName</var>, <var>itemX</var>,
         <var>itemY</var>, <var>itemPlayerId</var>:
@@ -323,7 +323,7 @@
           </li>
         </ul>
         <b>Note</b>: Si un objet se trouve sur la tuile d'un joueur, <var>itemX</var> et <var>itemY</var> serons égaux à 
-        <const>-1</const> pour ce joueur, et  <const>-2</const> pour son adversaire.
+        <const>-1</const> pour ce joueur, et <const>-2</const> pour son adversaire.<br>
         <span class="statement-lineno">Ligne suivante</span>: un entier <var>numQuests</var> pour le nombre total de quêtes révélées pour les deux joueurs.<br>
         <span class="statement-lineno">Les <var>numQuests</var> lignes suivantes</span>: <var>questItemName</var>,
         <var>questPlayerId</var>:

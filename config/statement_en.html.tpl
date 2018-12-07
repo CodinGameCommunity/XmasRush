@@ -313,7 +313,7 @@
             String <var>playerTile</var>: the player's tile in 4 digit format.
           </li>
         </ul>
-        <b>Note</b>: The player's input always comes <b>first</b>, the opponent's input comes <b>second</b>.
+        <b>Note</b>: The player's input always comes <b>first</b>, the opponent's input comes <b>second</b>.<br>
         <span class="statement-lineno">Next line</span>: Integer <var>numItems</var>: the total number of items
         available on board and on player tiles.<br>
         <span class="statement-lineno">Next <var>numItems</var> lines</span>: <var>itemName</var>, <var>itemX</var>,
@@ -333,7 +333,7 @@
           </li>
         </ul>
         <b>Note</b>: If an item is on a player's tile, <var>itemX</var> and <var>itemY</var> will both be
-        <const>-1</const> for the player and <const>-2</const> for the opponent.
+        <const>-1</const> for the player and <const>-2</const> for the opponent.<br>
         <span class="statement-lineno">Next line</span>: Integer <var>numQuests</var>: the total number of revealed quests
        for both players.<br>
         <span class="statement-lineno">Next <var>numQuests</var> lines</span>: <var>questItemName</var>,
