@@ -329,10 +329,10 @@
         <var>questPlayerId</var>:
         <ul style="margin-top: 0;padding-bottom: 0;">
           <li>
-            <var>questItemName</var>: le nom de l'objet.
+            Une chaîne de caractères <var>questItemName</var>: le nom de l'objet.
           </li>
           <li>
-            <var>questPlayerId</var>: l'idientifiant du joueur à qui l'objet appartient.
+            Un entier <var>questPlayerId</var>: l'idientifiant du joueur à qui l'objet appartient.
           </li>
         </ul>
         <b>Note</b>: l'identifiant du joueur est toujours <const>0</const> et celui de son adversaire <const>1</const>.
