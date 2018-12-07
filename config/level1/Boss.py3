@@ -168,6 +168,6 @@ while True:
         paths = myHeroTile.getPathConnectedTiles(board)
         path = getPathTo(board,paths,(goalPos[0],goalPos[1]))
         if path != False :
-            action = 'MOVE ' + " ".join(path[:20])
+            action = 'MOVE ' + " ".join(path[:2])
         print(action)
         moveType = (moveType+1)%len(moves)
