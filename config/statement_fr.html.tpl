@@ -60,6 +60,7 @@
       </p>
       <p>
         Chaque joueur possède une tuile qu'il utilise pour pousser une ligne ou une colonne du plateau, de façon à créer un chemin vers les objets de leurs quêtes.
+        Quand un joueur utilise sa tuile pour déplacer une colonne ou une ligne, il récupère la tuile qui est poussée hors du plateau.
       </p>
       <p>
         <b>Le plateau de jeu</b>
@@ -261,6 +262,9 @@
           <li>
             Il est possible de terminer une quête pendant un tour de modification. Si la commande déplace le joueur hors du jeu puis sur la tuile utilisée qui contient l'objet d'une quête révélée, alors cette quête est terminée et une nouvelle est révélée à la fin du tour.
           </li>
+          <li>
+            L'ordre des quêtes est le même pour les deux joueurs. Tous les objets d'un joueur sont uniques.
+          </li>
         </ul>
       </p>
     </div>
@@ -329,10 +333,10 @@
         <var>questPlayerId</var>:
         <ul style="margin-top: 0;padding-bottom: 0;">
           <li>
-            Une chaîne de caractères <var>questItemName</var>: le nom de l'objet.
+            Une chaîne de caractères <var>questItemName</var>: le nom de l'objet associé à la quête.
           </li>
           <li>
-            Un entier <var>questPlayerId</var>: l'idientifiant du joueur à qui l'objet appartient.
+            Un entier <var>questPlayerId</var>: l'idientifiant du joueur qui possède cette quête.
           </li>
         </ul>
         <b>Note</b>: l'identifiant du joueur est toujours <const>0</const> et celui de son adversaire <const>1</const>.
@@ -350,7 +354,7 @@
             <action>LEFT</action> ou <action>RIGHT</action>.
           </li>
         </ul>
-        Exemple: <action>PUSH 3 UP</action> poussera la troisième colonne vers le bas.
+        Exemple: <action>PUSH 3 UP</action> poussera la quatrième colonne vers le haut.
       </div>
       <div class="title" style="padding-bottom: 0;">Sortie pour un tour de déplacement</div>
     <div class="text">
