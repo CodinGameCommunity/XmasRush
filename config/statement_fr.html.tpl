@@ -310,7 +310,7 @@
         <var>itemY</var>, <var>itemPlayerId</var>:
         <ul style="margin-top: 0;padding-bottom: 0;">
           <li>
-            Un entier <var>itemName</var>: le nom de l'objet.
+            Une chaîne de caractères <var>itemName</var>: le nom de l'objet.
           </li>
           <li>
             Un entier <var>itemX</var>: la position <const>x</const> de l'objet sur le plateau (sa colonne).
@@ -319,7 +319,7 @@
             Un entier <var>itemY</var>: la position <const>y</const> de l'objet sur le plateau (sa ligne).
           </li>
           <li>
-            Une chaîne de caractères <var>itemPlayerId</var>: l'identifiant du joueur à qui l'objet appartient.
+            Un entier <var>itemPlayerId</var>: l'identifiant du joueur à qui l'objet appartient.
           </li>
         </ul>
         <b>Note</b>: Si un objet se trouve sur la tuile d'un joueur, <var>itemX</var> et <var>itemY</var> serons égaux à 
@@ -329,10 +329,10 @@
         <var>questPlayerId</var>:
         <ul style="margin-top: 0;padding-bottom: 0;">
           <li>
-            <var>questItemName</var>: le nom de l'objet.
+            Une chaîne de caractères <var>questItemName</var>: le nom de l'objet.
           </li>
           <li>
-            <var>questPlayerId</var>: l'idientifiant du joueur à qui l'objet appartient.
+            Un entier <var>questPlayerId</var>: l'idientifiant du joueur à qui l'objet appartient.
           </li>
         </ul>
         <b>Note</b>: l'identifiant du joueur est toujours <const>0</const> et celui de son adversaire <const>1</const>.
