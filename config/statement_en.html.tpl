@@ -362,7 +362,7 @@
             <action>LEFT</action> or <action>RIGHT</action>.
           </li>
         </ul>
-        Example: <action>PUSH 3 UP</action> will push the third column upwards.
+        Example: <action>PUSH 3 UP</action> will push the fourth column upwards.
       </div>
       <div class="title" style="padding-bottom: 0;">Output for one MOVE game turn</div>
     <div class="text">
