@@ -60,8 +60,9 @@
         left corner.
       </p>
       <p>
-        Each player has 1 tile which they can use to push a row or a column on the board, trying to make a path toward
-        their quest items.
+        Each player has 1 tile placed outside the board which they can use to push a row or a column on the board,
+        trying to make a path toward their quest items. When a user pushes a tile into the board, the tile that gets
+        pushed out will become the new player's tile.
       </p>
       <p>
         <b>The board</b>
@@ -72,7 +73,7 @@
           (<const>UP</const>, <const>RIGHT</const>, <const>DOWN</const> and <const>LEFT</const>).
         </li>
         <li>
-          Some tiles have items on them.
+          Some tiles have an item on them.
         </li>
       </ul>
       <p>
@@ -80,7 +81,7 @@
       </p>
       <ul style="padding-top: 0;padding-bottom: 0;">
         <li>
-          Each quest corresponds to an item on the board.
+          Each quest corresponds to an item on the board. Quests are the same for both players, but each item is unique in the deck.
         </li>
         <li>
           To complete a quest, a player must move to the tile containing the corresponding item. The quest must be
@@ -320,7 +321,7 @@
         <var>itemY</var>, <var>itemPlayerId</var>:
         <ul style="margin-top: 0;padding-bottom: 0;">
           <li>
-            Integer <var>itemName</var>: the item's name.
+            String <var>itemName</var>: the item's name.
           </li>
           <li>
             Integer <var>itemX</var>: the item's <const>x</const> position on the board (the column).
@@ -329,7 +330,7 @@
             Integer <var>itemY</var>: the item's <const>y</const> position on the board (the row).
           </li>
           <li>
-            String <var>itemPlayerId</var>: the id of the player the item belongs to.
+            Integer <var>itemPlayerId</var>: the id of the player who can collect the item.
           </li>
         </ul>
         <b>Note</b>: If an item is on a player's tile, <var>itemX</var> and <var>itemY</var> will both be
