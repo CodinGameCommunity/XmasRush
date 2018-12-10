@@ -44,8 +44,7 @@
       <span>The Goal</span>
     </h2>
     <div class="statement-goal-content">
-      Make your way to the items on the board and be the first to complete your quests! If your opponent completes their
-      quests in the same turn as you it will count as a draw, so be faster than them.
+      Make your way to the items on the board and be the first to complete your quests!
     </div>
   </div>
 
@@ -215,7 +214,7 @@
       <div class="text">
         <ul style="padding-top: 0;padding-bottom: 0;">
           <li>
-            You complete all your quests before your opponent (if both of you complete your quests in the same turn the
+            You complete all your quests before your opponent (if both players complete their quests in the same turn, the
             game will end as a draw).
           </li>
           <li>
