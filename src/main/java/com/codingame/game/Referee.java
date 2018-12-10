@@ -87,8 +87,21 @@ public class Referee extends AbstractReferee {
                 numVisibleCards = 1;
                 threeWayTiles = true;
                 break;
-            default: // All other leagues
+            case 3: // Third league
                 availablePatterns = new ArrayList<>(Constants.TILE_PATTERNS.get(1));
+                numCardsPerPlayer = 12;
+                numVisibleCards = 3;
+                threeWayTiles = false;
+                break;
+            case 4:
+            case 5:
+                availablePatterns = new ArrayList<>(Constants.TILE_PATTERNS.get(2));
+                numCardsPerPlayer = 12;
+                numVisibleCards = 3;
+                threeWayTiles = false;
+                break;
+            default: // All other leagues
+                availablePatterns = new ArrayList<>(Constants.TILE_PATTERNS.get(3));
                 numCardsPerPlayer = 12;
                 numVisibleCards = 3;
                 threeWayTiles = false;
