@@ -44,8 +44,7 @@
       <span>Objectif</span>
     </h2>
     <div class="statement-goal-content">
-      Faites-vous un chemin vers les objets disséminés dans le labyrinthe et soyez le premier à terminer vos quêtes&nbsp;!<br>
-      Les quêtes sont comptabilisés à la fin d'un tour alors soyez plus rapide que votre adversaire&nbsp;!
+      Faites-vous un chemin vers les objets disséminés dans le labyrinthe et soyez le premier à terminer vos quêtes&nbsp;!
     </div>
   </div>
 
@@ -209,7 +208,7 @@
       <div class="text">
         <ul style="padding-top: 0;padding-bottom: 0;">
           <li>
-            Vous terminez toutes vos quêtes avant votre adversaire. Si vous terminez tout les deux vos quêtes au même tour de jeu, la partie se termine en match nul.
+            Vous terminez toutes vos quêtes avant votre adversaire. Si les deux joueurs terminent leur quêtes au même tour de jeu, la partie se termine en match nul.
           </li>
           <li>
             Après <const>150</const> tours, vous terminez plus de quêtes que votre adversaire.
