@@ -214,8 +214,12 @@ public class Referee extends AbstractReferee {
 
     private List<Item> createItems(List<String> itemNames, int playerId) {
         List<Item> itemList = new ArrayList<>();
-        for (String name : itemNames)
-            itemList.add(new Item(name, playerId));
+        for (String name : itemNames){
+            Item item = new Item(name, playerId);
+            int highlightColor = gameManager.getPlayer(playerId).getColorToken();
+            item.setHighlightColor(highlightColor);
+            itemList.add(item);
+        }
         return itemList;
     }
 

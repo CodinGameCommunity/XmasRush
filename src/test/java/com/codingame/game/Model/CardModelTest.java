@@ -72,4 +72,16 @@ public class CardModelTest {
         CardModel card = new CardModel(item, pos);
         assertEquals("BOOK 0", card.opponentCardToString());
     }
+
+    @Test
+    public void testFlip() {
+        Item item = new Item("BOOK", 1);
+        Vector2 pos = new Vector2(2, 1);
+        CardModel card = new CardModel(item, pos);
+        assertFalse(item.getHighlight());
+        card.flip();
+        assertTrue(item.getHighlight());
+        card.flip();
+        assertTrue(item.getHighlight());
+    }
 }
