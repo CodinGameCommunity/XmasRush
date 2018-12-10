@@ -393,6 +393,10 @@ public class Referee extends AbstractReferee {
     }
 
     private Action parseAction(String action) throws InvalidAction {
+        if (action.length() > Constants.MAX_INPUT_LENGTH) {
+            throw new InvalidAction("exceeded number of allowed characters");
+        }
+
         Matcher matchPush = Constants.PLAYER_INPUT_PUSH_PATTERN.matcher(action);
         Matcher matchMove = Constants.PLAYER_INPUT_MOVE_PATTERN.matcher(action);
         Matcher matchMaxSteps = Constants.PLAYER_INPUT_MOVE_MAX_STEPS_PATTERN.matcher(action);
