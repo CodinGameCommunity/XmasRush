@@ -13,6 +13,7 @@ import com.codingame.gameengine.module.entities.Entity;
 import com.codingame.gameengine.module.entities.GraphicEntityModule;
 import com.codingame.gameengine.module.entities.Group;
 import com.codingame.gameengine.module.entities.Sprite;
+import com.codingame.gameengine.module.entities.Circle;
 import com.codingame.view.tooltip.TooltipModule;
 
 import java.util.Observable;
