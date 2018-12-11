@@ -1,7 +1,12 @@
 import sys
 import math
+from collections import namedtuple
+from collections import deque
 
-board_width, board_height = [7, 7]
+Vector = namedtuple('Vector', ['x', 'y'])
+Step = namedtuple('Step', ['direction', 'tile'])
+
+boardWidth, boardHeight = 7, 7
 
 # Here are my global variables, these keep their values between turns
 column = 0
@@ -14,10 +19,10 @@ player = -1
 
 # A dictionnary linking directions to their vectors
 moves = {
-    'LEFT': [-1, 0],
-    'UP': [0, -1],
-    'RIGHT': [1, 0],
-    'DOWN': [0, 1]
+    'LEFT': Vector(-1, 0),
+    'UP': Vector(0, -1),
+    'RIGHT': Vector(1, 0),
+    'DOWN': Vector(0, 1)
 }
 # A dictionnary linking directions to their opposite
 oppositeMove = {
@@ -28,8 +33,8 @@ oppositeMove = {
 }
 
 # Here is a function allowing me to add two vectors
-def addPositions(pos1, pos2):
-    return [pos1[0]+pos2[0], pos1[1]+pos2[1]]
+def addPositions(v1, v2):
+    return Vector(v1.x + v2.x, v1.y + v2.y)
 
 # Now we're going to create our tile object
 class Tile:
@@ -38,85 +43,58 @@ class Tile:
     def __init__(self, pos, code):
         self.pos = pos # the coordinates of the tile
         # the directions that you can take from this tile
-        self.availableMoves = self.transcribeCode(code)
+        self.availableMoves = self.parseCode(code)
 
     # this function allows us to use the '0101' code of the tile and turn it into a list of directions
-    def transcribeCode(self, code):
-        tilemoves = []
+    def parseCode(self, code):
+        moves = []
         if (code[0] == '1'):
-            tilemoves.append('UP')
+            moves.append('UP')
         if (code[1] == '1'):
-            tilemoves.append('RIGHT')
+            moves.append('RIGHT')
         if (code[2] == '1'):
-            tilemoves.append('DOWN')
+            moves.append('DOWN')
         if (code[3] == '1'):
-            tilemoves.append('LEFT')
-        return tilemoves
-
-    # This function allows us to get every path to every reachable tile from the current tile
-    def getPathConnectedTiles(self, board):
-        paths = {self: 'STOP'}
-        tovisit = self.getAccessibleTiles(board)
-        while(len(tovisit) != 0):
-            nexttiles = tovisit[0][1].getAccessibleTiles(board)
-            if (len(nexttiles) != 0):
-                for tile in nexttiles:
-                    try:
-                        paths[tile[1]]
-                    except KeyError:
-                        tovisit.append(tile)
-            paths[tovisit[0][1]] = tovisit[0][0]
-            tovisit.remove(tovisit[0])
-        return paths
-
+            moves.append('LEFT')
+        return moves
     # Returns the tile in direction direction
     def getTileInDirection(self, board, direction):
         vect = moves.get(direction)
         pos = addPositions(self.pos, vect)
-        return board[pos[0], pos[1]]
+        return board[pos]
 
     # Returns all the direction you can take from a tile
     def getAccessibleDirections(self, board):
-        direc = []
-        for move in self.availableMoves:
-            vect = moves.get(move)
-            dest = addPositions(self.pos, vect)
-            try:
-                if (oppositeMove.get(move) in board[dest[0], dest[1]].availableMoves):
-                    direc.append(move)
-            except KeyError:
-                pass
-        return direc
+        steps = self.getPossibleSteps(board)
+        return list(map(lambda x: x.direction, steps))
 
     # Returns all the accessible tiles from this tile in one move
-    def getAccessibleTiles(self, board):
+    def getPossibleSteps(self, board):
         direc = []
         for move in self.availableMoves:
             vect = moves.get(move)
             dest = addPositions(self.pos, vect)
-            try:
-                if (oppositeMove.get(move) in board[dest[0], dest[1]].availableMoves):
-                    direc.append([move, board[dest[0], dest[1]]])
-            except KeyError:
-                pass
+            
+            if dest in board and oppositeMove.get(move) in board[dest].availableMoves:
+                direc.append(Step(move, board[dest]))
+        
         return direc
 
-# Takes the list of all the paths and gets you the one leading to the tile you want
-def getPathTo(board, path, pos):
-    directions = []
-    currtile = None
-    try:
-        currtile = board[pos]
-        directions.append(path[currtile])
-    except KeyError:
-        return []
-    while True:
-        currtile = currtile.getTileInDirection(
-            board, oppositeMove[directions[len(directions)-1]])
-        if (path.get(currtile) != 'STOP'):
-            directions.append(path.get(currtile))
-        else:
-            return list(reversed(directions))
+    # Returns the path from this tile to the tile you want
+    def findPath(self, board, pos):
+        currentTile = self
+        visited = {currentTile}
+        toVisit = deque()
+        toVisit.append((currentTile, []))
+        while toVisit:
+            currentTile, path = toVisit.popleft()
+            if currentTile.pos == pos:
+                return path
+            else:
+                for step in currentTile.getPossibleSteps(board):
+                    if(step.tile not in visited):
+                        toVisit.append((step.tile, path + [step.direction]))
+                        visited.add(step.tile)
 
 
 # game loop
@@ -132,11 +110,11 @@ while True:
     turn_type = int(input())
 
     # Here we create our representation of the board
-    for y in range(board_height):
+    for y in range(boardHeight):
         x = 0
         for tile in input().split():
             temp = Tile([x, y], tile)
-            board[x, y] = Tile([x, y], tile)
+            board[Vector(x, y)] = Tile(Vector(x, y), tile)
             x += 1
 
     # Here we get the player infos
@@ -165,12 +143,10 @@ while True:
         if (quest_player_id == 0):
             quests.append(quest_item_name)
 
-    # To debug: print("Debug messages...", file=sys.stderr)
-
     myInfos = playerinfos[0]
-    myHeroPos = [myInfos[1], myInfos[2]]
-    myHeroTile = board[myHeroPos[0], myHeroPos[1]]
-    goalPos = []
+    myHeroPos = Vector(myInfos[1], myInfos[2])
+    myHeroTile = board[myHeroPos]
+    goalPos = Vector(0,0)
 
     # Now we detect if we are player one or two (just to avoid having boring draws against ourself)
     if (player == -1):
@@ -183,7 +159,7 @@ while True:
     # We select the item we want to search
     for i in items:
         if(i[0] == quests[0]):
-            goalPos = [i[1], i[2]]
+            goalPos = Vector(i[1], i[2])
 
     # If it's a push turn
     if(turn_type == 0):
@@ -191,10 +167,10 @@ while True:
         # and change the line or the column we want to push at each push
         if(toggle):
             print("PUSH "+str(column) + " RIGHT")
-            column = (column + 1) % board_height
+            column = (column + 1) % boardHeight
         else:
             print("PUSH "+str(row) + " DOWN")
-            row = (row + 1) % board_height
+            row = (row + 1) % boardHeight
         toggle = not(toggle)
 
     # If it's a move turn
@@ -204,13 +180,11 @@ while True:
 
         # if we can go somewhere select one of the available directions
         if (len(myHeroTile.getAccessibleDirections(board)) != 0):
-            action = "MOVE " + myHeroTile.getAccessibleDirections(
-                board)[moveType % len(myHeroTile.getAccessibleDirections(board))]
+            action = "MOVE " + myHeroTile.getAccessibleDirections(board)[moveType % len(myHeroTile.getAccessibleDirections(board))]
 
         # if we can go to our goal item go for it (but we don't want to be too strong so we don't go for more that 2 tiles at once)
-        paths = myHeroTile.getPathConnectedTiles(board)
-        path = getPathTo(board, paths, (goalPos[0], goalPos[1]))
-        if path != []:
+        path = myHeroTile.findPath(board,goalPos)
+        if path:
             action = 'MOVE ' + " ".join(path[:2])
 
         # output the move we chose
