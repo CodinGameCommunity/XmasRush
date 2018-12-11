@@ -9,6 +9,8 @@ import com.codingame.game.Utils.Constants;
 public class Item {
     private final String name;
     private final int playerId;
+    private boolean highlight = false;
+    private int highlightColor;
 
     private void checkRep() {
        assert name != null;
@@ -33,6 +35,24 @@ public class Item {
     public int getOpponentId() {
         return (playerId == Constants.PLAYER_INDEX) ? Constants.OPPONENT_INDEX : Constants.PLAYER_INDEX;
     }
+
+    //highlight methods
+    public boolean getHighlight() {
+        return highlight;
+    }
+
+    public void setHighlight() {
+        highlight = true;
+    }
+
+    public int getHighlightColor() {
+        return highlightColor;
+    }
+
+    public void setHighlightColor(int color) {
+        highlightColor = color;
+    }
+
 
     public boolean equals(Object obj) {
         if (!(obj instanceof Item)) {

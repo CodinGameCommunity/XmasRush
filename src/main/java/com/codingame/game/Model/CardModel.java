@@ -27,6 +27,7 @@ public class CardModel extends MovingModel {
 
     public void flip() {
         updateState(new FlipCardUpdate());
+        item.setHighlight();
     }
 
     public void updatePosition() {

@@ -13,6 +13,7 @@ import com.codingame.gameengine.module.entities.Entity;
 import com.codingame.gameengine.module.entities.GraphicEntityModule;
 import com.codingame.gameengine.module.entities.Group;
 import com.codingame.gameengine.module.entities.Sprite;
+import com.codingame.gameengine.module.entities.Circle;
 import com.codingame.view.tooltip.TooltipModule;
 
 import java.util.Observable;
@@ -27,8 +28,10 @@ public class TileView extends MovingView {
     private Sprite background;
     private Sprite frame;
     private Group itemGroup;
+    private Circle itemBackground;
 
     private boolean showFrame = false;
+    private boolean highlight = false;
 
     private Item tileItem;
     private TileModel model;
@@ -91,12 +94,11 @@ public class TileView extends MovingView {
     private void addItem() {
         if (tileItem != null) {
             itemGroup = entityModule.createGroup().setZIndex(2);
-            itemGroup.add(
-                entityModule.createCircle()
+            itemBackground = entityModule.createCircle()
                     .setZIndex(0)
                     .setScale(0.3)
-                    .setAlpha(0.7)
-                );
+                    .setAlpha(0.7);
+            itemGroup.add(itemBackground);
             String spritePath = String.format("item_%s_%d", tileItem.getName(), tileItem.getPlayerId());
             itemGroup.add(entityModule.createSprite()
                 .setImage(spritePath)
@@ -164,6 +166,13 @@ public class TileView extends MovingView {
 
         String tooltipText = model.getPos().toTooltip();
         if (model.hasItem()) {
+            //add highlight once
+            if (!highlight && model.getItem().getHighlight()){
+                int highlightColor = tileItem.getHighlightColor();
+                itemBackground.setFillColor(highlightColor);
+                entityModule.commitEntityState(0, itemBackground);
+                highlight = true;
+            }
             tooltipText += '\n' + model.getItem().toTooltip();
         }
         tooltipModule.updateExtraTooltipText(group, tooltipText);
