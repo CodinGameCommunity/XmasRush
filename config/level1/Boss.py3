@@ -5,6 +5,7 @@ from collections import deque
 
 Vector = namedtuple('Vector', ['x', 'y'])
 Step = namedtuple('Step', ['direction', 'tile'])
+Item = namedtuple('Item', ['name','position'])
 
 boardWidth, boardHeight = 7, 7
 
@@ -100,14 +101,14 @@ class Tile:
 # game loop
 while True:
     # Here are my local variables, these are reset at each turn
-    playerinfos = []
+    myHeroPos = Vector(0,0)
     quests = []
     items = []
 
     board = {}  # The board is a dictionnary linking the position of a tile to the tile object
 
     # Here we get the type of turn : 0 for push and 1 for move
-    turn_type = int(input())
+    turnType = int(input())
 
     # Here we create our representation of the board
     for y in range(boardHeight):
@@ -117,34 +118,31 @@ while True:
             board[Vector(x, y)] = Tile(Vector(x, y), tile)
             x += 1
 
-    # Here we get the player infos
+    # Here we get our position (and ignore all the other infos)
     for i in range(2):
-        num_player_cards, player_x, player_y, player_tile = input().split()
-        num_player_cards = int(num_player_cards)
-        player_x = int(player_x)
-        player_y = int(player_y)
-        playerinfos.append([num_player_cards, player_x, player_y, player_tile])
+        numPlayerCards, playerX, playerY, playerTile = input().split()
+        numPlayerCards = int(numPlayerCards)
+        playerX = int(playerX)
+        playerY = int(playerY)
+        if(i == 0):
+            myHeroPos = Vector(playerX, playerY)
 
     # Here we get the position of our items (and ignore the ones of the other player)
-    num_items = int(input())
-    for i in range(num_items):
-        item_name, item_x, item_y, item_player_id = input().split()
-        item_x = int(item_x)
-        item_y = int(item_y)
-        item_player_id = int(item_player_id)
-        if(item_player_id == 0):
-            items.append([item_name, item_x, item_y])
+    numItems = int(input())
+    for i in range(numItems):
+        itemName, itemX, itemY, itemPlayerId = input().split()
+        itemPlayerId = int(itemPlayerId)
+        if(itemPlayerId == 0):
+            items.append(Item(itemName, Vector(int(itemX), int(itemY))))
 
     # Here we get le list of the items we want (and ignore the ones of the other player)
-    num_quests = int(input())
-    for i in range(num_quests):
-        quest_item_name, quest_player_id = input().split()
-        quest_player_id = int(quest_player_id)
-        if (quest_player_id == 0):
-            quests.append(quest_item_name)
+    numQuests = int(input())
+    for i in range(numQuests):
+        questItemName, questPlayerId = input().split()
+        questPlayerId = int(questPlayerId)
+        if (questPlayerId == 0):
+            quests.append(questItemName)
 
-    myInfos = playerinfos[0]
-    myHeroPos = Vector(myInfos[1], myInfos[2])
     myHeroTile = board[myHeroPos]
     goalPos = Vector(0,0)
 
@@ -157,19 +155,19 @@ while True:
         toggle = player  # to avoid boring draws we start our push phase differently
 
     # We select the item we want to search
-    for i in items:
-        if(i[0] == quests[0]):
-            goalPos = Vector(i[1], i[2])
+    for item in items:
+        if(item.name == quests[0]):
+            goalPos = item.position
 
     # If it's a push turn
-    if(turn_type == 0):
+    if(turnType == 0):
         # We will alternate between vertical and horizontal push to shuffle the grid
         # and change the line or the column we want to push at each push
         if(toggle):
-            print("PUSH "+str(column) + " RIGHT")
+            print("PUSH " + str(column) + " RIGHT")
             column = (column + 1) % boardHeight
         else:
-            print("PUSH "+str(row) + " DOWN")
+            print("PUSH " + str(row) + " DOWN")
             row = (row + 1) % boardHeight
         toggle = not(toggle)
 
