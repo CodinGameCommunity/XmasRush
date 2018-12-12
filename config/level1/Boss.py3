@@ -135,7 +135,7 @@ while True:
         if(itemPlayerId == 0):
             items.append(Item(itemName, Vector(int(itemX), int(itemY))))
 
-    # Here we get le list of the items we want (and ignore the ones of the other player)
+    # Here we get the list of the items we want (and ignore the ones of the other player)
     numQuests = int(input())
     for i in range(numQuests):
         questItemName, questPlayerId = input().split()
