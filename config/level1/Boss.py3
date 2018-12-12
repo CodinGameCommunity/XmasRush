@@ -164,10 +164,10 @@ while True:
         # We will alternate between vertical and horizontal push to shuffle the grid
         # and change the line or the column we want to push at each push
         if(toggle):
-            print("PUSH " + str(column) + " RIGHT")
+            print("PUSH", column, "RIGHT")
             column = (column + 1) % boardHeight
         else:
-            print("PUSH " + str(row) + " DOWN")
+            print("PUSH", row, "DOWN")
             row = (row + 1) % boardHeight
         toggle = not(toggle)
 
