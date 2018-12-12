@@ -49,13 +49,13 @@ class Tile:
     # this function allows us to use the '0101' code of the tile and turn it into a list of directions
     def parseCode(self, code):
         moves = []
-        if (code[0] == '1'):
+        if code[0] == '1':
             moves.append('UP')
-        if (code[1] == '1'):
+        if code[1] == '1':
             moves.append('RIGHT')
-        if (code[2] == '1'):
+        if code[2] == '1':
             moves.append('DOWN')
-        if (code[3] == '1'):
+        if code[3] == '1':
             moves.append('LEFT')
         return moves
     # Returns the tile in direction direction
@@ -93,7 +93,7 @@ class Tile:
                 return path
             else:
                 for step in currentTile.getPossibleSteps(board):
-                    if(step.tile not in visited):
+                    if step.tile not in visited:
                         toVisit.append((step.tile, path + [step.direction]))
                         visited.add(step.tile)
 
@@ -124,7 +124,7 @@ while True:
         numPlayerCards = int(numPlayerCards)
         playerX = int(playerX)
         playerY = int(playerY)
-        if(i == 0):
+        if i == 0:
             myHeroPos = Vector(playerX, playerY)
 
     # Here we get the position of our items (and ignore the ones of the other player)
@@ -132,7 +132,7 @@ while True:
     for i in range(numItems):
         itemName, itemX, itemY, itemPlayerId = input().split()
         itemPlayerId = int(itemPlayerId)
-        if(itemPlayerId == 0):
+        if itemPlayerId == 0:
             items.append(Item(itemName, Vector(int(itemX), int(itemY))))
 
     # Here we get the list of the items we want (and ignore the ones of the other player)
@@ -140,15 +140,15 @@ while True:
     for i in range(numQuests):
         questItemName, questPlayerId = input().split()
         questPlayerId = int(questPlayerId)
-        if (questPlayerId == 0):
+        if questPlayerId == 0:
             quests.append(questItemName)
 
     myHeroTile = board[myHeroPos]
     goalPos = Vector(0,0)
 
     # Now we detect if we are player one or two (just to avoid having boring draws against ourself)
-    if (player == -1):
-        if(myHeroPos[0] == 0):
+    if player == -1:
+        if myHeroPos[0] == 0:
             player = 0
         else:
             player = 1
@@ -156,14 +156,14 @@ while True:
 
     # We select the item we want to search
     for item in items:
-        if(item.name == quests[0]):
+        if item.name == quests[0]:
             goalPos = item.position
 
     # If it's a push turn
-    if(turnType == 0):
+    if turnType == 0:
         # We will alternate between vertical and horizontal push to shuffle the grid
         # and change the line or the column we want to push at each push
-        if(toggle):
+        if toggle:
             print("PUSH", column, "RIGHT")
             column = (column + 1) % boardHeight
         else:
@@ -177,7 +177,7 @@ while True:
         action = 'PASS'
 
         # if we can go somewhere select one of the available directions
-        if (len(myHeroTile.getAccessibleDirections(board)) != 0):
+        if len(myHeroTile.getAccessibleDirections(board)) != 0:
             action = "MOVE " + myHeroTile.getAccessibleDirections(board)[moveType % len(myHeroTile.getAccessibleDirections(board))]
 
         # if we can go to our goal item go for it (but we don't want to be too strong so we don't go for more that 2 tiles at once)
