@@ -56,7 +56,15 @@ public class Constants {
             Arrays.asList("0110", "0110", "0110", "0110", "0110", "0110", "0110", "0110",
                     "1101", "1101", "1101", "0111", "0111", "0111", "0111", "0111", "0111",
                     "1010", "1010", "1010", "1010", "1010", "1010",
-                    "1111")
+                    "1111"),
+
+            Arrays.asList("0110", "0110", "0110", "0110", "0110", "0110", "0110", "0110",
+                    "1101", "1101", "1101", "0111", "0111", "0111", "0111",
+                    "1010", "1010", "1010", "1010", "1010", "1010", "1010", "1010", "1010"),
+
+            Arrays.asList("0110", "0110", "0110", "0110", "0110", "0110", "0110", "0110", "0110", "0110",
+                    "1101", "1101", "1101", "0111", "0111",
+                    "1010", "1010", "1010", "1010", "1010", "1010", "1010", "1010", "1010")
     ));
 
     public static final int PLAYER_INDEX = 0;
@@ -89,6 +97,7 @@ public class Constants {
     //make sure the number of GAME turns is EVEN for equal number of PUSH and MOVE turns
     public static final int MAX_GAME_TURNS = 150;
     public static final int MAX_MOVE_STEPS = 20;
+    public static final int MAX_INPUT_LENGTH = 124;
 
     public static final Pattern PLAYER_INPUT_PUSH_PATTERN = Pattern
             .compile("(?<pushAction>\\bPUSH\\b) (?<id>[ 0-" + (MAP_SIZE - 1) + "]) (?<direction>(\\bUP\\b|\\bRIGHT\\b|\\bDOWN\\b|\\bLEFT\\b))");

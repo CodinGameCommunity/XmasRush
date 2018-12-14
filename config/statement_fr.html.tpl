@@ -44,7 +44,7 @@
       <span>Objectif</span>
     </h2>
     <div class="statement-goal-content">
-      Faites-vous un chemin vers les objets disséminés dans le labyrinthe et soyez le premier à terminer vos quêtes !
+      Faites-vous un chemin vers les objets disséminés dans le labyrinthe et soyez le premier à terminer vos quêtes&nbsp;!
     </div>
   </div>
 
@@ -60,6 +60,7 @@
       </p>
       <p>
         Chaque joueur possède une tuile qu'il utilise pour pousser une ligne ou une colonne du plateau, de façon à créer un chemin vers les objets de leurs quêtes.
+        Quand un joueur utilise sa tuile pour déplacer une colonne ou une ligne, il récupère la tuile qui est poussée hors du plateau.
       </p>
       <p>
         <b>Le plateau de jeu</b>
@@ -207,7 +208,7 @@
       <div class="text">
         <ul style="padding-top: 0;padding-bottom: 0;">
           <li>
-            Vous terminez toutes vos quêtes avant votre adversaire.
+            Vous terminez toutes vos quêtes avant votre adversaire. Si les deux joueurs terminent leur quêtes au même tour de jeu, la partie se termine en match nul.
           </li>
           <li>
             Après <const>150</const> tours, vous terminez plus de quêtes que votre adversaire.
@@ -261,6 +262,9 @@
           <li>
             Il est possible de terminer une quête pendant un tour de modification. Si la commande déplace le joueur hors du jeu puis sur la tuile utilisée qui contient l'objet d'une quête révélée, alors cette quête est terminée et une nouvelle est révélée à la fin du tour.
           </li>
+          <li>
+            L'ordre des quêtes est le même pour les deux joueurs. Tous les objets d'un joueur sont uniques.
+          </li>
         </ul>
       </p>
     </div>
@@ -310,7 +314,7 @@
         <var>itemY</var>, <var>itemPlayerId</var>:
         <ul style="margin-top: 0;padding-bottom: 0;">
           <li>
-            Un entier <var>itemName</var>: le nom de l'objet.
+            Une chaîne de caractères <var>itemName</var>: le nom de l'objet.
           </li>
           <li>
             Un entier <var>itemX</var>: la position <const>x</const> de l'objet sur le plateau (sa colonne).
@@ -319,7 +323,7 @@
             Un entier <var>itemY</var>: la position <const>y</const> de l'objet sur le plateau (sa ligne).
           </li>
           <li>
-            Une chaîne de caractères <var>itemPlayerId</var>: l'identifiant du joueur à qui l'objet appartient.
+            Un entier <var>itemPlayerId</var>: l'identifiant du joueur à qui l'objet appartient.
           </li>
         </ul>
         <b>Note</b>: Si un objet se trouve sur la tuile d'un joueur, <var>itemX</var> et <var>itemY</var> serons égaux à 
@@ -329,10 +333,10 @@
         <var>questPlayerId</var>:
         <ul style="margin-top: 0;padding-bottom: 0;">
           <li>
-            <var>questItemName</var>: le nom de l'objet.
+            Une chaîne de caractères <var>questItemName</var>: le nom de l'objet associé à la quête.
           </li>
           <li>
-            <var>questPlayerId</var>: l'idientifiant du joueur à qui l'objet appartient.
+            Un entier <var>questPlayerId</var>: l'idientifiant du joueur qui possède cette quête.
           </li>
         </ul>
         <b>Note</b>: l'identifiant du joueur est toujours <const>0</const> et celui de son adversaire <const>1</const>.
@@ -350,7 +354,7 @@
             <action>LEFT</action> ou <action>RIGHT</action>.
           </li>
         </ul>
-        Exemple: <action>PUSH 3 UP</action> poussera la troisième colonne vers le bas.
+        Exemple: <action>PUSH 3 UP</action> poussera la quatrième colonne vers le haut.
       </div>
       <div class="title" style="padding-bottom: 0;">Sortie pour un tour de déplacement</div>
     <div class="text">

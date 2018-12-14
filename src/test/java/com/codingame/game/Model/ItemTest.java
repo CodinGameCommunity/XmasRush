@@ -85,4 +85,14 @@ public class ItemTest {
         Item item = new Item("BOOK", 1);
         assertEquals("BOOK 0", item.opponentItemToString());
     }
+
+    @Test
+    public void testSetGetHighlight() {
+        Item item = new Item("BOOK", 1);
+        assertFalse(item.getHighlight());
+        item.setHighlight();
+        assertTrue(item.getHighlight());
+        item.setHighlight();
+        assertTrue(item.getHighlight());
+    }
 }

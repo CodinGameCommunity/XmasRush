@@ -87,8 +87,21 @@ public class Referee extends AbstractReferee {
                 numVisibleCards = 1;
                 threeWayTiles = true;
                 break;
-            default: // All other leagues
+            case 3: // Third league
                 availablePatterns = new ArrayList<>(Constants.TILE_PATTERNS.get(1));
+                numCardsPerPlayer = 12;
+                numVisibleCards = 3;
+                threeWayTiles = false;
+                break;
+            case 4:
+            case 5:
+                availablePatterns = new ArrayList<>(Constants.TILE_PATTERNS.get(2));
+                numCardsPerPlayer = 12;
+                numVisibleCards = 3;
+                threeWayTiles = false;
+                break;
+            default: // All other leagues
+                availablePatterns = new ArrayList<>(Constants.TILE_PATTERNS.get(3));
                 numCardsPerPlayer = 12;
                 numVisibleCards = 3;
                 threeWayTiles = false;
@@ -201,8 +214,12 @@ public class Referee extends AbstractReferee {
 
     private List<Item> createItems(List<String> itemNames, int playerId) {
         List<Item> itemList = new ArrayList<>();
-        for (String name : itemNames)
-            itemList.add(new Item(name, playerId));
+        for (String name : itemNames){
+            Item item = new Item(name, playerId);
+            int highlightColor = gameManager.getPlayer(playerId).getColorToken();
+            item.setHighlightColor(highlightColor);
+            itemList.add(item);
+        }
         return itemList;
     }
 
@@ -393,6 +410,10 @@ public class Referee extends AbstractReferee {
     }
 
     private Action parseAction(String action) throws InvalidAction {
+        if (action.length() > Constants.MAX_INPUT_LENGTH) {
+            throw new InvalidAction("exceeded number of allowed characters");
+        }
+
         Matcher matchPush = Constants.PLAYER_INPUT_PUSH_PATTERN.matcher(action);
         Matcher matchMove = Constants.PLAYER_INPUT_MOVE_PATTERN.matcher(action);
         Matcher matchMaxSteps = Constants.PLAYER_INPUT_MOVE_MAX_STEPS_PATTERN.matcher(action);
