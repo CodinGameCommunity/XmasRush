@@ -48,6 +48,10 @@ public class Referee extends AbstractReferee {
     //max move step frames per MOVE turn + (1 row frame + 1 push frame) per PUSH turn
     //+ 1 extra frame to return "Max turns reached!", if required
     private static final int MAX_NUM_TURNS = (Constants.MAX_MOVE_STEPS + 2) * Constants.MAX_GAME_TURNS / 2 + 1;
+    //Stale turns
+    private static final int maxStaleTurns = 5; //todo: change the num, remove todo
+    private int numStalePushTurns;
+    private int numStaleMoveTurns;
 
     //League stuff
     private static int leagueLevel;
@@ -296,6 +300,12 @@ public class Referee extends AbstractReferee {
                 gameManager.addToGameSummary(GameManager.formatErrorMessage("Max turns reached!"));
                 forceGameEnd();
             }
+
+            if (numStalePushTurns >= maxStaleTurns && numStaleMoveTurns >= maxStaleTurns) {
+                gameManager.addToGameSummary(GameManager.formatErrorMessage("The game ended in a deadlock!"));
+                forceGameEnd();
+            }
+
             checkForWinner();
 
             if (gameManager.getActivePlayers().isEmpty()) {
@@ -443,16 +453,25 @@ public class Referee extends AbstractReferee {
             pushActions.remove(0);
             doPushAction(actions);
         } else {
-            for (Map.Entry action : moveActions.entrySet()) {
-                doMoveAction(action);
+            if (moveActions.isEmpty())
+                //both players passed
+                numStaleMoveTurns++;
+            else {
+                //none or one player passed
+                int invalidMoves = (passActions && moveActions.size() < 2) ? 1 : 0;
+                for (Map.Entry action : moveActions.entrySet()) {
+                    invalidMoves += doMoveAction(action);
+                }
+                //pass + invalid move or invalid move x 2
+                numStaleMoveTurns = (invalidMoves == 2) ? numStaleMoveTurns + 1 : 0;
+                moveActions.values().removeIf(MoveAction::isEmpty);
             }
-            moveActions.values().removeIf(MoveAction::isEmpty);
             passActions = false;
         }
     }
 
     //Move actions
-    private void doMoveAction(Map.Entry<Player, MoveAction> action) {
+    private int doMoveAction(Map.Entry<Player, MoveAction> action) {
         Player player = action.getKey();
         PlayerModel playerModel = players.get(player.getIndex());
         MoveAction moveAction = action.getValue();
@@ -460,10 +479,12 @@ public class Referee extends AbstractReferee {
         try {
             movePlayer(playerModel, step);
             gameManager.addToGameSummary(String.format("%s moved %s", player.getNicknameToken(), step));
+            return 0;
         }
         catch (InvalidAction e) {
             moveAction.setEmpty();
             gameManager.addToGameSummary(GameManager.formatErrorMessage(String.format("%s: invalid input - MOVE %s", player.getNicknameToken(), e.getMessage())));
+            return 1;
         }
     }
 
@@ -481,8 +502,10 @@ public class Referee extends AbstractReferee {
 
         if (!areValidPushActions(new ArrayList(actions.values()))) {
             gameManager.addToGameSummary(GameManager.formatErrorMessage("Both players tried to push the same line. Nothing happens!"));
+            numStalePushTurns++;
             return;
         }
+        numStalePushTurns = 0;
         for (Map.Entry<Player, PushAction> action : actions.entrySet()) {
             Player player = action.getKey();
             PlayerModel playerModel = players.get(player.getIndex());

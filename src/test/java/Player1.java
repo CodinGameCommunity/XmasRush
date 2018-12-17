@@ -41,7 +41,7 @@ public class Player1 {
             }
 
             //league 3
-            if (turn == 0) System.out.println("PUSH 0 DOWN");
+            if (turn == 0) System.out.println("PUSH 1 DOWN");
             if (turn == 1) System.out.println("MOVE RIGHT UP RIGHT RIGHT DOWN");
             if (turn == 2) System.out.println("PUSH 1 RIGHT");
             if (turn == 3) System.out.println("MOVE UP RIGHT RIGHT");
@@ -49,7 +49,7 @@ public class Player1 {
             if (turn == 5) System.out.println("MOVE RIGHT");
             if (turn == 6) System.out.println("PUSH 6 UP");
             if (turn == 7) System.out.println("PASS");
-            if (turn == 8) System.out.println("PUSH 6 UP");
+            if (turn == 8) System.out.println("PUSH 4 LEFT");
             if (turn == 9) System.out.println("MOVE LEFT UP");
             if (turn == 10) System.out.println("PUSH 5 RIGHT");
             if (turn == 11) System.out.println("MOVE DOWN DOWN");
@@ -58,16 +58,16 @@ public class Player1 {
             if (turn == 14) System.out.println("PUSH 5 LEFT");
             if (turn == 15) System.out.println("MOVE UP");
             if (turn == 16) System.out.println("PUSH 5 RIGHT");
-            if (turn == 17) System.out.println("MOVE DOWN LEFT DOWN RIGHT");
+            if (turn == 17) System.out.println("PASS");
             if (turn == 18) System.out.println("PUSH 6 RIGHT");
-            if (turn == 19) System.out.println("MOVE UP RIGHT RIGHT DOWN RIGHT RIGHT UP LEFT UP RIGHT UP UP UP");
-            if (turn == 20) System.out.println("PUSH 5 RIGHT");
-            if (turn == 21) System.out.println("MOVE LEFT UP RIGHT RIGHT DOWN DOWN DOWN DOWN LEFT DOWN LEFT LEFT UP UP");
+            if (turn == 19) System.out.println("PASS");
+            if (turn == 20) System.out.println("PUSH 1 RIGHT");
+            if (turn == 21) System.out.println("MOVE LEFT");
             if (turn == 22) System.out.println("PUSH 3 LEFT");
-            if (turn == 23) System.out.println("MOVE UP");
-            if (turn == 24) System.out.println("PUSH 2 LEFT");
-            if (turn == 25) System.out.println("MOVE DOWN LEFT UP");
-            if (turn == 26) System.out.println("PUSH 3 LEFT");
+            if (turn == 23) System.out.println("PASS");
+            if (turn == 24) System.out.println("PUSH 3 LEFT");
+            if (turn == 25) System.out.println("PASS");
+            if (turn == 26) System.out.println("PUSH 5 LEFT");
             if (turn == 27) System.out.println("MOVE UP UP LEFT DOWN DOWN");
             if (turn == 28) System.out.println("PUSH 3 RIGHT");
             if (turn == 29) System.out.println("MOVE UP");
