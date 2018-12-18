@@ -51,7 +51,6 @@ public class Referee extends AbstractReferee {
     //Stale turns
     private static final int maxStaleTurns = 10;
     private int numStalePushTurns;
-    private int numStaleMoveTurns;
 
     //League stuff
     private static int leagueLevel;
@@ -301,7 +300,7 @@ public class Referee extends AbstractReferee {
                 forceGameEnd();
             }
 
-            if (numStalePushTurns >= maxStaleTurns && numStaleMoveTurns >= maxStaleTurns) {
+            if (numStalePushTurns >= maxStaleTurns) {
                 gameManager.addToGameSummary(GameManager.formatErrorMessage("The game ended in a deadlock!"));
                 forceGameEnd();
             }
@@ -453,25 +452,16 @@ public class Referee extends AbstractReferee {
             pushActions.remove(0);
             doPushAction(actions);
         } else {
-            if (moveActions.isEmpty())
-                //both players passed
-                numStaleMoveTurns++;
-            else {
-                //none or one player passed
-                int invalidMoves = (passActions) ? 1 : 0;
-                for (Map.Entry action : moveActions.entrySet()) {
-                    invalidMoves += doMoveAction(action);
-                }
-                //pass + invalid move or invalid move x 2
-                numStaleMoveTurns = (invalidMoves == 2) ? numStaleMoveTurns + 1 : 0;
-                moveActions.values().removeIf(MoveAction::isEmpty);
+            for (Map.Entry action : moveActions.entrySet()) {
+                doMoveAction(action);
             }
+            moveActions.values().removeIf(MoveAction::isEmpty);
             passActions = false;
         }
     }
 
     //Move actions
-    private int doMoveAction(Map.Entry<Player, MoveAction> action) {
+    private void doMoveAction(Map.Entry<Player, MoveAction> action) {
         Player player = action.getKey();
         PlayerModel playerModel = players.get(player.getIndex());
         MoveAction moveAction = action.getValue();
@@ -479,12 +469,10 @@ public class Referee extends AbstractReferee {
         try {
             movePlayer(playerModel, step);
             gameManager.addToGameSummary(String.format("%s moved %s", player.getNicknameToken(), step));
-            return 0;
         }
         catch (InvalidAction e) {
             moveAction.setEmpty();
             gameManager.addToGameSummary(GameManager.formatErrorMessage(String.format("%s: invalid input - MOVE %s", player.getNicknameToken(), e.getMessage())));
-            return 1;
         }
     }
 

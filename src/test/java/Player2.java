@@ -42,14 +42,14 @@ public class Player2 {
             //league 3
             if (turn == 0) System.out.println("PUSH 1 UP");
             if (turn == 1) System.out.println("MOVE UP");
-            if (turn == 2) System.out.println("PUSH 1 LEFT");
+            if (turn == 2) System.out.println("PUSH 1 LEFT"); //2 stale pushes
             if (turn == 3) System.out.println("MOVE DOWN LEFT");
-            if (turn == 4) System.out.println("PUSH 6 DOWN");
-            if (turn == 5) System.out.println("MOVE LEFT DOWN DOWN DOWN DOWN DOWN LEFT");
+            if (turn == 4) System.out.println("PUSH 6 DOWN"); //interrupted
+            if (turn == 5) System.out.println("MOVE LEFT LEFT DOWN DOWN DOWN DOWN DOWN LEFT");
             if (turn == 6) System.out.println("PUSH 6 DOWN");
             if (turn == 7) System.out.println("PASS");
             if (turn == 8) System.out.println("PUSH 4 LEFT");
-            if (turn == 9) System.out.println("PASS");
+            if (turn == 9) System.out.println("MOVE DOWN RIGHT RIGHT");
             if (turn == 10) System.out.println("PUSH 1 RIGHT");
             if (turn == 11) System.out.println("PASS");
             if (turn == 12) System.out.println("PUSH 5 RIGHT");
@@ -58,14 +58,14 @@ public class Player2 {
             if (turn == 15) System.out.println("PASS");
             if (turn == 16) System.out.println("PUSH 3 RIGHT");
             if (turn == 17) System.out.println("MOVE DOWN LEFT");
-            if (turn == 18) System.out.println("PUSH 6 RIGHT"); //10 stale PUSHES
+            if (turn == 18) System.out.println("PUSH 6 RIGHT");
             if (turn == 19) System.out.println("PASS");
             if (turn == 20) System.out.println("PUSH 1 LEFT");
             if (turn == 21) System.out.println("MOVE RIGHT");
             if (turn == 22) System.out.println("PUSH 3 LEFT");
             if (turn == 23) System.out.println("PASS");
             if (turn == 24) System.out.println("PUSH 3 LEFT");
-            if (turn == 25) System.out.println("PASS"); //10 stale MOVES
+            if (turn == 25) System.out.println("PASS"); //10 stale pushes
             turn++;
         }
     }
