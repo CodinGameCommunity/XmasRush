@@ -49,7 +49,7 @@ public class Referee extends AbstractReferee {
     //+ 1 extra frame to return "Max turns reached!", if required
     private static final int MAX_NUM_TURNS = (Constants.MAX_MOVE_STEPS + 2) * Constants.MAX_GAME_TURNS / 2 + 1;
     //Stale turns
-    private static final int maxStaleTurns = 5; //todo: change the num, remove todo
+    private static final int maxStaleTurns = 10;
     private int numStalePushTurns;
     private int numStaleMoveTurns;
 
