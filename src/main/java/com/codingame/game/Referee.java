@@ -458,7 +458,7 @@ public class Referee extends AbstractReferee {
                 numStaleMoveTurns++;
             else {
                 //none or one player passed
-                int invalidMoves = (passActions && moveActions.size() < 2) ? 1 : 0;
+                int invalidMoves = (passActions) ? 1 : 0;
                 for (Map.Entry action : moveActions.entrySet()) {
                     invalidMoves += doMoveAction(action);
                 }
