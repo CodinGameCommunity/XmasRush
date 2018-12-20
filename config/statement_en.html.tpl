@@ -272,7 +272,7 @@
             the quest, if revealed, is completed and another one is revealed at the end of the turn.
           </li>
           <li>
-            If no modification of the labyrinth happens (following a Push action) for 10 successive turns, the game ends, whatever the movement actions of the players.
+            If no modification of the labyrinth happens for <const>10</const> successive turns of modification, the game ends, independently of both players' movement actions.
           </li>
         </ul>
       </p>
