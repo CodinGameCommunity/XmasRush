@@ -271,6 +271,9 @@
             It is possible to complete a quest during a push turn. If a push command warps a player onto a quest item,
             the quest, if revealed, is completed and another one is revealed at the end of the turn.
           </li>
+          <li>
+            If no modification of the labyrinth happens (following a Push action) for 10 successive turns, the game ends, whatever the movement actions of the players.
+          </li>
         </ul>
       </p>
     </div>
