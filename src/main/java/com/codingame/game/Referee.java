@@ -48,6 +48,9 @@ public class Referee extends AbstractReferee {
     //max move step frames per MOVE turn + (1 row frame + 1 push frame) per PUSH turn
     //+ 1 extra frame to return "Max turns reached!", if required
     private static final int MAX_NUM_TURNS = (Constants.MAX_MOVE_STEPS + 2) * Constants.MAX_GAME_TURNS / 2 + 1;
+    //Stale turns
+    private static final int maxStaleTurns = 10;
+    private int numStalePushTurns;
 
     //League stuff
     private static int leagueLevel;
@@ -296,6 +299,12 @@ public class Referee extends AbstractReferee {
                 gameManager.addToGameSummary(GameManager.formatErrorMessage("Max turns reached!"));
                 forceGameEnd();
             }
+
+            if (numStalePushTurns >= maxStaleTurns) {
+                gameManager.addToGameSummary(GameManager.formatErrorMessage("The game ended in a deadlock!"));
+                forceGameEnd();
+            }
+
             checkForWinner();
 
             if (gameManager.getActivePlayers().isEmpty()) {
@@ -312,6 +321,7 @@ public class Referee extends AbstractReferee {
             gameTurnsLeft--;
             forceGameFrame();
             flipCards();
+            checkForFinishedItems();
             sendPlayerInputs();
             getPlayerActions();
         }
@@ -481,8 +491,10 @@ public class Referee extends AbstractReferee {
 
         if (!areValidPushActions(new ArrayList(actions.values()))) {
             gameManager.addToGameSummary(GameManager.formatErrorMessage("Both players tried to push the same line. Nothing happens!"));
+            numStalePushTurns++;
             return;
         }
+        numStalePushTurns = 0;
         for (Map.Entry<Player, PushAction> action : actions.entrySet()) {
             Player player = action.getKey();
             PlayerModel playerModel = players.get(player.getIndex());
