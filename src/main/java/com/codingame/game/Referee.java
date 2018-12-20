@@ -321,6 +321,7 @@ public class Referee extends AbstractReferee {
             gameTurnsLeft--;
             forceGameFrame();
             flipCards();
+            checkForFinishedItems();
             sendPlayerInputs();
             getPlayerActions();
         }
