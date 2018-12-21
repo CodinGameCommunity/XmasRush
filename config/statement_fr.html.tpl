@@ -265,6 +265,9 @@
           <li>
             L'ordre des quêtes est le même pour les deux joueurs. Tous les objets d'un joueur sont uniques.
           </li>
+          <li>
+            Si le labyrinthe n'est pas modifié pendant <const>10</const> tours consécutifs de modification, la partie se termine, indépendamment des actions de mouvement des joueurs.
+          </li>
         </ul>
       </p>
     </div>
