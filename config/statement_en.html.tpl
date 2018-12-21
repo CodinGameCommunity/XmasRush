@@ -105,6 +105,13 @@
           When an item is collected, it is removed from the tile and the quest is marked as completed and removed
           from the player's quest deck. After the turn ends, a new quest is revealed (if available).
         </li>
+        <li style="color: #7cc576;
+        background-color: rgba(124, 197, 118,.1);
+        padding: 2px;">
+          If a player is on a tile with an item that gets revealed as a quest at the beginning of a turn, the item
+          will be collected automatically.<br/>
+          Note: The player inputs are sent before the quests are collected.
+        </li>
           <!-- END -->
           <!-- BEGIN level3 -->
         <li style="color: #7cc576;
@@ -132,6 +139,11 @@
         <li>
           When an item is collected, it is removed from the tile and the quest is marked as completed and removed
           from the player's quest deck. After the turn ends, a new quest is revealed (if available).
+        </li>
+        <li>
+          If a player is on a tile with an item that gets revealed as a quest at the beginning of a turn, the item
+          will be collected automatically.<br/>
+          Note: The player inputs are sent before the quests are collected.
         </li>
         <!-- END -->
         <!-- BEGIN level3 -->
