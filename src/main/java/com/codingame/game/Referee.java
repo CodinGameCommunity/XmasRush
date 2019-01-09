@@ -119,7 +119,6 @@ public class Referee extends AbstractReferee {
         Constants.DECK_POSITIONS.get(0).setX(cardsPosX);
         Constants.DECK_POSITIONS.get(1).setX(Constants.SCREEN_WIDTH - cardsPosX);
 
-        loadSpriteSheets();
         createBoard();
         createPlayers();
         createView();
@@ -136,38 +135,6 @@ public class Referee extends AbstractReferee {
         }
     }
 
-    private void loadSpriteSheets() {
-        entityModule.createSpriteSheetLoader()
-                .setSourceImage("items_sheet.png")
-                .setImageCount(12)
-                .setWidth(48)
-                .setHeight(48)
-                .setOrigRow(0)
-                .setOrigCol(0)
-                .setImagesPerRow(5)
-                .setName("items_sheet")
-                .load();
-        entityModule.createSpriteSheetLoader()
-                .setSourceImage("tile_decorators.png")
-                .setImageCount(12)
-                .setWidth(312)
-                .setHeight(312)
-                .setOrigRow(0)
-                .setOrigCol(0)
-                .setImagesPerRow(3)
-                .setName("tile_decorators")
-                .load();
-        entityModule.createSpriteSheetLoader()
-                .setSourceImage("tile_paths.png")
-                .setImageCount(12)
-                .setWidth(312)
-                .setHeight(312)
-                .setOrigRow(0)
-                .setOrigCol(0)
-                .setImagesPerRow(3)
-                .setName("tile_paths")
-                .load();
-    }
 
     //Models
     private void createBoard() {
