@@ -268,6 +268,8 @@ public class Referee extends AbstractReferee {
             }
 
             if (numStalePushTurns >= maxStaleTurns) {
+                //allows the last push message to be displayed in the summary
+                forceAnimationFrame();
                 gameManager.addToGameSummary(GameManager.formatErrorMessage("The game ended in a deadlock!"));
                 forceGameEnd();
             }
